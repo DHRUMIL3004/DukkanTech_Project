@@ -11,8 +11,8 @@ function Hero() {
             and track sales with our comprehensive retail management solution.
           </p>
           <div className="hero-buttons">
-            <button className="hero-btn-primary">Explore More</button>
-            <button className="hero-btn-secondary">Features</button>
+            <button className="hero-btn-primary"><a className='anchor' href='/login'>Explore More</a></button>
+            <button className="hero-btn-secondary"><a className='anchor' href='/'>Features</a></button>
             
           </div>
         </div>
