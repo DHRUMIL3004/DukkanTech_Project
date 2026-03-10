@@ -1,0 +1,51 @@
+.login_form{
+    background-image: url('/Backimg2.png');
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+   
+}
+
+/* glass card */
+.login_card{
+    border-radius: 15px;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(8px);
+    border: none;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+/* logo */
+.logo{
+    height: 20px;
+    
+}
+
+/* button */
+.login_btn{
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    transition: 0.3s;
+}
+
+.login_btn:hover{
+    background : #1d4ed8;
+}
+
+/* register link */
+.register_link{
+    color: #2563eb;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.form-control {
+  font-size: 16px;
+}
+
+
+.form-select{
+    font-size: 16px;
+}

@@ -4,7 +4,7 @@ function LandingNavbar() {
     return ( 
      <nav className="navbar navbar-expand-lg navbar-light bg-light fixed-top">
   <div className="container">
-    <a className="navbar-brand" href="#">DukaanTech</a>
+    <a className="navbar-brand" href="#"><img className='logo' src='/Logo.png'/></a>
     <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span className="navbar-toggler-icon" />
     </button>
