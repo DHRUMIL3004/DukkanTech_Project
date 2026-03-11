@@ -16,27 +16,5 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserService userService;
-
-    @PostMapping
-    public ResponseEntity<UserResponse> createUser(
-            @RequestBody UserRequest request){
-
-        return ResponseEntity.ok(userService.createUser(request));
-    }
-
-    @GetMapping
-    public ResponseEntity<List<UserResponse>> getUsers(){
-
-        return ResponseEntity.ok(userService.readUsers());
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteUser(
-            @PathVariable String id){
-
-        userService.deleteUser(id);
-        return ResponseEntity.ok("User Deleted Successfully");
-    }
 
 }
