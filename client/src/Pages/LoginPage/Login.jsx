@@ -12,7 +12,7 @@ function Login() {
                   <div className="text-center mb-2">
                     <img src="/Logo.png" alt="logo" className="logo" />
                     <h4 className="mt-4">Built for Growing Businesses</h4>
-                    <p className="text-muted pt-3">Sign into your account</p>
+                    <p className="text pt-3">Sign into your account</p>
                   </div>
 
                   <form>
