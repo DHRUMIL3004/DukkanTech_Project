@@ -8,7 +8,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { BrowserRouter } from 'react-router-dom';
 import "./Pages/LoginPage/Login.css";
-
+import './locales/i18n';
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>

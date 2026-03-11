@@ -1,6 +1,13 @@
 // import "./Login.css";
 
+import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
+
 function Login() {
+
+  const {t,i18n}=useTranslation("login");
+  
+
   return (
     <div>
       <section className="vh-100 login_form d-flex align-items-center">
@@ -11,8 +18,8 @@ function Login() {
                 <div className="card-body p-5">
                   <div className="text-center mb-2">
                     <img src="/Logo.png" alt="logo" className="logo" />
-                    <h4 className="mt-4">Built for Growing Businesses</h4>
-                    <p className="text pt-3">Sign into your account</p>
+                     <h4 className="mt-4">{t("welcome")}</h4>
+                    <p className="text pt-3">{t('signIn')}</p>
                   </div>
 
                   <form>
@@ -20,7 +27,7 @@ function Login() {
                       <input
                         type="email"
                         className="form-control form-control-lg"
-                        placeholder="Email address"
+                        placeholder={t('email')}
                       />
                     </div>
 
@@ -28,19 +35,19 @@ function Login() {
                       <input
                         type="password"
                         className="form-control form-control-lg"
-                        placeholder="Password"
+                        placeholder={t('password')}
                       />
                     </div>
                     <div className="mb-3">
                       <select className="form-select form-select-lg">
-                        <option value="">Select Role</option>
-                        <option value="ADMIN">Admin</option>
-                        <option value="EMPLOYEE">Employee</option>
+                        <option value="">{t('selectRole')}</option>
+                        <option value="ADMIN">{t('admin')}</option>
+                        <option value="EMPLOYEE">{t('employee')}</option>
                       </select>
                     </div>
 
                     <div className="d-grid mb-3">
-                      <button className="btn login_btn btn-lg">Login</button>
+                      <button className="btn login_btn btn-lg">{t('login')}</button>
                     </div>
                   </form>
                 </div>
