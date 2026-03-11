@@ -1,13 +1,13 @@
 package com.intech.dukaantech.user.controller;
 
+import com.intech.dukaantech.common.dto.PageResponse;
 import com.intech.dukaantech.user.dto.UserRequest;
 import com.intech.dukaantech.user.dto.UserResponse;
 import com.intech.dukaantech.user.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -18,25 +18,37 @@ public class UserController {
 
     private final UserService userService;
 
+    // Create User
     @PostMapping
     public ResponseEntity<UserResponse> createUser(
-            @RequestBody UserRequest request){
+            @Valid @RequestBody UserRequest request){
 
-        return ResponseEntity.ok(userService.createUser(request));
+        UserResponse response = userService.createUser(request);
+        return ResponseEntity.ok(response);
     }
 
+    // Get All Users
     @GetMapping
-    public ResponseEntity<List<UserResponse>> getUsers(){
+    public ResponseEntity<PageResponse<UserResponse>> getUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
 
-        return ResponseEntity.ok(userService.readUsers());
+        return ResponseEntity.ok(userService.readUsers(page, size));
     }
 
-    @DeleteMapping("/{id}")
+    // Delete User
+    @DeleteMapping("/{userId}")
     public ResponseEntity<String> deleteUser(
-            @PathVariable String id){
+            @PathVariable String userId){
 
-        userService.deleteUser(id);
-        return ResponseEntity.ok("User Deleted Successfully");
+        userService.deleteUser(userId);
+        return ResponseEntity.ok("User deleted successfully");
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<UserResponse>> searchUsers(
+            @RequestParam String name){
+
+        return ResponseEntity.ok(userService.searchUsersByName(name));
+    }
 }

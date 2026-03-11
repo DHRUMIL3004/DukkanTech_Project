@@ -1,9 +1,11 @@
+import React from 'react'
+
 function Login() {
-    return ( 
-        <div>
-            Login Page
-        </div>
-     );
+  return (
+    <div>
+      
+    </div>
+  )
 }
 
-export default Login;
+export default Login

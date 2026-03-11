@@ -1,31 +1,103 @@
-.navbar {
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+.app-navbar,
+.landing-navbar {
+  animation: fadeInDown 0.5s ease both;
+  position: sticky;
+  top: 0;
+  z-index: 1030;
 }
 
-.navbar-brand {
-    font-weight: 700;
-    font-size: 1.5rem;
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.nav-link {
-    font-weight: 500;
-    text-transform: uppercase;
-    margin-right: 1rem;
-    transition: color 0.3s;
+.app-navbar .nav-link {
+  font-weight: 600;
+  transition: color 150ms ease, background 150ms ease;
 }
 
-.nav-link:hover {
-    color: #ccc !important;
+.app-navbar .nav-link {
+  font-weight: 600;
+  transition: color 150ms ease, background 150ms ease;
 }
 
-.nav-link.active {
-    color: #fff !important;
+.app-navbar .nav-link:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 0.5rem;
+  text-decoration: none;
 }
 
-.form-control {
-    border-radius: 20px 0 0 20px;
+/* stronger hover feedback for disabled items */
+.app-navbar .nav-link.disabled:hover {
+  background: rgba(255, 255, 255, 0.18);
+  text-decoration: none;
 }
 
-.btn-outline-light {
-    border-radius: 0 20px 20px 0;
+.app-navbar .nav-link.active {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 0.5rem;
+}
+
+.app-navbar .nav-link.disabled {
+  cursor: pointer;
+  pointer-events: auto;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.app-navbar .nav-link.disabled:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.user-pill {
+  font-size: 0.9rem;
+  letter-spacing: 0.02em;
+}
+
+.landing-navbar .nav-link {
+  color: #212529;
+}
+
+.landing-navbar .nav-link:hover {
+  color: #0d6efd;
+}
+
+.card-panel {
+  opacity: 0;
+  animation: fadeInUp 0.4s ease forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-expand {
+  opacity: 0;
+  transform: scale(0.96);
+  animation: fadeExpand 0.35s ease forwards;
+}
+
+@keyframes fadeExpand {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }

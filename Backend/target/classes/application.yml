@@ -2,17 +2,31 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/billing_app
     username: root
-    password: Sorthiya@123
+    password: root
+
   security:
     user:
       name: akshay
       password: akshay
 
+  main:
+    banner-mode: off
+
   jpa:
     hibernate:
       ddl-auto: update
+    show-sql: true
 
 server:
   servlet:
-    context.path: /api
+    context-path: /api
 
+logging:
+  level:
+    root: INFO                 # Default logging level for the entire application
+
+    org.springframework: WARN  # Reduce Spring framework logs (only show warnings or errors)
+
+    org.hibernate: WARN       # Hide verbose Hibernate logs like SQL and internal details
+
+    com.intech.dukaantech: DEBUG  # Enable detailed logs for our application package for debugging

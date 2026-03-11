@@ -1,6 +1,10 @@
 package com.intech.dukaantech.user.model;
 
+import com.intech.dukaantech.user.enums.Role;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -22,6 +26,7 @@ public class UserEntity {
     @Column(unique = true)
     private String userId;
 
+    @Column(unique = true)
     private String name;
 
     @Column(unique = true)
@@ -29,13 +34,12 @@ public class UserEntity {
 
     private String password;
 
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @CreationTimestamp
-    @Column(updatable = false)
     private Timestamp createdAt;
 
     @UpdateTimestamp
     private Timestamp updatedAt;
-
 }

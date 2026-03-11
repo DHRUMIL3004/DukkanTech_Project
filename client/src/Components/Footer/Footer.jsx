@@ -1,31 +1,14 @@
-import { ShoppingBag } from 'lucide-react';
-import './Footer.css';
-
-function Footer() {
+const Footer = () => {
   return (
-    <footer className="footer">
-      <div className="footer-container">
-        <div className="footer-grid">
-          <div className="footer-section footer-section-brand">
-            <div className="footer-brand">
-              <ShoppingBag className="footer-icon" />
-              <span className="footer-title">DukaanTech</span>
-            </div>
-            <p className="footer-description">
-              Modern retail billing software designed to help shop owners streamline
-              operations, reduce errors, and grow their business.
-            </p>
-          </div>
-
-         
+    <footer className="py-4 bg-dark text-white">
+      <div className="container d-flex flex-column flex-md-row justify-content-between align-items-center">
+        <div>
+          <strong>DukaanTech</strong> &mdash; built with Bootstrap and React.
         </div>
-
-        <div className="footer-bottom">
-          <p>2026 DukaanTech. All rights reserved.</p>
-        </div>
+        <div className="text-muted">© {new Date().getFullYear()} DukaanTech</div>
       </div>
     </footer>
   );
-}
+};
 
 export default Footer;
