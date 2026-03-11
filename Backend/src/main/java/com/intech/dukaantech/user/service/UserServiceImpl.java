@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -59,11 +60,17 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public List<UserResponse> readUsers() {
-        return List.of();
+        return userRepository.findAll()
+                .stream()
+                .map(user->createUserResponse(user))
+                .collect(Collectors.toList());
     }
 
     @Override
     public void deleteUser(String id) {
+        UserEntity getUser = userRepository.findByUserId(id)
+                .orElseThrow(()->new UsernameNotFoundException("User not found"));
 
+        userRepository.delete(getUser);
     }
 }
