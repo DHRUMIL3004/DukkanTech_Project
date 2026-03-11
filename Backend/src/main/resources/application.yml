@@ -7,12 +7,25 @@ spring:
     user:
       name: akshay
       password: akshay
+  main:
+    banner-mode: off
 
   jpa:
     hibernate:
       ddl-auto: update
+    show-sql: true
 
 server:
   servlet:
-    context.path: /api
+    context:
+      path: /api
 
+# Show JPA/Hibernate logging messages
+logging:
+  level:
+    root: warn
+    org:
+      hibernate:
+        SQL: trace
+      jdbc:
+        bind: trace

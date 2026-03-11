@@ -1,5 +1,6 @@
 package com.intech.dukaantech.user.dto;
 
+import com.intech.dukaantech.user.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,6 +18,6 @@ public class UserRequest {
 
     private String password;
 
-    private String role;
+    private Role role;
 
 }
