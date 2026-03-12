@@ -1,8 +1,5 @@
 package com.intech.dukaantech.user.dto;
 
-<<<<<<< HEAD
-public class UserResponse {
-=======
 import com.intech.dukaantech.user.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,5 +20,5 @@ public class UserResponse {
     private Timestamp createdAt;
     private Timestamp updatedAt;
     private Role role;
->>>>>>> Manage_item
+
 }

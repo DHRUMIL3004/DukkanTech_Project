@@ -1,13 +1,8 @@
 package com.intech.dukaantech.category.dto;
 
-<<<<<<< HEAD
-public class CategoryResponse {
-}
-=======
 import lombok.Builder;
 import lombok.Data;
 
-import java.sql.Time;
 import java.sql.Timestamp;
 
 @Data
@@ -23,4 +18,3 @@ public class CategoryResponse {
     private String imgUrl;
 
 }
->>>>>>> Manage_item

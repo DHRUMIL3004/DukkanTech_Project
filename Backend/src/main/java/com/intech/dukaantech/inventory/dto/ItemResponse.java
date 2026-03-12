@@ -1,8 +1,5 @@
 package com.intech.dukaantech.inventory.dto;
 
-<<<<<<< HEAD
-public class ItemResponse {
-=======
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,5 +23,5 @@ public class ItemResponse {
     private String imgUrl;
     private Timestamp createdAt;
     private Timestamp updatedAt;
->>>>>>> Manage_item
+
 }

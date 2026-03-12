@@ -1,8 +1,5 @@
 package com.intech.dukaantech.user.service;
 
-<<<<<<< HEAD
-public interface UserService {
-=======
 import com.intech.dukaantech.user.dto.UserRequest;
 import com.intech.dukaantech.user.dto.UserResponse;
 
@@ -16,9 +13,5 @@ public interface UserService {
 
     List<UserResponse> readUsers();
 
-
     void deleteUser(String id);
-
-
->>>>>>> Manage_item
 }

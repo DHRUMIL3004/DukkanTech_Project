@@ -1,8 +1,5 @@
 package com.intech.dukaantech.inventory.model;
 
-<<<<<<< HEAD
-public class Item {
-=======
 import com.intech.dukaantech.category.model.Category;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -29,9 +26,10 @@ public class Item {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String itemID;
 
+    @Column(nullable = false)
     private String name;
 
     private BigDecimal price;
@@ -48,8 +46,7 @@ public class Item {
     private String imgUrl;
 
     @ManyToOne
-    @JoinColumn(name ="category_id",nullable = false )
+    @JoinColumn(name = "category_id", nullable = false)
     @OnDelete(action = OnDeleteAction.RESTRICT)
     private Category category;
->>>>>>> Manage_item
 }

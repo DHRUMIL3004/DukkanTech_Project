@@ -1,8 +1,5 @@
 package com.intech.dukaantech.user.controller;
 
-<<<<<<< HEAD
-public class UserController {
-=======
 import com.intech.dukaantech.user.dto.UserRequest;
 import com.intech.dukaantech.user.dto.UserResponse;
 import com.intech.dukaantech.user.service.UserService;
@@ -21,8 +18,7 @@ public class UserController {
 
     // Create User
     @PostMapping
-    public ResponseEntity<UserResponse> createUser(
-            @RequestBody UserRequest request){
+    public ResponseEntity<UserResponse> createUser(@RequestBody UserRequest request) {
 
         UserResponse response = userService.createUser(request);
         return ResponseEntity.ok(response);
@@ -30,18 +26,16 @@ public class UserController {
 
     // Get All Users
     @GetMapping
-    public ResponseEntity<List<UserResponse>> getUsers(){
+    public ResponseEntity<List<UserResponse>> getUsers() {
 
         return ResponseEntity.ok(userService.readUsers());
     }
 
     // Delete User
     @DeleteMapping("/{userId}")
-    public ResponseEntity<String> deleteUser(
-            @PathVariable String userId){
+    public ResponseEntity<String> deleteUser(@PathVariable String userId) {
 
         userService.deleteUser(userId);
         return ResponseEntity.ok("User deleted successfully");
     }
->>>>>>> Manage_item
 }

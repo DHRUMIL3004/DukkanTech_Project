@@ -1,9 +1,5 @@
 package com.intech.dukaantech.category.model;
 
-<<<<<<< HEAD
-public class Category {
-}
-=======
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
@@ -41,4 +37,3 @@ public class Category {
     @UpdateTimestamp
     private Timestamp updatedAt;
 }
->>>>>>> Manage_item

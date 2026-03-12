@@ -1,8 +1,5 @@
 package com.intech.dukaantech.user.service;
 
-<<<<<<< HEAD
-public class UserServiceImpl implements UserService{
-=======
 import com.intech.dukaantech.user.dto.UserRequest;
 import com.intech.dukaantech.user.dto.UserResponse;
 import com.intech.dukaantech.user.model.UserEntity;
@@ -19,7 +16,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -29,7 +26,7 @@ public class UserServiceImpl implements UserService{
     public UserResponse createUser(UserRequest request) {
 
         // Check if email already exists
-        if(userRepository.findByEmail(request.getEmail()).isPresent()){
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new RuntimeException("Email already exists");
         }
 
@@ -39,7 +36,6 @@ public class UserServiceImpl implements UserService{
     }
 
     private UserResponse createUserResponse(UserEntity user) {
-
         return modelMapper.map(user, UserResponse.class);
     }
 
@@ -56,7 +52,7 @@ public class UserServiceImpl implements UserService{
     @Override
     public String getUserRole(String email) {
         UserEntity getUser = userRepository.findByEmail(email)
-                .orElseThrow(()-> new UsernameNotFoundException("User Not Found"));
+                .orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
 
         return getUser.getRole().name();
     }
@@ -72,9 +68,8 @@ public class UserServiceImpl implements UserService{
     @Override
     public void deleteUser(String id) {
         UserEntity getUser = userRepository.findByUserId(id)
-                .orElseThrow(()->new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         userRepository.delete(getUser);
     }
->>>>>>> Manage_item
 }
