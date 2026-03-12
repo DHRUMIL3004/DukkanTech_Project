@@ -15,24 +15,31 @@ import java.util.Map;
 @Slf4j
 public class GlobalExceptionHandler {
 
-    // handle errors when username or email already exists
-    @ExceptionHandler(UserAlreadyExistsException.class)
-    public ResponseEntity<ApiErrorResponse> handleUserAlreadyExists(UserAlreadyExistsException ex){
-
-        log.warn("User creation failed: {}", ex);
+    // helper method to generate to create ApiErrorResponse
+    private ResponseEntity<ApiErrorResponse> buildErrorResponse(
+            String message, HttpStatus status) {
 
         Map<String, String> errors = new HashMap<>();
-        errors.put("message", ex.getMessage());
+        errors.put("message", message);
 
         ApiErrorResponse response = ApiErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
-                .status(HttpStatus.BAD_REQUEST.value())
+                .status(status.value())
                 .errors(errors)
                 .build();
 
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(response, status);
     }
 
+    // handle errors when username or email already exists
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public ResponseEntity<ApiErrorResponse> handleUserAlreadyExists(
+            UserAlreadyExistsException ex){
+
+        log.warn("User creation failed: {}", ex.getMessage());
+
+        return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 
     // handle fields validation errors
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -47,13 +54,28 @@ public class GlobalExceptionHandler {
                 errors.put(error.getField(), error.getDefaultMessage())
         );
 
-        ApiErrorResponse response = ApiErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
-                .status(HttpStatus.BAD_REQUEST.value())
-                .errors(errors)
-                .build();
-
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        return buildErrorResponse(errors.toString(), HttpStatus.BAD_REQUEST);
     }
 
+    // Category already exists
+    @ExceptionHandler(CategoryAlreadyExistsException.class)
+    public ResponseEntity<ApiErrorResponse> handleCategoryAlreadyExists(
+            CategoryAlreadyExistsException ex){
+
+        log.warn("Category creation failed: {}", ex.getMessage());
+
+        Map<String, String> errors = Map.of("message", ex.getMessage());
+
+        return buildErrorResponse(errors.toString(), HttpStatus.BAD_REQUEST);
+    }
+
+    // Category not found
+    @ExceptionHandler(CategoryNotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleCategoryNotFound(
+            CategoryNotFoundException ex){
+
+        log.warn("Category not found: {}", ex.getMessage());
+
+        return buildErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
 }
