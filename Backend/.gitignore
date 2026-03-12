@@ -1,5 +1,5 @@
 <<<<<<< HEAD
-/src/main/resources/application-secret.yml
-=======
+target/
+.idea/=======
 target/
 >>>>>>> Manage_item

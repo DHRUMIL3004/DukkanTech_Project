@@ -13,9 +13,18 @@ spring:
     banner-mode: off
 >>>>>>> Manage_item
 
+  security:
+    user:
+      name: akshay
+      password: akshay
+
+  main:
+    banner-mode: off
+
   jpa:
     hibernate:
       ddl-auto: update
+<<<<<<< HEAD
 <<<<<<< HEAD
 
 server:
@@ -30,3 +39,20 @@ server:
       path: /api
 
 >>>>>>> Manage_item
+=======
+    show-sql: true
+
+server:
+  servlet:
+    context-path: /api
+
+logging:
+  level:
+    root: INFO                 # Default logging level for the entire application
+
+    org.springframework: WARN  # Reduce Spring framework logs (only show warnings or errors)
+
+    org.hibernate: WARN       # Hide verbose Hibernate logs like SQL and internal details
+
+    com.intech.dukaantech: DEBUG  # Enable detailed logs for our application package for debugging
+>>>>>>> user-manage
