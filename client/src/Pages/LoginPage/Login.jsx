@@ -1,12 +1,56 @@
 // import "./Login.css";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 function Login() {
 
   const {t,i18n}=useTranslation("login");
-  
+  const [email,setEmail]=useState("");
+  const[password,setPassword]=useState("");
+  const [role,setRole]=useState("");
+
+  const handleLogin=async(e)=>{
+    e.preventDefault();
+
+    if(!email || !password|| !role){
+      alert("Please fill all fields");
+      return;
+    }
+
+    try{
+      const response=await fetch ("http://localhost:8080/auth/login",{
+        method:"POST",
+        headers:{
+          "Content-type":"application/json",
+        },
+        body:JSON.stringify({email,password}),
+      });
+      
+      if(!response.ok){
+        const err=await response.json();
+       alert(err.message || "Login failed");
+       return;
+      }
+
+      const data=await response.json();
+      console.log("Login Success",data);
+
+      //store jwt
+      const token=data.token;
+      localStorage.setItem("token",token);
+      console.log(token);
+
+      // redirect user based on role
+      if(role=="ADMIN") window.location.href="/admin-dashboard";
+      else window.location.href = "/employee-dashboard";
+
+    }
+    catch(err){
+      console.log("Login error : ",err);
+      alert("Something went wrong");
+    }
+  };
 
   return (
     <div>
@@ -22,12 +66,13 @@ function Login() {
                     <p className="text pt-3">{t('signIn')}</p>
                   </div>
 
-                  <form>
+                  <form onSubmit={handleLogin} >
                     <div className="mb-3">
                       <input
                         type="email"
                         className="form-control form-control-lg"
                         placeholder={t('email')}
+                        onChange={(e)=>setEmail(e.target.value)}
                       />
                     </div>
 
@@ -36,10 +81,11 @@ function Login() {
                         type="password"
                         className="form-control form-control-lg"
                         placeholder={t('password')}
+                         onChange={(e) => setPassword(e.target.value)}
                       />
                     </div>
                     <div className="mb-3">
-                      <select className="form-select form-select-lg">
+                      <select className="form-select form-select-lg" onChange={(e) => setRole(e.target.value)}>
                         <option value="">{t('selectRole')}</option>
                         <option value="ADMIN">{t('admin')}</option>
                         <option value="EMPLOYEE">{t('employee')}</option>

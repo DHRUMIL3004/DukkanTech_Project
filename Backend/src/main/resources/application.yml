@@ -3,11 +3,30 @@ spring:
     url: jdbc:mysql://localhost:3306/billing_app
     username: root
     password: root
+<<<<<<< HEAD
+=======
+  security:
+    user:
+      name: akshay
+      password: akshay
+  main:
+    banner-mode: off
+>>>>>>> Manage_item
 
   jpa:
     hibernate:
       ddl-auto: update
+<<<<<<< HEAD
 
 server:
   servlet:
     context.path: /api
+=======
+    show-sql: true
+
+server:
+  servlet:
+    context:
+      path: /api
+
+>>>>>>> Manage_item

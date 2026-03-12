@@ -2,10 +2,7 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
-<<<<<<< HEAD
-=======
       <profile default="true" name="Default" enabled="true" />
->>>>>>> Manage_item
       <profile name="Annotation profile for Backend" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />

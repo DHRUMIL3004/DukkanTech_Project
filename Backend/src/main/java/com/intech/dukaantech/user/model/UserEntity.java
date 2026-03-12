@@ -1,38 +1,37 @@
-package com.intech.dukaantech.category.model;
+package com.intech.dukaantech.user.model;
 
-<<<<<<< HEAD
-public class Category {
-}
-=======
+import com.intech.dukaantech.user.enums.Role;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "tbl_category")
+@Table(name = "tbl_users")
 @Builder
 @Data
-public class Category {
+@AllArgsConstructor
+@NoArgsConstructor
+public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(unique = true)
-    private String categoryId;
+    private String userId;
 
-    @Column(unique = true)
     private String name;
 
-    private String description;
+    @Column(unique = true)
+    private String email;
 
-    private String imgUrl;
+    private String password;
 
-    private String bgColor;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @CreationTimestamp
     @Column(updatable = false)
@@ -40,5 +39,5 @@ public class Category {
 
     @UpdateTimestamp
     private Timestamp updatedAt;
+
 }
->>>>>>> Manage_item
