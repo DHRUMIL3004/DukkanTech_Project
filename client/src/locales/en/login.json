@@ -1,0 +1,10 @@
+{
+    "welcome":"Built for Growing Businesses",
+    "signIn":"Sign into your account",
+    "email":"Email Address",
+     "password": "Password",
+     "selectRole": "Select Role",
+     "admin" : "Admin",
+     "employee":"Employee",
+     "login":"Login"
+}
