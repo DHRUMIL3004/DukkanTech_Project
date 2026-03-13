@@ -19,7 +19,7 @@ function Login() {
     }
 
     try{
-      const response=await fetch ("http://localhost:8080/auth/login",{
+      const response=await fetch ("http://localhost:8080/api/auth/login",{
         method:"POST",
         headers:{
           "Content-type":"application/json",
@@ -42,7 +42,7 @@ function Login() {
       console.log(token);
 
       // redirect user based on role
-      if(role=="ADMIN") window.location.href="/admin-dashboard";
+      if(role=="ADMIN") window.location.href="/manage-user";
       else window.location.href = "/employee-dashboard";
 
     }

@@ -1,24 +1,44 @@
-import './LandingNavbar.css';
+import "./LandingNavbar.css";
 
 function LandingNavbar() {
-    return ( 
-     <nav className="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-  <div className="container">
-    <a className="navbar-brand" href="#"><img className='logo' src='/Logo.png'/></a>
-    <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-      <span className="navbar-toggler-icon" />
-    </button>
-    <div className="collapse navbar-collapse" id="navbarNav">
-      <ul className="navbar-nav ms-auto">
-        <li className="nav-item">
-          <a className="nav-link " href="/login">Login</a>
-        </li>
-      </ul>
-    </div>
-  </div>
-</nav>
+  return (
+    <nav className="landing-navbar navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
+      <div className="container">
 
-     );
+        <a className="navbar-brand d-flex align-items-center" href="/">
+          <img className="logo me-2" src="/Logo.png" alt="logo"/>
+          <span className="brand-title">Cafe POS</span>
+        </a>
+
+        <button
+          className="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span className="navbar-toggler-icon" />
+        </button>
+
+        <div className="collapse navbar-collapse" id="navbarNav">
+          <ul className="navbar-nav ms-auto align-items-center">
+
+            <li className="nav-item">
+              <a className="nav-link nav-hover" href="/login">
+                Login
+              </a>
+            </li>
+
+            <li className="nav-item ms-3">
+              <a className="btn btn-primary px-4 rounded-pill" href="/login">
+                Get Started
+              </a>
+            </li>
+
+          </ul>
+        </div>
+      </div>
+    </nav>
+  );
 }
 
 export default LandingNavbar;
