@@ -1,11 +1,22 @@
-import React from 'react'
+import { useState } from "react";
+import ManagementLayout from "../../Components/Common/ManagementLayout";
+import CategoryForm from "../../Components/Categories/CategoryForm";
+import CategoryList from "../../Components/Categories/CategoryList";
 
-function ManageCategory() {
+const ManageCategory = () => {
+  const [refreshFlag, setRefreshFlag] = useState(false);
+
+  const refreshCategories = () => {
+    setRefreshFlag((prev) => !prev);
+  };
+
   return (
-    <div>
-      
-    </div>
-  )
-}
+    <ManagementLayout
+      title="Manage Categories"
+      left={<CategoryForm refreshCategories={refreshCategories} />}
+      right={<CategoryList refreshFlag={refreshFlag} />}
+    />
+  );
+};
 
-export default ManageCategory
+export default ManageCategory;

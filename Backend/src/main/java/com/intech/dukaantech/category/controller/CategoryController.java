@@ -6,8 +6,14 @@ import com.intech.dukaantech.category.service.CategoryService;
 import com.intech.dukaantech.common.dto.PageResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import tools.jackson.databind.ObjectMapper;
+
+import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/categories")
@@ -17,11 +23,16 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     // Create Category
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<CategoryResponse> createCategory(
-            @Valid @RequestBody CategoryRequest request){
+            @RequestPart("data") String data,
+            @RequestPart("image") MultipartFile file) throws IOException {
 
-        CategoryResponse response = categoryService.createCategory(request);
+        ObjectMapper mapper = new ObjectMapper();
+        CategoryRequest request = mapper.readValue(data, CategoryRequest.class);
+
+        CategoryResponse response =
+                categoryService.createCategory(request, file);
 
         return ResponseEntity.ok(response);
     }
@@ -42,5 +53,14 @@ public class CategoryController {
         categoryService.deleteCategory(categoryId);
 
         return ResponseEntity.ok("Category deleted successfully");
+    }
+
+    // searching
+    @GetMapping("/search")
+    public ResponseEntity<List<CategoryResponse>> searchCategory(
+            @RequestParam String name){
+
+        return ResponseEntity.ok(
+                categoryService.searchCategoryByName(name));
     }
 }

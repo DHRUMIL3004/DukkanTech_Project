@@ -1,4 +1,4 @@
-package com.intech.dukaantech.common.exception;
+package com.intech.dukaantech.common.exception.custom;
 
 /**
  * Thrown when attempting to create a user with

@@ -1,7 +1,7 @@
 package com.intech.dukaantech.user.service;
 
 import com.intech.dukaantech.common.dto.PageResponse;
-import com.intech.dukaantech.common.exception.UserAlreadyExistsException;
+import com.intech.dukaantech.common.exception.custom.UserAlreadyExistsException;
 import com.intech.dukaantech.user.dto.UserRequest;
 import com.intech.dukaantech.user.dto.UserResponse;
 import com.intech.dukaantech.user.mapper.UserMapper;

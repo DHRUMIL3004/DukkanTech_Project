@@ -1,4 +1,7 @@
 spring:
+  config:
+    import: optional:application-secret.yml
+
   datasource:
     url: jdbc:mysql://localhost:3306/billing_app
     username: root

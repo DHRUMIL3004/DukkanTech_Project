@@ -1,6 +1,8 @@
 package com.intech.dukaantech.common.exception;
 
-import com.intech.dukaantech.common.exception.ApiErrorResponse;
+import com.intech.dukaantech.common.exception.custom.CategoryAlreadyExistsException;
+import com.intech.dukaantech.common.exception.custom.CategoryNotFoundException;
+import com.intech.dukaantech.common.exception.custom.UserAlreadyExistsException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

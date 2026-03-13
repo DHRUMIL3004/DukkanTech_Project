@@ -1,4 +1,4 @@
-package com.intech.dukaantech.common.exception;
+package com.intech.dukaantech.common.exception.custom;
 
 public class CategoryNotFoundException extends RuntimeException {
 
