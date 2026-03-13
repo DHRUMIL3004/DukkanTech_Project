@@ -33,10 +33,7 @@ const CategoryForm = ({ refreshCategories }) => {
       // clear file input manually - later if needed
       document.getElementById("category-image").value = "";
     } catch (error) {
-      const message =
-        error.response?.data?.errors
-          ? Object.values(error.response.data.errors)[0]
-          : error.response?.data || error.message;
+      const message = Object.values(error.response.data.errors)[0];
       alert(message);
     }
   };

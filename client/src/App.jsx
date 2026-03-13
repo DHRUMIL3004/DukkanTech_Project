@@ -9,6 +9,7 @@ function App() {
       <Routes>
         <Route path="/manage-user" element={<ManageUser />} />
         <Route path="/manage-category" element={<ManageCategory />} />
+        
       </Routes>
     </>
   );

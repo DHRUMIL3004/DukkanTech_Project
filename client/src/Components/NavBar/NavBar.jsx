@@ -6,7 +6,7 @@ const NavBar = () => {
     { to: "/", label: "Dashboard", disabled: true },
     { to: "/billing", label: "Billing", disabled: true },
     { to: "/manage-item", label: "Manage Item", disabled: true },
-    { to: "/manage-category", label: "Manage Category", disabled: true },
+    { to: "/manage-category", label: "Manage Category"},
     { to: "/manage-user", label: "Manage User" },
     { to: "/order-history", label: "Order History", disabled: true },
   ];

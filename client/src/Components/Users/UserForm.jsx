@@ -76,7 +76,7 @@ const UserForm = ({ refreshUsers }) => {
           >
             <option value="">Select Role</option>
             <option value="ADMIN">ADMIN</option>
-            <option value="CASHIER">CASHIER</option>
+            <option value="EMPLOYEE">EMPLOYEE</option>
           </select>
         </div>
 
