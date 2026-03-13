@@ -6,6 +6,7 @@ import AdminDashboard from './Components/AdminDashboard';
 import EmployeeDashboard from './Components/EmployeeDashboard';
 import ManageCategory from './Pages/ManageCategory/ManageCategory';
 import ManageUser from './Pages/ManageUser/ManageUser';
+import ManageItemPage from './Pages/ManageItem/ManageItemPage';
 
 
 function App() {
@@ -32,6 +33,10 @@ function App() {
       <Route path='/Login' element={<Login/>} />
        <Route path="/manage-user" element={<ManageUser />} />
         <Route path="/manage-category" element={<ManageCategory />} />
+        <Route
+  path="/manage-item"
+  element={<ManageItemPage />}
+/>
      </Routes>
   
     

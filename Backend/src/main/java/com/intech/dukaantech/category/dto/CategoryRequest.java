@@ -6,21 +6,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Time;
-import java.sql.Timestamp;
-
-@Data
 @Builder
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CategoryResponse {
+public class CategoryRequest {
 
-    private String categoryId;
     private String name;
     private String description;
     private String bgColor;
-    private Timestamp createdAt;
-    private Timestamp updatedAt;
-    private String imgUrl;
 
 }
+

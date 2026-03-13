@@ -1,8 +1,11 @@
+
 package com.intech.dukaantech.category.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -10,6 +13,8 @@ import java.sql.Timestamp;
 
 @Entity
 @Table(name = "tbl_category")
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @Data
 public class Category {

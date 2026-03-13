@@ -1,8 +1,13 @@
 spring:
+  config:
+    import: optional:application-secret.yml
+
   datasource:
     url: jdbc:mysql://localhost:3306/billing_app
     username: root
     password: root
+
+
 
   main:
     banner-mode: off
@@ -15,3 +20,13 @@ spring:
 server:
   servlet:
     context-path: /api
+
+logging:
+  level:
+    root: INFO                 # Default logging level for the entire application
+
+    org.springframework: WARN  # Reduce Spring framework logs (only show warnings or errors)
+
+    org.hibernate: WARN       # Hide verbose Hibernate logs like SQL and internal details
+
+    com.intech.dukaantech: DEBUG  # Enable detailed logs for our application package for debugging

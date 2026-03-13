@@ -28,6 +28,7 @@ public class UserServiceImpl implements UserService {
         // Check if email already exists
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new RuntimeException("Email already exists");
+
         }
 
         UserEntity newUser = createNewUserInEntity(request);
