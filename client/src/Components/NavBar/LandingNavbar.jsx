@@ -7,7 +7,7 @@ function LandingNavbar() {
 
         <a className="navbar-brand d-flex align-items-center" href="/">
           <img className="logo me-2" src="/Logo.png" alt="logo"/>
-          <span className="brand-title">Cafe POS</span>
+     
         </a>
 
         <button
@@ -22,11 +22,7 @@ function LandingNavbar() {
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav ms-auto align-items-center">
 
-            <li className="nav-item">
-              <a className="nav-link nav-hover" href="/login">
-                Login
-              </a>
-            </li>
+          
 
             <li className="nav-item ms-3">
               <a className="btn btn-primary px-4 rounded-pill" href="/login">
