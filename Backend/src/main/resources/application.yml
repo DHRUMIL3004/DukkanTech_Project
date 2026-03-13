@@ -1,50 +1,17 @@
-
-
-
-#spring:
-#  datasource:
-#    url: jdbc:mysql://localhost:3306/billing_app
-#    username: root
-#    password:
-#
-#  security:
-#    user:
-#      name: akshay
-#      password: akshay
-#
-#  main:
-#    banner-mode: off
-#
-#  jpa:
-#    hibernate:
-#      ddl-auto: update
-#    show-sql: true
-#
-#server:
-#  servlet:
-#    context-path: /api
-
-
-
-
 spring:
   datasource:
-    url: jdbc:h2:mem:testdb
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
+    url: jdbc:mysql://localhost:3306/billing_app
+    username: root
+    password: root
+
+  main:
+    banner-mode: off
 
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: update
     show-sql: true
 
-  h2:
-    console:
-      enabled: true
-
 server:
   servlet:
-    context:
-      path: /api
+    context-path: /api

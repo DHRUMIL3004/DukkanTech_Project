@@ -10,32 +10,29 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/items")
+@RequestMapping("/items")
 @RequiredArgsConstructor
 public class ItemController {
 
     private final ItemService itemService;
 
-    // ADD ITEM
     @PostMapping
     public ResponseEntity<ItemResponse> addItem(@RequestBody ItemRequest itemRequest) {
 
         ItemResponse response = itemService.add(itemRequest);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(201).body(response);
     }
 
-    // GET ALL ITEMS
     @GetMapping
     public ResponseEntity<List<ItemResponse>> getAllItems() {
 
         return ResponseEntity.ok(itemService.fetchItem());
     }
 
-    // DELETE ITEM
     @DeleteMapping("/{itemId}")
-    public ResponseEntity<String> deleteItem(@PathVariable String itemId) {
+    public ResponseEntity<Void> deleteItem(@PathVariable String itemId) {
 
         itemService.deleteItem(itemId);
-        return ResponseEntity.ok("Item deleted successfully");
+        return ResponseEntity.noContent().build();
     }
 }
