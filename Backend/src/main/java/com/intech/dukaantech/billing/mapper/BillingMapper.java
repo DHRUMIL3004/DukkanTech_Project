@@ -24,6 +24,8 @@ public class BillingMapper {
         response.setTotalTax(bill.getTotalTax());
         response.setTotalAmount(bill.getTotalAmount());
         response.setPaid(bill.isPaid());
+        response.setCreatedAt(bill.getCreatedAt());
+
 
         List<OrderItemResponse> itemResponses = new ArrayList<>();
         for (OrderItem item : bill.getItems()) {
