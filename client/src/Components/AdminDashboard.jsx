@@ -1,9 +1,11 @@
+import React from 'react'
+
 function AdminDashboard() {
-    return (  
-        <diV>
-            Welcome in Admin Dashboard
-        </diV>
-    );
+  return (
+    <div>
+        
+    </div>
+  )
 }
 
-export default AdminDashboard;
+export default AdminDashboard

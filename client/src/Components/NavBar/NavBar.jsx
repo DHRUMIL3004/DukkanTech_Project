@@ -5,7 +5,7 @@ const NavBar = () => {
 
   const links = [
     { to: "/", label: "Dashboard", disabled: true },
-    { to: "/billing", label: "Billing", disabled: true },
+    { to: "/billing", label: "Billing"},
     { to: "/manage-item", label: "Manage Item" },
     { to: "/manage-category", label: "Manage Category" },
     { to: "/manage-user", label: "Manage User" },

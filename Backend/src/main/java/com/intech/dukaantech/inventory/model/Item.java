@@ -36,6 +36,8 @@ public class Item {
 
     private String description;
 
+    private Long quantity;
+
     @CreationTimestamp
     @Column(updatable = false)
     private Timestamp createdAt;

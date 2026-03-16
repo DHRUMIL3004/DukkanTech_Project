@@ -7,39 +7,45 @@ import EmployeeDashboard from './Components/EmployeeDashboard';
 import ManageCategory from './Pages/ManageCategory/ManageCategory';
 import ManageUser from './Pages/ManageUser/ManageUser';
 import ManageItemPage from './Pages/ManageItem/ManageItemPage';
-
+import BillingPage from './Pages/BillingPage/BillingPage';
+import CartPage from './Pages/BillingPage/CartPage';
 
 function App() {
- 
- const token = localStorage.getItem("token");
- console.log(token);
+
+  const token = localStorage.getItem("token");
+  console.log(token);
   return (
     <>
-    
-     <Routes>
-        <Route 
-          path="/admin-dashboard" 
+
+      <Routes>
+        <Route
+          path="/admin-dashboard"
           element={
             token ? <AdminDashboard /> : <Navigate to="/" replace />
-          } 
+          }
         />
-      <Route 
-          path="/employee-dashboard" 
+        <Route
+          path="/employee-dashboard"
           element={
             token ? <EmployeeDashboard /> : <Navigate to="/" replace />
-          } 
+          }
         />
-      <Route path='/' element={<LandingPage/>} />
-      <Route path='/Login' element={<Login/>} />
-       <Route path="/manage-user" element={<ManageUser />} />
+        <Route path='/' element={<LandingPage />} />
+        <Route path='/Login' element={<Login />} />
+        <Route path="/manage-user" element={<ManageUser />} />
         <Route path="/manage-category" element={<ManageCategory />} />
         <Route
-  path="/manage-item"
-  element={<ManageItemPage />}
-/>
-     </Routes>
-  
-    
+          path="/manage-item"
+          element={<ManageItemPage />}
+        />
+
+        <Route path="/billing" element={<BillingPage />} />
+
+        <Route path="/billing/cart" element={<CartPage />} />
+
+      </Routes>
+
+
     </>
   )
 }

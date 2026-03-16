@@ -18,6 +18,7 @@ public class ItemResponse {
     private String name;
     private String categoryId;
     private BigDecimal price;
+    private Long quantity;
     private String description;
     private String categoryName;
     private String imgUrl;
