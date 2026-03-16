@@ -7,6 +7,7 @@ const CategoryForm = ({ refreshCategories }) => {
     name: "",
     description: "",
     bgColor: "#ffffff",
+    tax: "",
   });
   const [file, setFile] = useState(null);
 
@@ -28,7 +29,7 @@ const CategoryForm = ({ refreshCategories }) => {
       await createCategory(category, file);
       refreshCategories();
 
-      setCategory({ name: "", description: "", bgColor: "#ffffff" });
+      setCategory({ name: "", description: "", bgColor: "#ffffff" ,tax:""});
       setFile(null);
       // clear file input manually - later if needed
       document.getElementById("category-image").value = "";
@@ -63,6 +64,18 @@ const CategoryForm = ({ refreshCategories }) => {
             placeholder="Description"
             name="description"
             value={category.description}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Tax % </label>
+          <input
+            type="number"
+            className="form-control"
+            placeholder="Tax Percentage"
+            name="tax"
+            value={category.tax}
             onChange={handleChange}
           />
         </div>

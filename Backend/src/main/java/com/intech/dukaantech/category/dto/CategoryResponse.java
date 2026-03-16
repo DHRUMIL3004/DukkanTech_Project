@@ -17,6 +17,7 @@ public class CategoryResponse {
 
     private String categoryId;
     private String name;
+    private double tax;
     private String description;
     private String bgColor;
     private Timestamp createdAt;

@@ -29,6 +29,8 @@ public class Category {
     @Column(unique = true)
     private String name;
 
+    private double tax;
+
     private String description;
 
     private String imgUrl;
