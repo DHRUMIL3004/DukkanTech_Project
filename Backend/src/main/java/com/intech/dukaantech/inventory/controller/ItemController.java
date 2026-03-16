@@ -4,9 +4,13 @@ import com.intech.dukaantech.inventory.dto.ItemRequest;
 import com.intech.dukaantech.inventory.dto.ItemResponse;
 import com.intech.dukaantech.inventory.service.ItemService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import tools.jackson.databind.ObjectMapper;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -16,10 +20,16 @@ public class ItemController {
 
     private final ItemService itemService;
 
-    @PostMapping
-    public ResponseEntity<ItemResponse> addItem(@RequestBody ItemRequest itemRequest) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ItemResponse> addItem(
+            @RequestPart("data") String data,
+            @RequestPart("image") MultipartFile file) throws IOException {
 
-        ItemResponse response = itemService.add(itemRequest);
+        ObjectMapper mapper = new ObjectMapper();
+        ItemRequest request = mapper.readValue(data, ItemRequest.class);
+
+        ItemResponse response = itemService.add(request,file);
+
         return ResponseEntity.status(201).body(response);
     }
 
@@ -33,7 +43,6 @@ public class ItemController {
     public ResponseEntity<String> deleteItem(@PathVariable String itemId) {
 
         itemService.deleteItem(itemId);
-        ResponseEntity.noContent().build();
         return ResponseEntity.ok("Item deleted successfully");
     }
 }

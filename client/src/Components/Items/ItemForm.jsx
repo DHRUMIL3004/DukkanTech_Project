@@ -4,47 +4,53 @@ import { createItem } from "../../Service/ItemService";
 import { getCategories } from "../../Service/CategoryService";
 
 
-const ItemForm = () => {
+const ItemForm = ({ refreshItems }) => {
 
-  const [categories,setCategories] = useState([]);
+  const [file, setFile] = useState(null);
+  const [categories, setCategories] = useState([]);
 
-  const [item,setItem] = useState({
-    itemID:"",
-    name:"",
-    price:"",
-    quantity:"",
-    description:"",
-    categoryId:"",
-    imgUrl:""
-  });
+  const emptyItem = {
+    itemId: "",
+    name: "",
+    price: "",
+    quantity: "",
+    description: "",
+    categoryId: "",
+    imgUrl: ""
+  };
 
-  useEffect(()=>{
+  const [item, setItem] = useState(emptyItem);
 
-    getCategories().then(res=>{
+  useEffect(() => {
+
+    getCategories().then(res => {
       setCategories(res.data.content || res.data);
     })
 
-  },[])
+  }, [])
 
 
-  const handleChange=(e)=>{
-    setItem({...item,[e.target.name]:e.target.value})
+  const handleChange = (e) => {
+    setItem({ ...item, [e.target.name]: e.target.value })
   }
 
 
-  const handleSubmit=(e)=>{
+  const handleSubmit = (e) => {
     e.preventDefault();
 
-    createItem(item)
-      .then(()=>{
+    createItem(item, file)
+      .then(() => {
         alert("Item Created");
+        refreshItems();
+        setItem(emptyItem);
+        setFile(null);
       })
-      .catch(()=>{
+      .catch(() => {
         alert("Error creating item");
       })
   }
 
-  return(
+  return (
 
     <div className="card shadow-sm">
 
@@ -53,12 +59,6 @@ const ItemForm = () => {
         <h5 className="mb-3">Create Item</h5>
 
         <form onSubmit={handleSubmit}>
-
-          {/* IMAGE */}
-
-          <div className="mb-3 text-center">
-            <input type="file" className="form-control"/>
-          </div>
 
           {/* ITEM NAME */}
 
@@ -74,13 +74,24 @@ const ItemForm = () => {
 
           {/* CATEGORY */}
 
-          <select className="form-select">
-  {categories.map(category => (
-  <option key={category.id} value={category.id}>
-    {category.name}
-  </option>
-))}
-</select>
+          <div className="mb-3">
+            <select
+              className="form-select"
+              name="categoryId"
+              value={item.categoryId}
+              onChange={handleChange}
+            >
+              <option value="">Select Category</option>
+              {categories.map((category) => (
+                <option
+                  key={category.categoryId}
+                  value={category.categoryId}
+                >
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
           {/* PRICE */}
 
@@ -93,6 +104,7 @@ const ItemForm = () => {
               onChange={handleChange}
             />
           </div>
+
 
           {/* QUANTITY */}
 
@@ -114,6 +126,16 @@ const ItemForm = () => {
               className="form-control"
               placeholder="Description"
               onChange={handleChange}
+            />
+          </div>
+
+          {/* IMAGE */}
+
+          <div className="mb-3 text-center">
+            <input
+              type="file"
+              className="form-control"
+              onChange={(e) => setFile(e.target.files[0])}
             />
           </div>
 

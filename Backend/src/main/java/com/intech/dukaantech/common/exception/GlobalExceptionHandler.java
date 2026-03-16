@@ -1,8 +1,5 @@
 package com.intech.dukaantech.common.exception;
 
-import com.intech.dukaantech.common.exception.custom.CategoryAlreadyExistsException;
-import com.intech.dukaantech.common.exception.custom.CategoryNotFoundException;
-import com.intech.dukaantech.common.exception.custom.UserAlreadyExistsException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,14 +30,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, status);
     }
 
-    // handle errors when username or email already exists
-    @ExceptionHandler(UserAlreadyExistsException.class)
-    public ResponseEntity<ApiErrorResponse> handleUserAlreadyExists(
-            UserAlreadyExistsException ex){
+    @ExceptionHandler(ApiException.class)
+    public ResponseEntity<ApiErrorResponse> handleApiException(ApiException ex){
 
-        log.warn("User creation failed: {}", ex.getMessage());
+        log.warn("Application error: {}", ex.getMessage());
 
-        return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        return buildErrorResponse(ex.getMessage(), ex.getStatus());
     }
 
     // handle fields validation errors
@@ -58,26 +53,42 @@ public class GlobalExceptionHandler {
 
         return buildErrorResponse(errors.toString(), HttpStatus.BAD_REQUEST);
     }
-
-    // Category already exists
-    @ExceptionHandler(CategoryAlreadyExistsException.class)
-    public ResponseEntity<ApiErrorResponse> handleCategoryAlreadyExists(
-            CategoryAlreadyExistsException ex){
-
-        log.warn("Category creation failed: {}", ex.getMessage());
-
-        Map<String, String> errors = Map.of("message", ex.getMessage());
-
-        return buildErrorResponse(errors.toString(), HttpStatus.BAD_REQUEST);
-    }
-
-    // Category not found
-    @ExceptionHandler(CategoryNotFoundException.class)
-    public ResponseEntity<ApiErrorResponse> handleCategoryNotFound(
-            CategoryNotFoundException ex){
-
-        log.warn("Category not found: {}", ex.getMessage());
-
-        return buildErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND);
-    }
 }
+
+
+
+
+
+//    // handle errors when username or email already exists
+//    @ExceptionHandler(UserAlreadyExistsException.class)
+//    public ResponseEntity<ApiErrorResponse> handleUserAlreadyExists(
+//            UserAlreadyExistsException ex){
+//
+//        log.warn("User creation failed: {}", ex.getMessage());
+//
+//        return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+//    }
+//
+//
+//
+//    // Category already exists
+//    @ExceptionHandler(CategoryAlreadyExistsException.class)
+//    public ResponseEntity<ApiErrorResponse> handleCategoryAlreadyExists(
+//            CategoryAlreadyExistsException ex){
+//
+//        log.warn("Category creation failed: {}", ex.getMessage());
+//
+//        Map<String, String> errors = Map.of("message", ex.getMessage());
+//
+//        return buildErrorResponse(errors.toString(), HttpStatus.BAD_REQUEST);
+//    }
+//
+//    // Category not found
+//    @ExceptionHandler(CategoryNotFoundException.class)
+//    public ResponseEntity<ApiErrorResponse> handleCategoryNotFound(
+//            CategoryNotFoundException ex){
+//
+//        log.warn("Category not found: {}", ex.getMessage());
+//
+//        return buildErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND);
+//    }

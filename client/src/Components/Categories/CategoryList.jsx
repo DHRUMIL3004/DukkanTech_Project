@@ -87,7 +87,9 @@ const CategoryList = ({ refreshFlag }) => {
               )}
               <div>
                 <strong>{cat.name}</strong>
-                <div className="text-muted">0 Items</div>
+                <div className="text-muted">
+                  {(cat.itemCount ?? 0)} Items
+                </div>
               </div>
             </div>
 

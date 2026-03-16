@@ -2,8 +2,7 @@ import { useState } from "react";
 import ManagementLayout from "../../Components/Common/ManagementLayout";
 import ItemForm from "../../Components/Items/ItemForm";
 import ItemList from "../../Components/Items/ItemList";
-import NavBar from "../../Components/NavBar/NavBar";
-
+import { FaBoxOpen } from "react-icons/fa";
 
 const ManageItemPage = () => {
 
@@ -16,11 +15,11 @@ const ManageItemPage = () => {
   return (
     <ManagementLayout
       title="Manage Items"
+      Icon={FaBoxOpen}
       left={<ItemForm refreshItems={refreshItems} />}
       right={<ItemList refreshFlag={refreshFlag} />}
     />
   );
-
 };
 
 export default ManageItemPage;

@@ -7,6 +7,7 @@ import com.intech.dukaantech.common.dto.PageResponse;
 import com.intech.dukaantech.category.model.Category;
 import com.intech.dukaantech.category.repository.CategoryRepository;
 import com.intech.dukaantech.category.mapper.CategoryMapper;
+import com.intech.dukaantech.common.exception.ApiException;
 import com.intech.dukaantech.common.exception.custom.CategoryAlreadyExistsException;
 import com.intech.dukaantech.common.exception.custom.CategoryNotFoundException;
 import com.intech.dukaantech.common.service.S3Service;
@@ -15,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,22 +33,23 @@ public class CategoryServiceImpl implements CategoryService{
     private final CategoryMapper categoryMapper;
     private final S3Service s3Service;
 
+    // Creating Categories
     @Override
     public CategoryResponse createCategory(CategoryRequest request, MultipartFile file) {
 
         // check is category exists
         if(categoryRepository.findByName(request.getName()).isPresent()){
-            throw new CategoryAlreadyExistsException("Category already exists");
+            throw new ApiException("Category already exists", HttpStatus.BAD_REQUEST);
         }
 
         // check file is not empty
         if(file.isEmpty()){
-            throw new RuntimeException("File is empty");
+            throw new ApiException("File is empty", HttpStatus.BAD_REQUEST);
         }
 
         // file is not image type
         if(!file.getContentType().startsWith("image/")){
-            throw new RuntimeException("Only image files are allowed");
+            throw new ApiException("Only image files are allowed", HttpStatus.BAD_REQUEST);
         }
 
         Category newCategory = categoryMapper.mapToEntity(request);
@@ -60,6 +63,7 @@ public class CategoryServiceImpl implements CategoryService{
         return categoryMapper.mapToResponse(newCategory);
     }
 
+    // Fetching Categories
     @Override
     public PageResponse<CategoryResponse> readCategories(int page, int size) {
 
@@ -87,7 +91,8 @@ public class CategoryServiceImpl implements CategoryService{
         log.info("Deleting category with id: {}", categoryId);
 
         Category category = categoryRepository.findByCategoryId(categoryId)
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+                .orElseThrow(() ->
+                        new ApiException("Category not found", HttpStatus.NOT_FOUND));
 
         if(category.getImgUrl() != null){
             s3Service.deleteFile(category.getImgUrl());

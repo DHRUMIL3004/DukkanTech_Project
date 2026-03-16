@@ -1,6 +1,20 @@
 import './Hero.css';
 
 function Hero() {
+
+  const scrollToFeatures = () => {
+    const section = document.getElementById('features');
+    if (section) {
+      const navbarOffset = 80; // adjust if your navbar is taller/shorter
+      const elementPosition = section.getBoundingClientRect().top + window.scrollY;
+      const offsetPosition = elementPosition - navbarOffset;
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth',
+      });
+    }
+  };
+
   return (
     <section className="hero">
       <div className="hero-container">
@@ -12,7 +26,9 @@ function Hero() {
           </p>
           <div className="hero-buttons">
             <button className="hero-btn-primary"><a className='anchor' href='/login'>Explore More</a></button>
-            <button className="hero-btn-secondary"><a className='anchor' href='/'>Features</a></button>
+            <button className="hero-btn-secondary" onClick={scrollToFeatures}>
+              <a className='anchor' href='#features'>Features</a>
+            </button>
             
           </div>
         </div>

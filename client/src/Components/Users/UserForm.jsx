@@ -17,38 +17,49 @@ const UserForm = ({ refreshUsers }) => {
     });
   };
 
+  const getErrorMessage = (error) => {
+
+    console.log(error);
+  
+    if (!error.response) {
+      return "Server not responding";
+    }
+  
+    const data = error.response.data;
+  
+    if (data?.errors?.message) {
+      return data.errors.message;
+    }
+  
+    if (data?.errors) {
+      return Object.values(data.errors)[0];
+    }
+  
+    if (data?.message) {
+      return data.message;
+    }
+  
+    return "Something went wrong";
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     try {
       await createUser(user);
       refreshUsers();
-
+  
       setUser({
         name: "",
         email: "",
         role: "",
         password: ""
       });
-
+  
     } catch (error) {
-
-  let message = "Something went wrong";
-
-  if (error.response) {
-    if (error.response.data.errors) {
-      message = Object.values(error.response.data.errors)[0];
-    } 
-    else if (error.response.data.message) {
-      message = error.response.data.message;
-    } 
-    else if (error.response.data.error) {
-      message = error.response.data.error;
+      const message = getErrorMessage(error);
+      alert(message);
     }
-  }
-
-  alert(message);
-}
   };
 
   return (

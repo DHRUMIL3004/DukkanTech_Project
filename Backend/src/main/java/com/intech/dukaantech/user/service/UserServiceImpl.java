@@ -1,11 +1,13 @@
 package com.intech.dukaantech.user.service;
 
+import com.intech.dukaantech.common.exception.ApiException;
 import com.intech.dukaantech.user.dto.UserRequest;
 import com.intech.dukaantech.user.dto.UserResponse;
 import com.intech.dukaantech.user.model.UserEntity;
 import com.intech.dukaantech.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,8 +29,7 @@ public class UserServiceImpl implements UserService {
 
         // Check if email already exists
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new RuntimeException("Email already exists");
-
+            throw new ApiException("Email already exists", HttpStatus.BAD_REQUEST);
         }
 
         UserEntity newUser = createNewUserInEntity(request);
@@ -69,7 +70,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(String id) {
         UserEntity getUser = userRepository.findByUserId(id)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() ->
+                        new ApiException("User not found", HttpStatus.NOT_FOUND));
 
         userRepository.delete(getUser);
     }
