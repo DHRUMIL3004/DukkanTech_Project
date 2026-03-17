@@ -18,7 +18,10 @@ const ItemCard = ({ item, deleteItem }) => {
           )}
           <div>
             <strong>{item.name}</strong>
-            <div className="text-muted">Price : ₹{item.price}</div>
+            <div className="text-muted" style={{ fontSize: '0.85rem' }}>
+              Price: ₹{item.price} | Qty: {item.quantity ?? 0}
+              {item.categoryName && <span> | {item.categoryName}</span>}
+            </div>
           </div>
         </div>
 

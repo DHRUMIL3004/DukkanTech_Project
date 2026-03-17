@@ -9,7 +9,7 @@ const NavBar = () => {
     { to: "/manage-item", label: "Manage Item" },
     { to: "/manage-category", label: "Manage Category" },
     { to: "/manage-user", label: "Manage User" },
-    { to: "/order-history", label: "Order History", disabled: true },
+    { to: "/order-history", label: "Order History" },
   ];
 
   return (

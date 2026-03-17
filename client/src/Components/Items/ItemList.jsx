@@ -11,8 +11,15 @@ const ItemList = ({ refreshFlag }) => {
   const [sortOrder, setSortOrder] = useState("NONE"); // NONE | ASC | DESC
 
   const loadItems = () => {
-    getItems().then((data) => {
-      setItems(data?.content || data || []);
+    getItems(0, 1000).then((response) => {
+      // Handle paginated response - extract data array
+      if (response && response.data && Array.isArray(response.data)) {
+        setItems(response.data);
+      } else if (Array.isArray(response)) {
+        setItems(response);
+      } else {
+        setItems([]);
+      }
     });
   };
 

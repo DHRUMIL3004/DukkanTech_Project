@@ -3,17 +3,19 @@ import axios from "axios";
 // Item APIs
 const API_URL = "http://localhost:8080/api/items";
 
-// GET ITEMS
-export const getItems = async () => {
+// GET ITEMS with pagination
+export const getItems = async (page = 0, size = 12) => {
 
   const token = localStorage.getItem("token");
 
-  const response = await axios.get(API_URL, {
+  const response = await axios.get(`${API_URL}?page=${page}&size=${size}`, {
     headers: {
       Authorization: `Bearer ${token}`
     }
   });
 
+  // Return full paginated response
+  // Response format: { page, size, totalPages, totalElements, data: [...] }
   return response.data;
 };
 

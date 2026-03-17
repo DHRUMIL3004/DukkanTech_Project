@@ -2,6 +2,7 @@ package com.intech.dukaantech.inventory.service;
 
 import com.intech.dukaantech.category.model.Category;
 import com.intech.dukaantech.category.repository.CategoryRepository;
+import com.intech.dukaantech.common.dto.PageResponse;
 import com.intech.dukaantech.common.exception.ApiException;
 import com.intech.dukaantech.common.service.S3Service;
 import com.intech.dukaantech.inventory.dto.ItemRequest;
@@ -11,6 +12,9 @@ import com.intech.dukaantech.inventory.model.Item;
 import com.intech.dukaantech.inventory.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -68,12 +72,24 @@ public class ItemServiceImpl implements ItemService {
 
     // Fetching Items
     @Override
-    public List<ItemResponse> fetchItem() {
+    public PageResponse<ItemResponse> fetchItem(int page, int size) {
 
-        return itemRepository.findAll()
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Item> itemPage = itemRepository.findAll(pageable);
+
+        List<ItemResponse> items = itemPage.getContent()
                 .stream()
                 .map(itemMapper::mapToResponse)
                 .toList();
+
+        return PageResponse.<ItemResponse>builder()
+                .page(itemPage.getNumber())
+                .size(itemPage.getSize())
+                .totalPages(itemPage.getTotalPages())
+                .totalElements(itemPage.getTotalElements())
+                .data(items)
+                .build();
     }
 
     // Delete Item

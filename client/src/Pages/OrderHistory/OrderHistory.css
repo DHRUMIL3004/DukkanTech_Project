@@ -1,0 +1,122 @@
+.order-container {
+  padding: 20px;
+  background: #f5f7fb;
+  min-height: 100vh;
+}
+
+.title {
+  margin-bottom: 20px;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.table-card {
+  background: white;
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.table-header,
+.table-row {
+  display: grid;
+  grid-template-columns: 50px 120px 1fr 120px 120px 120px 120px;
+  align-items: center;
+  padding: 12px;
+}
+
+.table-header {
+  font-weight: 600;
+  border-bottom: 2px solid #eee;
+  color: #555;
+}
+
+.table-row {
+  margin-top: 10px;
+  border-radius: 8px;
+  background: #fafafa;
+  transition: 0.2s;
+}
+
+.table-row:hover {
+  background: #f0f4ff;
+  transform: scale(1.01);
+}
+
+.status {
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  text-align: center;
+  width: fit-content;
+}
+
+.success {
+  background: #e6f9f0;
+  color: #1dbf73;
+}
+
+.fail {
+  background: #ffe6e6;
+  color: #ff4d4f;
+}
+
+.pagination {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  align-items: center;
+}
+
+.pagination button {
+  padding: 8px 14px;
+  border: none;
+  background: #4a6cf7;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.pagination button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.invoice-modal {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  width: 600px;
+}
+
+.invoice-table {
+  width: 100%;
+  margin-top: 15px;
+  border-collapse: collapse;
+}
+
+.invoice-table th,
+.invoice-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.modal-buttons {
+  margin-top: 15px;
+  display: flex;
+  gap: 10px;
+}

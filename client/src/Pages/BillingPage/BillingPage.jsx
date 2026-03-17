@@ -1,28 +1,48 @@
+/**
+ * BillingPage - Main product listing page with cart functionality
+ * Uses server-side pagination to fetch items from backend API
+ */
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getItems } from "../../Service/ItemService";
 import NavBar from "../../Components/NavBar/NavBar";
-import { FaShoppingCart, FaSearch, FaFilter } from "react-icons/fa";
-import "./BillingPage.css";
+import { FaShoppingCart } from "react-icons/fa";
 import { toast } from "react-toastify";
+import {
+  SearchBox,
+  FilterDropdown,
+  ProductCard,
+  Pagination
+} from "../../Components/Billing";
+import "./BillingPage.css";
 
 const BillingPage = () => {
   const navigate = useNavigate();
 
-  // Items from API
+  // ============ STATE MANAGEMENT ============
+  
+  // Product data from API
   const [items, setItems] = useState([]);
   const [filteredItems, setFilteredItems] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Search, filter, sort
+  // Search and filter controls
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("name-asc");
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [categories, setCategories] = useState([]);
 
-  // Cart
+  // Cart state (persisted in localStorage)
   const [cartItems, setCartItems] = useState([]);
+
+  // Pagination state (0-indexed for API)
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
+  const itemsPerPage = 12;
+
+  // ============ EFFECTS ============
 
   // Load cart from localStorage on mount
   useEffect(() => {
@@ -32,42 +52,17 @@ const BillingPage = () => {
     }
   }, []);
 
-  // Save cart to localStorage whenever it changes
+  // Persist cart to localStorage on change
   useEffect(() => {
     localStorage.setItem("billingCart", JSON.stringify(cartItems));
   }, [cartItems]);
 
-  // Fetch items on mount
+  // Fetch products when page changes
   useEffect(() => {
-    fetchItems();
-  }, []);
+    fetchItems(currentPage);
+  }, [currentPage]);
 
-  const fetchItems = async () => {
-    setLoading(true);
-    try {
-
-      const itemsData = await getItems();
-
-      console.log("API RESPONSE:", itemsData);
-
-      setItems(itemsData);
-      setFilteredItems(itemsData);
-
-      // Extract categories
-      const uniqueCategories = [
-        ...new Set(itemsData.map(item => item.categoryName).filter(Boolean))
-      ];
-
-      setCategories(uniqueCategories);
-
-    } catch (error) {
-      console.error("Error fetching items:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Filter and sort items
+  // Apply client-side filtering and sorting when data or filters change
   useEffect(() => {
     let result = [...items];
 
@@ -81,13 +76,10 @@ const BillingPage = () => {
 
     // Category filter
     if (selectedCategories.length > 0) {
-      result = result.filter(item => {
-        const categoryName = item.categoryName;
-        return selectedCategories.includes(categoryName);
-      });
+      result = result.filter(item => selectedCategories.includes(item.categoryName));
     }
 
-    // Sort
+    // Sorting
     switch (sortBy) {
       case "name-asc":
         result.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
@@ -108,25 +100,55 @@ const BillingPage = () => {
     setFilteredItems(result);
   }, [searchTerm, sortBy, selectedCategories, items]);
 
-  // Add to cart
+  // ============ API FUNCTIONS ============
+
+  // Fetch paginated items from backend
+  const fetchItems = async (page) => {
+    setLoading(true);
+    try {
+      const response = await getItems(page, itemsPerPage);
+
+      if (response && response.data) {
+        setItems(response.data);
+        setFilteredItems(response.data);
+        setTotalPages(response.totalPages || 0);
+        setTotalElements(response.totalElements || 0);
+
+        // Extract unique categories for filter dropdown
+        const uniqueCategories = [
+          ...new Set(response.data.map(item => item.categoryName).filter(Boolean))
+        ];
+        setCategories(prev => [...new Set([...prev, ...uniqueCategories])]);
+      }
+    } catch (error) {
+      console.error("Error fetching items:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ============ CART FUNCTIONS ============
+
+  // Add item to cart or increase quantity if already exists
   const addToCart = (item) => {
     const existingItem = cartItems.find(ci => ci.itemId === item.itemId);
 
-    // Prevent over-adding
+    // Check stock limit
     if (existingItem && existingItem.quantity >= item.quantity) {
       toast.error("Stock limit reached");
       return;
     }
 
     if (existingItem) {
+      // Increase quantity
       setCartItems(cartItems.map(ci =>
         ci.itemId === item.itemId
           ? { ...ci, quantity: ci.quantity + 1 }
           : ci
       ));
-
-      toast.info(`${item.name} quantity increased `);
+      toast.info(`${item.name} quantity increased`);
     } else {
+      // Add new item
       setCartItems([
         ...cartItems,
         {
@@ -139,19 +161,31 @@ const BillingPage = () => {
           availableQuantity: item.quantity
         }
       ]);
-
-      toast.success(`${item.name} added to cart `);
+      toast.success(`${item.name} added to cart`);
     }
   };
-  // Total cart items count
-  const totalCartItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
-  // Navigate to cart page
-  const goToCart = () => {
-    navigate("/billing/cart");
+  // ============ PAGINATION HANDLERS ============
+
+  const totalCartItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const startIndex = currentPage * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, totalElements);
+
+  const goToPrevPage = () => {
+    if (currentPage > 0) {
+      setCurrentPage(currentPage - 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
-  // Toggle category filter
+  const goToNextPage = () => {
+    if (currentPage < totalPages - 1) {
+      setCurrentPage(currentPage + 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  // Toggle category in filter
   const toggleCategory = (category) => {
     if (selectedCategories.includes(category)) {
       setSelectedCategories(selectedCategories.filter(c => c !== category));
@@ -160,19 +194,15 @@ const BillingPage = () => {
     }
   };
 
-  // Check stock status
-  const getStockStatus = (item) => {
-    const stock = item.quantity || 0;;
-    if (stock <= 0) return { text: "Out of stock", inStock: false };
-    return { text: `${stock} in stock`, inStock: true };
-  };
+  // ============ RENDER ============
 
   return (
     <>
       <NavBar />
       <div className="billing-page">
         <div className="billing-container">
-          {/* Header */}
+          
+          {/* Page Header */}
           <div className="billing-header">
             <div className="header-text">
               <h1>Billing & Shopping</h1>
@@ -180,57 +210,23 @@ const BillingPage = () => {
             </div>
           </div>
 
-          {/* Controls Bar */}
+          {/* Search, Filter, Sort, and Cart Controls */}
           <div className="controls-bar">
-            {/* Search */}
-            <div className="search-box">
-              <FaSearch className="search-icon" />
-              <input
-                type="text"
-                placeholder="Search products..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
+            <SearchBox
+              value={searchTerm}
+              onChange={setSearchTerm}
+              placeholder="Search products..."
+            />
 
-            {/* Filter Button */}
-            <div className="filter-wrapper">
-              <button
-                className={`filter-btn ${selectedCategories.length > 0 ? "active" : ""}`}
-                onClick={() => setShowFilterDropdown(!showFilterDropdown)}
-              >
-                <FaFilter />
-                <span>Filter</span>
-                {selectedCategories.length > 0 && (
-                  <span className="filter-count">{selectedCategories.length}</span>
-                )}
-              </button>
+            <FilterDropdown
+              categories={categories}
+              selectedCategories={selectedCategories}
+              onToggleCategory={toggleCategory}
+              onClearAll={() => setSelectedCategories([])}
+              isOpen={showFilterDropdown}
+              onToggleOpen={() => setShowFilterDropdown(!showFilterDropdown)}
+            />
 
-              {showFilterDropdown && (
-                <div className="filter-dropdown">
-                  <div className="filter-header">
-                    <span>Categories</span>
-                    {selectedCategories.length > 0 && (
-                      <button onClick={() => setSelectedCategories([])}>Clear all</button>
-                    )}
-                  </div>
-                  <div className="filter-options">
-                    {categories.map(category => (
-                      <label key={category} className="filter-option">
-                        <input
-                          type="checkbox"
-                          checked={selectedCategories.includes(category)}
-                          onChange={() => toggleCategory(category)}
-                        />
-                        <span>{category}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Sort Dropdown */}
             <select
               className="sort-select"
               value={sortBy}
@@ -242,8 +238,7 @@ const BillingPage = () => {
               <option value="price-desc">Price (High to Low)</option>
             </select>
 
-            {/* Cart Button */}
-            <button className="cart-btn" onClick={goToCart}>
+            <button className="cart-btn" onClick={() => navigate("/billing/cart")}>
               <FaShoppingCart />
               <span>Cart</span>
               {totalCartItems > 0 && (
@@ -252,74 +247,36 @@ const BillingPage = () => {
             </button>
           </div>
 
-          {/* Products Count */}
+          {/* Products Count Display */}
           <div className="products-count">
-            Showing {filteredItems.length} of {items.length} products
+            Showing {totalElements > 0 ? startIndex + 1 : 0}-{endIndex} of {totalElements} products
           </div>
 
-          {/* Products Grid */}
+          {/* Products Grid - Shows loading, empty, or product cards */}
           <div className="products-grid">
             {loading ? (
               <div className="loading-state">Loading products...</div>
             ) : filteredItems.length === 0 ? (
               <div className="empty-state">No products found</div>
             ) : (
-              filteredItems.map(item => {
-                const stockStatus = getStockStatus(item);
-                const categoryName = item.category?.name || item.categoryName || "General";
-
-                return (
-                  <div key={item.itemId} className="product-card">
-                    <div className="product-image">
-                      {item.imgUrl ? (
-                        <img
-                          src={item.imgUrl}
-                          alt={item.name}
-                          onError={(e) => {
-                            e.target.src = "/placeholder.png";
-                          }}
-                        />
-                      ) : null}
-                      <div className="image-placeholder" style={{ display: item.imgUrl ? 'none' : 'flex' }}>
-                        {item.name?.charAt(0) || "P"}
-                      </div>
-                    </div>
-
-                    <div className="product-info">
-                      <div className="product-header">
-                        <h3 className="product-name">{item.name}</h3>
-                        <span className="product-category">{categoryName}</span>
-                      </div>
-
-                      <p className="product-description">
-                        {item.description || "No description available"}
-                      </p>
-
-                      <div className="product-footer">
-                        <span className="product-price">₹{parseFloat(item.price).toFixed(2)}</span>
-                        <span className={`stock-status ${stockStatus.inStock ? "in-stock" : "out-of-stock"}`}>
-                          {stockStatus.text}
-                        </span>
-
-                      </div>
-
-                      <button
-                        className={`add-to-cart-btn ${!stockStatus.inStock ? "disabled" : ""}`}
-                        onClick={() => addToCart(item)}
-                        disabled={
-                          !stockStatus.inStock ||
-                          cartItems.find(ci => ci.itemId === item.itemId)?.quantity >= item.quantity
-                        }
-                      >
-                        <FaShoppingCart />
-                        <span>Add to Cart</span>
-                      </button>
-                    </div>
-                  </div>
-                );
-              })
+              filteredItems.map(item => (
+                <ProductCard
+                  key={item.itemId}
+                  item={item}
+                  onAddToCart={addToCart}
+                  isDisabled={cartItems.find(ci => ci.itemId === item.itemId)?.quantity >= item.quantity}
+                />
+              ))
             )}
           </div>
+
+          {/* Arrow-based Pagination: < 1 > */}
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPrev={goToPrevPage}
+            onNext={goToNextPage}
+          />
         </div>
       </div>
     </>

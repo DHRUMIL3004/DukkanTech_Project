@@ -11,6 +11,7 @@ import BillingPage from './Pages/BillingPage/BillingPage';
 import CartPage from './Pages/BillingPage/CartPage';
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import OrderHistory from './Pages/OrderHistory/OrderHistory';
 
 
 function App() {
@@ -45,6 +46,8 @@ function App() {
         <Route path="/billing" element={<BillingPage />} />
 
         <Route path="/billing/cart" element={<CartPage />} />
+
+        <Route path="/order-history" element={<OrderHistory />} />
 
       </Routes>
 

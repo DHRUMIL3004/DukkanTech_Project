@@ -1,5 +1,6 @@
 package com.intech.dukaantech.inventory.controller;
 
+import com.intech.dukaantech.common.dto.PageResponse;
 import com.intech.dukaantech.inventory.dto.ItemRequest;
 import com.intech.dukaantech.inventory.dto.ItemResponse;
 import com.intech.dukaantech.inventory.service.ItemService;
@@ -36,9 +37,12 @@ public class ItemController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ItemResponse>> getAllItems() {
+    public ResponseEntity<PageResponse<ItemResponse>> getAllItems(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
 
-        return ok(itemService.fetchItem());
+        return ResponseEntity.ok(itemService.fetchItem(page, size));
     }
 
     @DeleteMapping("/{itemId}")
