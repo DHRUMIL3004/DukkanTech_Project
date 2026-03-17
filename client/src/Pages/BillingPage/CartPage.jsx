@@ -4,7 +4,7 @@ import { createBill } from "../../Service/BillingService";
 import NavBar from "../../Components/NavBar/NavBar";
 import { FaArrowLeft, FaPlus, FaMinus, FaTrash } from "react-icons/fa";
 import "./CartPage.css";
-
+import { toast } from "react-toastify";
 
 
 
@@ -81,19 +81,27 @@ const CartPage = () => {
   const totalTax = cartItems.reduce((sum, item) => sum + calculateItemTaxAmount(item), 0);
   const totalAmount = subTotal + totalTax;
 
-  // Handle completed order
+ // Handle completed order
   const handleCompleted = async () => {
+      alert("Payment Received Successfully ✅");
+     toast.success("Payment Received Successfully ✅");
+      setSubmitting(true);
+  };
+
+
+  // Handle generate invoice
+  const handleGenerateInvoice = async () => {
     if (cartItems.length === 0) {
-      alert("Please add items to the cart");
+      toast.error("Please add items to the cart");
       return;
     }
 
     if (!customerName.trim()) {
-      alert("Please enter customer name");
+      toast.error("Please enter customer name");
       return;
     }
 
-    setSubmitting(true);
+    
 
     const billingRequest = {
       customerName: customerName.trim(),
@@ -101,7 +109,9 @@ const CartPage = () => {
       paymentMethod: paymentMethod,
       items: cartItems.map(item => ({
         itemId: item.itemId,
-        quantity: item.quantity
+        quantity: item.quantity,
+        tax: item.tax
+
       }))
     };
 
@@ -122,6 +132,7 @@ const CartPage = () => {
         items: cartItems.map(item => ({
           itemName: item.itemName,
           quantity: item.quantity,
+          tax: item.tax,
           price: item.price,
           total: item.price * item.quantity
         })),
@@ -139,10 +150,7 @@ const CartPage = () => {
     }
   };
 
-  // Handle generate invoice
-  const handleGenerateInvoice = async () => {
-    await handleCompleted();
-  };
+ 
 
   // New order
   const handleNewOrder = () => {
@@ -172,18 +180,21 @@ const CartPage = () => {
           <div className="receipt-wrapper">
             <div className="receipt-card">
               <div className="receipt-header">
+                <img src="/Logo.png" alt="DukaanTech Logo" className="logo" />
                 <div className="success-icon">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
                     <polyline points="22 4 12 14.01 9 11.01" />
                   </svg>
                 </div>
+                
                 <h2>Order Completed!</h2>
                 <p className="order-number">Order #{billResponse.orderId}</p>
               </div>
 
               <div className="receipt-body">
                 <div className="customer-details">
+                  
                   <div className="detail-row">
                     <span className="label">Customer</span>
                     <span className="value">{billResponse.customerName}</span>
@@ -205,27 +216,52 @@ const CartPage = () => {
                 </div>
 
                 <div className="receipt-items-section">
-                  <h4>Order Items</h4>
-                  <div className="receipt-items-list">
-                    {billResponse.items?.map((item, index) => (
-                      <div key={index} className="receipt-item-row">
-                        <div className="item-info">
-                          <span className="item-name">{item.itemName}</span>
-                          <span className="item-qty">x{item.quantity}</span>
-                        </div>
-                        <span className="item-total">${parseFloat(item.total).toFixed(2)}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+  <h4>Order Items</h4>
+
+  <div className="receipt-table">
+    
+    {/* Header */}
+    <div className="receipt-row header">
+      <span>Item</span>
+      <span>Price</span>
+      <span>Tax</span>
+      <span>Total</span>
+    </div>
+
+    {/* Items */}
+    {billResponse.items?.map((item, index) => (
+      <div key={index} className="receipt-row">
+        <span className="item-name">
+          {item.itemName} &nbsp; x{item.quantity}
+        </span>
+
+        <span>
+          ₹{parseFloat(item.price).toFixed(2)}
+        </span>
+
+        <span>
+          {item.tax || 0}%
+        </span>
+
+        <span className="total">
+          ₹{parseFloat(item.total).toFixed(2)}
+        </span>
+      </div>
+    ))}
+
+    {/* Divider */}
+    <div className="divider"></div>
+
+  </div>
+</div>
 
                 <div className="receipt-summary">
                   <div className="summary-row">
-                    <span>Subtotal</span>
+                    <span>Sub Total</span>
                     <span>₹{parseFloat(billResponse.subTotal).toFixed(2)}</span>
                   </div>
                   <div className="summary-row">
-                    <span>Tax</span>
+                    <span>Tax Amount</span>
                     <span>₹{parseFloat(billResponse.totalTax).toFixed(2)}</span>
                   </div>
                   <div className="summary-row total">
@@ -414,14 +450,15 @@ const CartPage = () => {
                     <button
                       className="btn-success"
                       onClick={handleCompleted}
-                      disabled={submitting && !customerName.trim() || !phone.trim()}
+                      disabled={submitting || !customerName.trim() || !phone.trim()}
                     >
-                      {submitting ? "Processing..." : "Completed"}
+                    
+                    Complete Payment
                     </button>
                     <button
                       className="btn-primary"
                       onClick={handleGenerateInvoice}
-                      disabled={submitting && !customerName.trim() || !phone.trim()}
+                      disabled={!submitting}
                     >
                       Generate Invoice
                     </button>
