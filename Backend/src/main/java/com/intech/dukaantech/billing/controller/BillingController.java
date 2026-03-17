@@ -6,10 +6,9 @@ import com.intech.dukaantech.billing.model.Bill;
 import com.intech.dukaantech.billing.service.BillingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/billing")
@@ -22,5 +21,7 @@ public class BillingController {
     public ResponseEntity<BillingResponse> createOrder(@RequestBody BillingRequest request){
         return   ResponseEntity.ok(billingService.createOrder(request));
     }
+
+
 
 }
