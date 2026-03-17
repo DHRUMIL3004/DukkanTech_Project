@@ -5,7 +5,7 @@ import NavBar from "../../Components/NavBar/NavBar";
 import { FaArrowLeft, FaPlus, FaMinus, FaTrash } from "react-icons/fa";
 import "./CartPage.css";
 import { toast } from "react-toastify";
-
+import { updateItemQuantity } from "../../Service/ItemService";
 
 
 const CartPage = () => {
@@ -57,14 +57,24 @@ const CartPage = () => {
 
   // Update quantity
   const updateQuantity = (itemId, newQuantity) => {
-    if (newQuantity <= 0) {
-      removeFromCart(itemId);
-      return;
-    }
-    setCartItems(cartItems.map(ci =>
-      ci.itemId === itemId ? { ...ci, quantity: newQuantity } : ci
-    ));
-  };
+  const item = cartItems.find(ci => ci.itemId === itemId);
+
+  if (!item) return;
+
+  if (newQuantity > item.availableQuantity) {
+    toast.error("Cannot exceed available stock ");
+    return;
+  }
+
+  if (newQuantity <= 0) {
+    removeFromCart(itemId);
+    return;
+  }
+
+  setCartItems(cartItems.map(ci =>
+    ci.itemId === itemId ? { ...ci, quantity: newQuantity } : ci
+  ));
+};
 
   // Remove from cart
   const removeFromCart = (itemId) => {
@@ -83,10 +93,31 @@ const CartPage = () => {
 
  // Handle completed order
   const handleCompleted = async () => {
-      alert("Payment Received Successfully ✅");
-     toast.success("Payment Received Successfully ✅");
-      setSubmitting(true);
-  };
+  try {
+    setSubmitting(true);
+
+    await Promise.all(
+      cartItems.map(async (item) => {
+
+        const newQuantity = item.availableQuantity - item.quantity;
+
+        if (newQuantity < 0) {
+          throw new Error(`Not enough stock for ${item.itemName}`);
+        }
+
+        await updateItemQuantity(item.itemId, newQuantity);
+      })
+    );
+
+    alert("Payment Received Successfully ");
+    toast.success("Payment Received Successfully ");
+
+  } catch (error) {
+    console.error(error);
+    toast.error(error.message || "Stock update failed ❌");
+    setSubmitting(false);
+  }
+};
 
 
   // Handle generate invoice

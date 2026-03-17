@@ -4,18 +4,6 @@ import axios from "axios";
 const API_URL = "http://localhost:8080/api/items";
 
 // GET ITEMS
-// export const getItems = async () => {
-
-//   const response = await axios.get(API_URL, {
-//     params: { page: 0, size: 50 },
-//     headers: { Authorization: `Bearer ${token}` }
-//   });
-
-//   return response.data;
-
-// };
-
-// TEMP: unauthenticated item APIs for development
 export const getItems = async () => {
 
   const token = localStorage.getItem("token");
@@ -76,4 +64,21 @@ export const deleteItem = async (id) => {
       Authorization: `Bearer ${token}`
     }
   });
+};
+
+
+// Update Quantity
+export const updateItemQuantity = async (id, quantity) => {
+
+  const token = localStorage.getItem("token");
+
+  return axios.patch(
+    `${API_URL}/${id}?quantity=${quantity}`, // query param
+    {}, // empty body
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
 };

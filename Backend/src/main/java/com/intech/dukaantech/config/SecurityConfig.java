@@ -38,7 +38,7 @@ public class SecurityConfig {
                 "http://localhost:5174",
                 "http://localhost:5175"
         ));
-        configuration.setAllowedMethods(List.of("GET","POST","PUT","DELETE"));
+        configuration.setAllowedMethods(List.of("GET","POST","PUT","DELETE","PATCH","OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
 
@@ -61,7 +61,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/appi/items").permitAll()
+                        .requestMatchers("/api/items/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter,

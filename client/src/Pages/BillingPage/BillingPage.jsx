@@ -110,32 +110,39 @@ const BillingPage = () => {
 
   // Add to cart
   const addToCart = (item) => {
-  const existingItem = cartItems.find(ci => ci.itemId === item.itemId);
+    const existingItem = cartItems.find(ci => ci.itemId === item.itemId);
 
-  if (existingItem) {
-    setCartItems(cartItems.map(ci =>
-      ci.itemId === item.itemId
-        ? { ...ci, quantity: ci.quantity + 1 }
-        : ci
-    ));
+    // Prevent over-adding
+    if (existingItem && existingItem.quantity >= item.quantity) {
+      toast.error("Stock limit reached");
+      return;
+    }
 
-    toast.info(`${item.name} quantity increased `);
-  } else {
-    setCartItems([
-      ...cartItems,
-      {
-        itemId: item.itemId,
-        itemName: item.name,
-        price: parseFloat(item.price) || 0,
-        tax: parseFloat(item.tax) || 0,
-        quantity: 1,
-        image: item.imgUrl
-      }
-    ]);
+    if (existingItem) {
+      setCartItems(cartItems.map(ci =>
+        ci.itemId === item.itemId
+          ? { ...ci, quantity: ci.quantity + 1 }
+          : ci
+      ));
 
-    toast.success(`${item.name} added to cart `);
-  }
-};
+      toast.info(`${item.name} quantity increased `);
+    } else {
+      setCartItems([
+        ...cartItems,
+        {
+          itemId: item.itemId,
+          itemName: item.name,
+          price: parseFloat(item.price) || 0,
+          tax: parseFloat(item.tax) || 0,
+          quantity: 1,
+          image: item.imgUrl,
+          availableQuantity: item.quantity
+        }
+      ]);
+
+      toast.success(`${item.name} added to cart `);
+    }
+  };
   // Total cart items count
   const totalCartItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -293,13 +300,16 @@ const BillingPage = () => {
                         <span className={`stock-status ${stockStatus.inStock ? "in-stock" : "out-of-stock"}`}>
                           {stockStatus.text}
                         </span>
-                        
+
                       </div>
 
                       <button
                         className={`add-to-cart-btn ${!stockStatus.inStock ? "disabled" : ""}`}
                         onClick={() => addToCart(item)}
-                        disabled={!stockStatus.inStock}
+                        disabled={
+                          !stockStatus.inStock ||
+                          cartItems.find(ci => ci.itemId === item.itemId)?.quantity >= item.quantity
+                        }
                       >
                         <FaShoppingCart />
                         <span>Add to Cart</span>

@@ -92,4 +92,26 @@ public class ItemServiceImpl implements ItemService {
 
         log.info("Item deleted successfully: {}", itemId);
     }
+
+    @Override
+    public void updateQuantity(String itemId, Long quantity) {
+
+        log.info("Updating quantity for item: {} with quantity: {}", itemId, quantity);
+
+        if (quantity == null || quantity < 0) {
+            throw new ApiException("Quantity must be non-negative", HttpStatus.BAD_REQUEST);
+        }
+
+        Item item = itemRepository.findByItemID(itemId)
+                .orElseThrow(() -> {
+                    log.warn("Item not found: {}", itemId);
+                    return new ApiException("Item not found", HttpStatus.NOT_FOUND);
+                });
+
+        item.setQuantity(quantity);
+
+        itemRepository.save(item);
+
+        log.info("Quantity updated successfully for item: {}", itemId);
+    }
 }

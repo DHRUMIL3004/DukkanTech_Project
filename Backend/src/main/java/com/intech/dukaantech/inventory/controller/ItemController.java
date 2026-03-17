@@ -13,6 +13,8 @@ import tools.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.List;
 
+import static org.springframework.http.ResponseEntity.ok;
+
 @RestController
 @RequestMapping("/items")
 @RequiredArgsConstructor
@@ -36,7 +38,7 @@ public class ItemController {
     @GetMapping
     public ResponseEntity<List<ItemResponse>> getAllItems() {
 
-        return ResponseEntity.ok(itemService.fetchItem());
+        return ok(itemService.fetchItem());
     }
 
     @DeleteMapping("/{itemId}")
@@ -44,5 +46,14 @@ public class ItemController {
 
         itemService.deleteItem(itemId);
         return ResponseEntity.ok("Item deleted successfully");
+    }
+
+    @PatchMapping("/{itemId}")
+    public ResponseEntity<String> updateQuantity(@PathVariable String itemId,
+                                                 @RequestParam Long quantity){
+
+        itemService.updateQuantity(itemId, quantity);
+
+        return ResponseEntity.ok("Item Quantity Updated");
     }
 }
