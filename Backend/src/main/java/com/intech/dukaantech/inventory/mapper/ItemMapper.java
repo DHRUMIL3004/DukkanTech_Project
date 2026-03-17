@@ -32,7 +32,8 @@ public class ItemMapper {
         response.setItemId(entity.getItemID());
         response.setCategoryId(entity.getCategory().getCategoryId());
         response.setCategoryName(entity.getCategory().getName());
-        response.setTax(entity.getCategory().getTax());
+      
+         response.setTax(entity.getCategory().getTax());
 
         return response;
     }
