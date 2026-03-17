@@ -19,6 +19,7 @@ public class ItemResponse {
     private String categoryId;
     private BigDecimal price;
     private Long quantity;
+    private double tax;
     private String description;
     private String categoryName;
     private String imgUrl;

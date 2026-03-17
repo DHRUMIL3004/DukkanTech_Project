@@ -5,6 +5,9 @@ import NavBar from "../../Components/NavBar/NavBar";
 import { FaArrowLeft, FaPlus, FaMinus, FaTrash } from "react-icons/fa";
 import "./CartPage.css";
 
+
+
+
 const CartPage = () => {
   const navigate = useNavigate();
   
@@ -219,15 +222,15 @@ const CartPage = () => {
                 <div className="receipt-summary">
                   <div className="summary-row">
                     <span>Subtotal</span>
-                    <span>${parseFloat(billResponse.subTotal).toFixed(2)}</span>
+                    <span>₹{parseFloat(billResponse.subTotal).toFixed(2)}</span>
                   </div>
                   <div className="summary-row">
                     <span>Tax</span>
-                    <span>${parseFloat(billResponse.totalTax).toFixed(2)}</span>
+                    <span>₹{parseFloat(billResponse.totalTax).toFixed(2)}</span>
                   </div>
                   <div className="summary-row total">
                     <span>Total</span>
-                    <span>${parseFloat(billResponse.totalAmount).toFixed(2)}</span>
+                    <span>₹{parseFloat(billResponse.totalAmount).toFixed(2)}</span>
                   </div>
                 </div>
 
@@ -293,6 +296,7 @@ const CartPage = () => {
                     <span className="col-price">Price</span>
                     <span className="col-qty">Quantity</span>
                     <span className="col-total">Total</span>
+                    <span className="col-total">Delete</span>
                     <span className="col-action"></span>
                   </div>
 
@@ -304,7 +308,7 @@ const CartPage = () => {
                       </div>
                       
                       <div className="col-price">
-                        <span>${item.price.toFixed(2)}</span>
+                        <span>₹{item.price.toFixed(2)}</span>
                       </div>
                       
                       <div className="col-qty">
@@ -326,7 +330,7 @@ const CartPage = () => {
                       </div>
                       
                       <div className="col-total">
-                        <span className="item-total">${(item.price * item.quantity).toFixed(2)}</span>
+                        <span className="item-total">₹{(item.price * item.quantity).toFixed(2)}</span>
                       </div>
                       
                       <div className="col-action">
@@ -398,7 +402,7 @@ const CartPage = () => {
                       </button>
                       <button
                         className={`payment-option ${paymentMethod === "UPI" ? "active" : ""}`}
-                        onClick={() => setPaymentMethod("UPI")}
+                        
                       >
                         UPI
                       </button>
@@ -410,14 +414,14 @@ const CartPage = () => {
                     <button
                       className="btn-success"
                       onClick={handleCompleted}
-                      disabled={submitting || !customerName.trim()}
+                      disabled={submitting && !customerName.trim() || !phone.trim()}
                     >
                       {submitting ? "Processing..." : "Completed"}
                     </button>
                     <button
                       className="btn-primary"
                       onClick={handleGenerateInvoice}
-                      disabled={submitting || !customerName.trim()}
+                      disabled={submitting && !customerName.trim() || !phone.trim()}
                     >
                       Generate Invoice
                     </button>

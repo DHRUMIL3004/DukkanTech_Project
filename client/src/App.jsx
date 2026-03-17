@@ -9,6 +9,9 @@ import ManageUser from './Pages/ManageUser/ManageUser';
 import ManageItemPage from './Pages/ManageItem/ManageItemPage';
 import BillingPage from './Pages/BillingPage/BillingPage';
 import CartPage from './Pages/BillingPage/CartPage';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 
 function App() {
 
@@ -44,6 +47,8 @@ function App() {
         <Route path="/billing/cart" element={<CartPage />} />
 
       </Routes>
+
+      <ToastContainer position="top-right" autoClose={2000} hideProgressBar />
 
 
     </>

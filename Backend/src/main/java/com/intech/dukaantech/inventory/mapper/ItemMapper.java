@@ -19,6 +19,8 @@ public class ItemMapper {
                 .name(request.getName())
                 .price(request.getPrice())
                 .description(request.getDescription())
+                .quantity((request.getQuantity()))
+
                 // id, itemID and category are set explicitly in the service layer
                 .build();
     }
@@ -30,6 +32,7 @@ public class ItemMapper {
         response.setItemId(entity.getItemID());
         response.setCategoryId(entity.getCategory().getCategoryId());
         response.setCategoryName(entity.getCategory().getName());
+        response.setTax(entity.getCategory().getTax());
 
         return response;
     }
