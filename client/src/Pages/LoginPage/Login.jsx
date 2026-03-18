@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import {jwtDecode} from "jwt-decode";
 
 function Login() {
 
@@ -36,13 +37,21 @@ function Login() {
       const data=await response.json();
       console.log("Login Success",data);
 
+      const decoded=jwtDecode(data.token);
+
+      console.log("Decoded JWT:", decoded);
+
       //store jwt
       const token=data.token;
       localStorage.setItem("token",token);
       console.log(token);
 
       // redirect user based on role
-     
+      if (decoded.role === "ADMIN") {
+        window.location.href = "/manage-user";
+      } else {
+        window.location.href = "/employee-dashboard";
+      }
 
     }
     catch(err){

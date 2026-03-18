@@ -1,7 +1,10 @@
+import EmployeeNavbar from "./NavBar/EmployeeNavbar";
+import NavBar from "./NavBar/NavBar";
+
 function EmployeeDashboard() {
     return (  
         <diV>
-            Welcome in Employee Dashboard
+           <EmployeeNavbar/>
         </diV>
     );
 }
