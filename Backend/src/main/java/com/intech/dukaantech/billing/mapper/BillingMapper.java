@@ -17,8 +17,10 @@ public class BillingMapper {
     public BillingResponse toBillingResponse(Bill bill) {
         BillingResponse response = new BillingResponse();
         response.setOrderId(bill.getOrderId());
-        response.setCustomerName(bill.getCustomerName());
-        response.setPhone(bill.getPhone());
+        response.setCustomerName(bill.getCustomer().getCustomerName());
+        response.setPhone(bill.getCustomer().getPhone());
+        response.setCity(bill.getCustomer().getCity());
+        response.setDob(bill.getCustomer().getDob());
         response.setPaymentMethod(bill.getPaymentMethod());
         response.setSubTotal(bill.getSubTotal());
         response.setTotalTax(bill.getTotalTax());

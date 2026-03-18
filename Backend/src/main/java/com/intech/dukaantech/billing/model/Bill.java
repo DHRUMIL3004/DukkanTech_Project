@@ -1,6 +1,7 @@
 package com.intech.dukaantech.billing.model;
 
 
+import com.intech.dukaantech.customer.model.Customer;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -23,9 +24,9 @@ public class Bill {
     @Column(unique = true)
     private String orderId;
 
-    private String customerName;
-
-    private String phone;
+    @ManyToOne
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
 
     private BigDecimal subTotal;
 

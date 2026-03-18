@@ -8,12 +8,12 @@ function Login() {
   const {t,i18n}=useTranslation("login");
   const [email,setEmail]=useState("");
   const[password,setPassword]=useState("");
-  const [role,setRole]=useState("");
+
 
   const handleLogin=async(e)=>{
     e.preventDefault();
 
-    if(!email || !password|| !role){
+    if(!email || !password){
       alert("Please fill all fields");
       return;
     }
@@ -42,8 +42,7 @@ function Login() {
       console.log(token);
 
       // redirect user based on role
-      if(role=="ADMIN") window.location.href="/manage-user";
-      else window.location.href = "/employee-dashboard";
+     
 
     }
     catch(err){
@@ -84,13 +83,13 @@ function Login() {
                          onChange={(e) => setPassword(e.target.value)}
                       />
                     </div>
-                    <div className="mb-3">
+                    {/* <div className="mb-3">
                       <select className="form-select form-select-lg" onChange={(e) => setRole(e.target.value)}>
                         <option value="">{t('selectRole')}</option>
                         <option value="ADMIN">{t('admin')}</option>
                         <option value="EMPLOYEE">{t('employee')}</option>
                       </select>
-                    </div>
+                    </div> */}
 
                     <div className="d-grid mb-3">
                       <button className="btn login_btn btn-lg">{t('login')}</button>

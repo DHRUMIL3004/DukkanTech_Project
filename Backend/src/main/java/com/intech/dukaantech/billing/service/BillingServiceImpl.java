@@ -7,9 +7,12 @@ import com.intech.dukaantech.billing.mapper.BillingMapper;
 import com.intech.dukaantech.billing.model.Bill;
 import com.intech.dukaantech.billing.model.OrderItem;
 import com.intech.dukaantech.billing.repository.BillingRepository;
+import com.intech.dukaantech.customer.model.Customer;
+import com.intech.dukaantech.customer.repository.CustomerRepository;
 import com.intech.dukaantech.inventory.model.Item;
 import com.intech.dukaantech.inventory.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -24,15 +27,31 @@ public class BillingServiceImpl implements BillingService {
     private final ItemRepository itemRepository;
     private final BillingRepository billingRepository;
     private final BillingMapper billingMapper; // mapper for DTO conversion
-
+    @Autowired
+    private CustomerRepository customerRepository;
     @Override
     public BillingResponse createOrder(BillingRequest request) {
+
+        Customer customer =customerRepository.findByPhone(request.getPhone())
+                .orElseGet(()->{
+                    Customer newCustomer =new Customer();
+                    newCustomer.setPhone(request.getPhone());
+                    return newCustomer;
+                });
+
+        // Update / Set latest details
+        customer.setCustomerName(request.getCustomerName());
+        customer.setCity(request.getCity());
+        customer.setDob(request.getDob());
+
+        //save customer
+        customer=customerRepository.save(customer);
+
 
         // Create new Bill
         Bill bill = new Bill();
         bill.setOrderId(UUID.randomUUID().toString());
-        bill.setCustomerName(request.getCustomerName());
-        bill.setPhone(request.getPhone());
+       bill.setCustomer(customer);
         bill.setPaymentMethod(request.getPaymentMethod());
         bill.setPaid(true);
 

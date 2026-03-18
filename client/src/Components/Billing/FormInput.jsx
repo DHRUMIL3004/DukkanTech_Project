@@ -4,6 +4,7 @@ const FormInput = ({
   label,
   type = "text",
   placeholder,
+  disabled,
   value,
   onChange,
   error,
@@ -18,6 +19,7 @@ const FormInput = ({
         placeholder={placeholder}
         value={value}
         onChange={onChange}
+        disabled={disabled}
         maxLength={maxLength}
         className={error ? "input-error" : ""}
       />

@@ -1,5 +1,7 @@
 package com.intech.dukaantech.authentication.security;
 
+import com.intech.dukaantech.user.model.User;
+import com.intech.dukaantech.user.model.UserEntity;
 import io.jsonwebtoken.*;
 import org.springframework.stereotype.Component;
 
@@ -10,15 +12,17 @@ public class JwtUtil {
 
     private final String SECRET = "dukaantechsupersecretkeydukaantechsupersecretkey";
 
-    public String generateToken(String email, String role){
+    public String generateToken(UserEntity user){
 
-        return Jwts.builder()
-                .setSubject(email)
-                .claim("role", role)
+        String token= Jwts.builder()
+                .setSubject(user.getEmail())
+                .claim("role", user.getRole())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis()+86400000))
                 .signWith(SignatureAlgorithm.HS256, SECRET)
                 .compact();
+
+        return token;
     }
 
     public String extractEmail(String token){
@@ -29,6 +33,8 @@ public class JwtUtil {
                 .getBody()
                 .getSubject();
     }
+    
+
 
     public boolean validateToken(String token){
 
@@ -39,4 +45,6 @@ public class JwtUtil {
             return false;
         }
     }
+
+
 }

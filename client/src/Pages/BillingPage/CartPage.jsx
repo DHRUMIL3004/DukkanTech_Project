@@ -1,7 +1,4 @@
-/**
- * CartPage - Shopping cart with checkout and invoice generation
- * Handles customer info validation, payment processing, and receipt display
- */
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { createBill } from "../../Service/BillingService";
@@ -19,6 +16,7 @@ import {
 import "./CartPage.css";
 
 const CartPage = () => {
+  
   const navigate = useNavigate();
   
   // ============ STATE MANAGEMENT ============
@@ -29,6 +27,8 @@ const CartPage = () => {
   // Customer form fields
   const [customerName, setCustomerName] = useState("");
   const [phone, setPhone] = useState("");
+  const [city, setCity] = useState("");
+  const [dob, setDob] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("CASH");
   
   // Form validation errors
@@ -58,17 +58,27 @@ const CartPage = () => {
     return "";
   };
 
+  const handlePhoneChange = (e) => {
+    const value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+    setPhone(value);
+    setPhoneError(validatePhone(value));
+  };
+
   const handleNameChange = (e) => {
     const value = e.target.value;
     setCustomerName(value);
     setNameError(validateName(value));
   };
 
-  const handlePhoneChange = (e) => {
-    const value = e.target.value.replace(/\D/g, ''); // Remove non-digits
-    setPhone(value);
-    setPhoneError(validatePhone(value));
-  };
+const handleCityChange = (e) => {
+   const value = e.target.value;
+    setCity(value);
+                                                         
+}
+
+const handleDobChange = (e) => {
+  setDob(e.target.value);
+}                                       
 
   const isFormValid = () => {
     return customerName.trim() && 
@@ -163,6 +173,8 @@ const CartPage = () => {
     const billingRequest = {
       customerName: customerName.trim(),
       phone: phone.trim(),
+      city: city.trim(),
+      dob: dob.trim(),
       paymentMethod: paymentMethod,
       items: cartItems.map(item => ({
         itemId: item.itemId,
@@ -210,6 +222,7 @@ const CartPage = () => {
     setBillResponse(null);
     setCustomerName("");
     setPhone("");
+    
     setPaymentMethod("CASH");
     navigate("/billing");
   };
@@ -298,10 +311,14 @@ const CartPage = () => {
               <OrderSummary
                 customerName={customerName}
                 phone={phone}
+                city={city}
+                dob={dob}
                 nameError={nameError}
                 phoneError={phoneError}
                 onNameChange={handleNameChange}
                 onPhoneChange={handlePhoneChange}
+                onCityChange={handleCityChange}
+                onDobChange={handleDobChange}
                 subTotal={subTotal}
                 totalTax={totalTax}
                 totalAmount={totalAmount}

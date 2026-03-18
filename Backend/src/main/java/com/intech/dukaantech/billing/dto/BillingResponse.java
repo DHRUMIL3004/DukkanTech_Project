@@ -4,6 +4,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -12,6 +13,8 @@ public class BillingResponse {
     private String orderId;
     private String customerName;
     private String phone;
+    private String city;
+    private LocalDate dob;
 
     private BigDecimal subTotal;
     private BigDecimal totalTax;

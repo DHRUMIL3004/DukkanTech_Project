@@ -16,6 +16,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
 
+
+    String role=claims
+
+
+
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,

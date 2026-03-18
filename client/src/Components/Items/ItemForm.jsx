@@ -44,10 +44,13 @@ const ItemForm = ({ refreshItems }) => {
         refreshItems();
         setItem(emptyItem);
         setFile(null);
+       
       })
       .catch(() => {
         alert("Error creating item");
       })
+     
+      
   }
 
   return (
