@@ -44,14 +44,18 @@ function App() {
     </ProtectedRoute>} />
         <Route
           path="/manage-item"
-          element={<ManageItemPage />}
+          element={ <ProtectedRoute allowedRoles={["ADMIN"]}>
+      <ManageItemPage />
+    </ProtectedRoute>} 
         />
 
         <Route path="/billing" element={<ProtectedRoute allowedRoles={["ADMIN", "EMPLOYEE"]}>
       <BillingPage />
     </ProtectedRoute>} />
 
-        <Route path="/billing/cart" element={<CartPage />} />
+        <Route path="/billing/cart" element={ <ProtectedRoute allowedRoles={["ADMIN","EMPLOYEE"]}>
+      <CartPage />
+    </ProtectedRoute>}  />
 
         <Route path="/order-history" element={<ProtectedRoute allowedRoles={["ADMIN", "EMPLOYEE"]}>
       <OrderHistory />
