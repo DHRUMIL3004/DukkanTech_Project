@@ -54,14 +54,18 @@ function AdminDashboard() {
         setOrders(ordersRes?.data || []);
         setItems(itemsRes?.data || []);
         setCategories(catsRes?.data || []);
-        setUsers(usersRes?.data || []);
+        console.log("usersRes:", usersRes);
+        console.log("usersRes.data:", usersRes.data);
+        setUsers(usersRes || []);
       } catch (err) {
         console.error("Dashboard fetch error:", err);
       } finally {
         setLoading(false);
+        
       }
     };
     fetchAll();
+    
   }, []);
 
   // ── Derived stats ──────────────────────────────────────────────────────
