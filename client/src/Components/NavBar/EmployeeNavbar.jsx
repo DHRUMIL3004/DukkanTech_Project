@@ -4,7 +4,6 @@ import "./NavBar.css";
 const EmployeeNavbar = () => {
 
   const links = [
-    { to: "/", label: "Dashboard", disabled: true },
     { to: "/billing", label: "Billing"},
     { to: "/order-history", label: "Order History" },
   ];

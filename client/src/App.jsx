@@ -14,18 +14,54 @@ import "react-toastify/dist/ReactToastify.css";
 import OrderHistory from './Pages/OrderHistory/OrderHistory';
 import ProtectedRoute from './Components/ProtectedRoute';
 
+import { useLocation } from "react-router-dom";
+import LandingNavbar from './Components/NavBar/LandingNavbar';
+import NavBar from './Components/NavBar/NavBar';
+import EmployeeNavbar from './Components/NavBar/EmployeeNavbar';
+
+
 function App() {
 
-  const token = localStorage.getItem("token");
+
+ const token = localStorage.getItem("token");
+
+  const location = useLocation();
+  const role = localStorage.getItem("role");
+  console.log("Current Role:", role);
+ 
+  const renderNavbar = () => {
+  const path = location.pathname;
+
+  // Public pages
+  if (path === "/" || path === "/login") {
+    return <LandingNavbar />;
+  }
+
+  // Admin routes
+  if (role === "ADMIN") {
+    return <NavBar />;
+  }
+
+  // Employee routes
+  if (role === "EMPLOYEE") {
+    return <EmployeeNavbar />;
+  }
+
+  return null;
+};
+ 
 
   return (
     <>
 
+    {renderNavbar()}
+      
       <Routes>
+         <Route path='/' element={<LandingPage />} />
         <Route
           path="/dashboard"
           element={
-            token ? <ProtectedRoute allowedRoles={["ADMIN", "EMPLOYEE"]}>
+            token ? <ProtectedRoute allowedRoles={["ADMIN"]}>
           <AdminDashboard />
         </ProtectedRoute>  : <Navigate to="/" replace />
           }
@@ -36,7 +72,7 @@ function App() {
             token ? <EmployeeDashboard /> : <Navigate to="/" replace />
           }
         />
-        <Route path='/' element={<LandingPage />} />
+        
         <Route path='/Login' element={<Login />} />
         <Route path="/manage-user" element={<ProtectedRoute allowedRoles={["ADMIN"]}>
           <ManageUser />
@@ -63,11 +99,11 @@ function App() {
           <OrderHistory />
         </ProtectedRoute>} />
 
-        {/* <Route path="/dashboard" element={<ProtectedRoute allowedRoles={["ADMIN", "EMPLOYEE"]}>
-          <AdminDashboard />
-        </ProtectedRoute>} /> */}
+       
 
-      </Routes>
+
+      </Routes> 
+
 
       <ToastContainer position="top-right" autoClose={2000} hideProgressBar />
 

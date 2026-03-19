@@ -235,7 +235,7 @@ const handleDobChange = (e) => {
   if (billResponse) {
     return (
       <>
-        <NavBar />
+        
         <div className="cart-page">
           <Receipt
             billResponse={billResponse}
@@ -250,7 +250,7 @@ const handleDobChange = (e) => {
   // Main cart view
   return (
     <>
-      <NavBar />
+   
 
       {/* Payment Success Popup */}
       {showPaymentPopup && (

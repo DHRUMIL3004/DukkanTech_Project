@@ -52,7 +52,7 @@ const OrderHistory = () => {
 
   return (
     <>
-      <NavBar />
+      
 
       <div className="order-container">
         <h2 className="title">Order History</h2>

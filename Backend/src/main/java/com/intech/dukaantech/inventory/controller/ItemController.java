@@ -56,7 +56,7 @@ public class ItemController {
         return ResponseEntity.ok("Item deleted successfully");
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLOYEE')")
     @PatchMapping("/{itemId}")
     public ResponseEntity<String> updateQuantity(@PathVariable String itemId,
                                                  @RequestParam Long quantity){

@@ -132,7 +132,7 @@ function AdminDashboard() {
 
   return (
     <div className="dash-root">
-      <NavBar />
+     
 
       <main className="dash-main">
         {/* ── Page Header ─────────────────────────────────────────── */}
