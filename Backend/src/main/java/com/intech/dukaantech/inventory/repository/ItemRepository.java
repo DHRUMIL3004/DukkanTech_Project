@@ -13,4 +13,6 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     Integer countByCategory_CategoryId(String categoryId);
 
     List<Item> findByNameContainingIgnoreCase(String name);
+
+    List<Item> findByQuantityLessThan(int quantity);
 }
