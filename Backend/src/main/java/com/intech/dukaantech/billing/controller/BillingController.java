@@ -6,6 +6,7 @@ import com.intech.dukaantech.billing.model.Bill;
 import com.intech.dukaantech.billing.service.BillingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +19,7 @@ public class BillingController {
 
     private final BillingService billingService;
 
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLOYEE')")
     @PostMapping("/create")
     public ResponseEntity<BillingResponse> createOrder(@RequestBody BillingRequest request){
         return   ResponseEntity.ok(billingService.createOrder(request));

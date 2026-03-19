@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import tools.jackson.databind.ObjectMapper;
@@ -24,6 +25,7 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     // Create Category
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<CategoryResponse> createCategory(
             @RequestPart("data") String data,
@@ -39,6 +41,7 @@ public class CategoryController {
     }
 
     // fetch categories
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<PageResponse<CategoryResponse>> readCategories(
             @RequestParam(defaultValue = "0") int page,
@@ -48,6 +51,7 @@ public class CategoryController {
     }
 
     // Delete Category
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{categoryId}")
     public ResponseEntity<String> deleteCategory(@PathVariable String categoryId){
 
@@ -57,6 +61,7 @@ public class CategoryController {
     }
 
     // searching
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/search")
     public ResponseEntity<List<CategoryResponse>> searchCategory(
             @RequestParam String name){

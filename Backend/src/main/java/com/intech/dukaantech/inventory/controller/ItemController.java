@@ -7,6 +7,7 @@ import com.intech.dukaantech.inventory.service.ItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import tools.jackson.databind.ObjectMapper;
@@ -23,6 +24,7 @@ public class ItemController {
 
     private final ItemService itemService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ItemResponse> addItem(
             @RequestPart("data") String data,
@@ -36,6 +38,7 @@ public class ItemController {
         return ResponseEntity.status(201).body(response);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLOYEE')")
     @GetMapping
     public ResponseEntity<PageResponse<ItemResponse>> getAllItems(
             @RequestParam(defaultValue = "0") int page,
@@ -45,6 +48,7 @@ public class ItemController {
         return ResponseEntity.ok(itemService.fetchItem(page, size));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{itemId}")
     public ResponseEntity<String> deleteItem(@PathVariable String itemId) {
 
@@ -52,6 +56,7 @@ public class ItemController {
         return ResponseEntity.ok("Item deleted successfully");
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/{itemId}")
     public ResponseEntity<String> updateQuantity(@PathVariable String itemId,
                                                  @RequestParam Long quantity){

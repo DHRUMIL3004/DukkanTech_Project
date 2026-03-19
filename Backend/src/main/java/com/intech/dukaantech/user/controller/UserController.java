@@ -5,6 +5,7 @@ import com.intech.dukaantech.user.dto.UserResponse;
 import com.intech.dukaantech.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +26,7 @@ public class UserController {
     }
 
     // Get All Users
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<UserResponse>> getUsers() {
 
@@ -32,6 +34,7 @@ public class UserController {
     }
 
     // Delete User
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{userId}")
     public ResponseEntity<String> deleteUser(@PathVariable String userId) {
 

@@ -5,6 +5,7 @@ import com.intech.dukaantech.customer.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.internal.bytebuddy.asm.Advice;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,7 @@ public class CustomerController {
 
     private final CustomerService customerService;
 
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLOYEE')")
     @GetMapping("/{phone}")
     public ResponseEntity<?> getCustomer(@PathVariable String phone){
         return customerService.findByPhone(phone)
