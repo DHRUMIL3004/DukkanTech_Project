@@ -1,6 +1,7 @@
 package com.intech.dukaantech.inventory.controller;
 
 import com.intech.dukaantech.inventory.model.Item;
+import com.intech.dukaantech.inventory.repository.ItemRepository;
 import com.intech.dukaantech.inventory.service.EmailServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,17 +18,25 @@ public class TestController {
     @Autowired
     private EmailServices emailService;
 
+    @Autowired
+    private ItemRepository itemRepository;
+
     @GetMapping("/mail")
     public String sendTestMail() {
 
+
         Item item = new Item();
-        item.setName("Test Product");
-        item.setQuantity(5L);
 
-        List<Item> list = new ArrayList<>();
-        list.add(item);
+        List<Item> lowStockItems=itemRepository.findByQuantityLessThan(2);
 
-        emailService.sendLowStockEmail(list);
+
+
+
+        if (lowStockItems.isEmpty()) {
+            return "No low stock items found!";
+        }
+
+        emailService.sendLowStockEmail(lowStockItems);
 
         return "Email sent!";
     }

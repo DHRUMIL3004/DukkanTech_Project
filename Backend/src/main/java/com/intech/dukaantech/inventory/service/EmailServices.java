@@ -21,12 +21,12 @@ public class EmailServices {
         content.append(" Low Stock Alert (Below 2)\n\n");
 
         for(Item item:items){
-            content.append(item.getName()+"\n");
+            content.append( "Item Name : " + item.getName()+"\n");
             content.append("Item Qty : "+item.getQuantity()+"\n");
         }
 
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo("dhrumil.patel@ics-global.in");
+        message.setTo("xyzpatel8077@gmail.com");
         message.setSubject("Low Stock Alert (<2)");
         message.setText(content.toString());
 

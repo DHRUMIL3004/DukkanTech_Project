@@ -21,7 +21,7 @@ public class Scheduler {
     @Scheduled(cron = "0 * * * * ?")
     public void checkLowStock() {
         List<Item> items= itemService.getLowStockItems();
-
+        System.out.println("Low Stock Alert");
         if (!items.isEmpty()) {
             emailServices.sendLowStockEmail(items);
         }
