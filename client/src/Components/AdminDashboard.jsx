@@ -55,12 +55,7 @@ function AdminDashboard() {
         setItems(itemsRes?.data || []);
         setCategories(catsRes?.data || []);
         setUsers(usersRes || []);
-        console.log("Dashboard data fetched:", {
-          orders: ordersRes?.data || [],
-          items: itemsRes?.data || [],
-          categories: catsRes?.data || [],
-          users: usersRes || []
-        });
+        
 
       } catch (err) {
         console.error("Dashboard fetch error:", err);
