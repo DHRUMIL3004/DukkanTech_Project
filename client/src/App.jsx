@@ -17,15 +17,17 @@ import ProtectedRoute from './Components/ProtectedRoute';
 function App() {
 
   const token = localStorage.getItem("token");
- 
+
   return (
     <>
 
       <Routes>
         <Route
-          path="/admin-dashboard"
+          path="/dashboard"
           element={
-            token ? <AdminDashboard /> : <Navigate to="/" replace />
+            token ? <ProtectedRoute allowedRoles={["ADMIN", "EMPLOYEE"]}>
+          <AdminDashboard />
+        </ProtectedRoute>  : <Navigate to="/" replace />
           }
         />
         <Route
@@ -36,30 +38,34 @@ function App() {
         />
         <Route path='/' element={<LandingPage />} />
         <Route path='/Login' element={<Login />} />
-        <Route path="/manage-user" element={ <ProtectedRoute allowedRoles={["ADMIN"]}>
-      <ManageUser />
-    </ProtectedRoute>} />
-        <Route path="/manage-category" element={ <ProtectedRoute allowedRoles={["ADMIN"]}>
-      <ManageCategory />
-    </ProtectedRoute>} />
+        <Route path="/manage-user" element={<ProtectedRoute allowedRoles={["ADMIN"]}>
+          <ManageUser />
+        </ProtectedRoute>} />
+        <Route path="/manage-category" element={<ProtectedRoute allowedRoles={["ADMIN"]}>
+          <ManageCategory />
+        </ProtectedRoute>} />
         <Route
           path="/manage-item"
-          element={ <ProtectedRoute allowedRoles={["ADMIN"]}>
-      <ManageItemPage />
-    </ProtectedRoute>} 
+          element={<ProtectedRoute allowedRoles={["ADMIN"]}>
+            <ManageItemPage />
+          </ProtectedRoute>}
         />
 
         <Route path="/billing" element={<ProtectedRoute allowedRoles={["ADMIN", "EMPLOYEE"]}>
-      <BillingPage />
-    </ProtectedRoute>} />
+          <BillingPage />
+        </ProtectedRoute>} />
 
-        <Route path="/billing/cart" element={ <ProtectedRoute allowedRoles={["ADMIN","EMPLOYEE"]}>
-      <CartPage />
-    </ProtectedRoute>}  />
+        <Route path="/billing/cart" element={<ProtectedRoute allowedRoles={["ADMIN", "EMPLOYEE"]}>
+          <CartPage />
+        </ProtectedRoute>} />
 
         <Route path="/order-history" element={<ProtectedRoute allowedRoles={["ADMIN", "EMPLOYEE"]}>
-      <OrderHistory />
-    </ProtectedRoute>} />
+          <OrderHistory />
+        </ProtectedRoute>} />
+
+        {/* <Route path="/dashboard" element={<ProtectedRoute allowedRoles={["ADMIN", "EMPLOYEE"]}>
+          <AdminDashboard />
+        </ProtectedRoute>} /> */}
 
       </Routes>
 

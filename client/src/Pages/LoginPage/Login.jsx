@@ -48,7 +48,7 @@ function Login() {
 
       // redirect user based on role
       if (decoded.role === "ADMIN") {
-        window.location.href = "/manage-user";
+        window.location.href = "/dashboard";
       } else {
         window.location.href = "/employee-dashboard";
       }

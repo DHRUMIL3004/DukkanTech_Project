@@ -4,7 +4,7 @@ import "./NavBar.css";
 const NavBar = () => {
 
   const links = [
-    { to: "/", label: "Dashboard", disabled: true },
+    { to: "/dashboard", label: "Dashboard" },
     { to: "/billing", label: "Billing"},
     { to: "/manage-item", label: "Manage Item" },
     { to: "/manage-category", label: "Manage Category" },
