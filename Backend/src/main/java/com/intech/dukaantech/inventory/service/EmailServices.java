@@ -26,7 +26,7 @@ public class EmailServices {
         }
 
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo("xyzpatel8077@gmail.com");
+        message.setTo("dhrumil.patel@ics-global.in");
         message.setSubject("Low Stock Alert (<2)");
         message.setText(content.toString());
 
