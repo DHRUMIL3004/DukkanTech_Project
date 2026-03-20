@@ -18,7 +18,7 @@ public class Scheduler {
     @Autowired
     private EmailServices emailServices;
 
-    @Scheduled(cron = "0 * * * * ?")
+    @Scheduled(cron = "0 20 * * * ?")
     public void checkLowStock() {
         List<Item> items= itemService.getLowStockItems();
         System.out.println("Low Stock Alert");

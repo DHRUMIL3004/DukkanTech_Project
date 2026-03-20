@@ -26,8 +26,15 @@ public class OrderController {
     @GetMapping("/orders")
     public ResponseEntity<PageResponse<BillingResponse>> fetchOrders(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String fromDate,
+            @RequestParam(required = false) String toDate,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortDir
     ) {
-        return ResponseEntity.ok(orderService.fetchOrders(page, size));
+        return ResponseEntity.ok(
+                orderService.fetchOrders(page, size, search, fromDate, toDate, sortBy, sortDir)
+        );
     }
 }
