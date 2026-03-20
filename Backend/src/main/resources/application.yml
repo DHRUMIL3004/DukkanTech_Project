@@ -25,6 +25,12 @@ spring:
   main:
     banner-mode: off
 
+twilio:
+  account-sid: ${TWILIO_ACCOUNT_SID}
+  auth-token: ${TWILIO_AUTH_TOKEN}
+  phone-number: ${TWILIO_PHONE_NUMBER}
+
+
   jpa:
     open-in-view: false
     hibernate:
