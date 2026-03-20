@@ -17,7 +17,7 @@ public class WhatsappController {
     public String sendMsg(){
         whatsappService.sendMessage("917874658874","Hello from DukaanTech, Order is Completed , Thanks for Coming!!!!!");
 
-        return "sent !";
+        return "sent successfull !";
 
     }
 }

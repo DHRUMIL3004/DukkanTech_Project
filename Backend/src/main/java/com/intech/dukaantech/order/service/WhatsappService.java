@@ -18,9 +18,11 @@ public class WhatsappService {
     @Value("${twilio.phone-number}")
     private String from;
 
+
+
    public void sendMessage(String to, String message){
        Twilio.init(sid,authToken);
-
+       System.out.println(from);
        Message.creator(
                new PhoneNumber("whatsapp:" + to),
                new PhoneNumber(from),
