@@ -198,7 +198,7 @@ const BillingPage = () => {
 
   return (
     <>
-      <NavBar />
+      
       <div className="billing-page">
         <div className="billing-container">
           

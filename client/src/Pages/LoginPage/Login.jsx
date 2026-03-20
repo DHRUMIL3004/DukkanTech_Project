@@ -44,13 +44,15 @@ function Login() {
       //store jwt
       const token=data.token;
       localStorage.setItem("token",token);
+      localStorage.setItem("role",decoded.role);
+
       console.log(token);
 
       // redirect user based on role
       if (decoded.role === "ADMIN") {
         window.location.href = "/dashboard";
       } else {
-        window.location.href = "/employee-dashboard";
+        window.location.href = "/billing";
       }
 
     }

@@ -13,7 +13,7 @@ const ManagementLayout = ({
 }) => {
   return (
     <>
-      <NavBar />
+      
       <div
         className="management-page py-4"
         style={{ minHeight: "calc(100vh - 70px)", background: "#f7f9fc" }}

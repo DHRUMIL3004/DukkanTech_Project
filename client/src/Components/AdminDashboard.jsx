@@ -132,7 +132,7 @@ function AdminDashboard() {
 
   return (
     <div className="dash-root">
-      <NavBar />
+     
 
       <main className="dash-main">
         {/* ── Page Header ─────────────────────────────────────────── */}
@@ -229,7 +229,7 @@ function AdminDashboard() {
                   </thead>
                   <tbody>
                     {recentOrders.map((order, i) => (
-                      <tr key={order.orderId}>
+                      <tr key={order.orderId || order.id || i}>
                         <td className="dash-td-muted">{i + 1}</td>
                         <td className="dash-td-bold">{order.customerName}</td>
                         <td className="dash-td-muted">{order.phone}</td>

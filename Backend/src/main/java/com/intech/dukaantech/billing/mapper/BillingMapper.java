@@ -15,10 +15,15 @@ public class BillingMapper {
 //    Maps Bill entity to BillingResponse DTO
 
     public BillingResponse toBillingResponse(Bill bill) {
+
         BillingResponse response = new BillingResponse();
         response.setOrderId(bill.getOrderId());
-        response.setCustomerName(bill.getCustomer().getCustomerName());
-        response.setPhone(bill.getCustomer().getPhone());
+
+        if (bill.getCustomer() != null) {
+            response.setCustomerName(bill.getCustomer().getCustomerName());
+            response.setPhone(bill.getCustomer().getPhone());
+        }
+
         response.setCity(bill.getCustomer().getCity());
         response.setDob(bill.getCustomer().getDob());
         response.setPaymentMethod(bill.getPaymentMethod());

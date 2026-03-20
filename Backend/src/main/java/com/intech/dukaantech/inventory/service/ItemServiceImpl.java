@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -71,6 +72,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     // Fetching Items
+
     @Override
     public PageResponse<ItemResponse> fetchItem(int page, int size) {
 
@@ -129,5 +131,10 @@ public class ItemServiceImpl implements ItemService {
         itemRepository.save(item);
 
         log.info("Quantity updated successfully for item: {}", itemId);
+    }
+
+    @Override
+    public List<Item> getLowStockItems() {
+        return itemRepository.findByQuantityLessThan(2);
     }
 }
