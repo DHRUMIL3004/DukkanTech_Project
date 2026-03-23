@@ -1,6 +1,7 @@
 import axios from "axios";
 
 const API_URL = "http://localhost:8080/api/billing";
+const Whatsapp_Url = "http://localhost:8080/api/whatsapp/send";
 
 // CREATE BILL
 export const createBill = async (billingRequest) => {
@@ -26,5 +27,17 @@ export const getBills = async () => {
     }
   });
 
+  return response.data;
+};
+
+export const sendWhatsappAlert = async (id) => {
+  const token = localStorage.getItem("token");
+
+  const response = await axios.get(`${Whatsapp_Url}/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+  console.log("WhatsApp alert response:", response.data);
   return response.data;
 };

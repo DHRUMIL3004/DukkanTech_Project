@@ -18,6 +18,7 @@ import { useLocation } from "react-router-dom";
 import LandingNavbar from './Components/NavBar/LandingNavbar';
 import NavBar from './Components/NavBar/NavBar';
 import EmployeeNavbar from './Components/NavBar/EmployeeNavbar';
+import Footer from './Components/Footer/Footer';
 
 
 function App() {
@@ -97,12 +98,11 @@ function App() {
 
         <Route path="/order-history" element={<ProtectedRoute allowedRoles={["ADMIN", "EMPLOYEE"]}>
           <OrderHistory />
+         
         </ProtectedRoute>} />
-
-       
-
-
+        
       </Routes> 
+      <Footer/>
 
 
       <ToastContainer position="top-right" autoClose={2000} hideProgressBar />

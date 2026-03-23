@@ -1,10 +1,17 @@
 package com.intech.dukaantech.order.controller;
 
+import com.intech.dukaantech.billing.model.Bill;
+import com.intech.dukaantech.billing.repository.BillingRepository;
+import com.intech.dukaantech.billing.service.BillingService;
+import com.intech.dukaantech.customer.model.Customer;
+import com.intech.dukaantech.customer.repository.CustomerRepository;
 import com.intech.dukaantech.order.service.WhatsappService;
+import com.twilio.rest.api.v2010.account.call.Payment;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/whatsapp")
@@ -12,12 +19,25 @@ import org.springframework.web.bind.annotation.RestController;
 public class WhatsappController {
 
     private final WhatsappService whatsappService;
+    private final CustomerRepository customerRepository;
+    private final BillingService billingService;
 
-    @GetMapping("/send")
-    public String sendMsg(){
-        whatsappService.sendMessage("917874658874","Hello from DukaanTech, Order is Completed , Thanks for Coming!!!!!");
 
-        return "sent successfull !";
 
+    @GetMapping("/send/{id}")
+    public String sendMsg(@PathVariable String id) {
+
+        Bill bill =billingService.getBillByOrderId(id);
+
+
+        Customer customer=bill.getCustomer();
+
+        String phone=customer.getPhone();
+
+       String name= customer.getCustomerName();
+
+//        whatsappService.sendMessage("91"+phone,"Payement Alert :   " +"Hello  "+ name + " Your Payment of  " + bill.getTotalAmount()+" is success , Thanks form DukkanTech ");
+
+        return  "msg sent on "+phone;
     }
 }

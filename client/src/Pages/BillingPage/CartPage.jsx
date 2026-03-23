@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { createBill } from "../../Service/BillingService";
+import { createBill, sendWhatsappAlert } from "../../Service/BillingService";
 import { updateItemQuantity } from "../../Service/ItemService";
 import NavBar from "../../Components/NavBar/NavBar";
 import { FaArrowLeft } from "react-icons/fa";
@@ -182,10 +182,11 @@ const handleDobChange = (e) => {
         tax: item.tax
       }))
     };
-
+let finalResponse = null;
     try {
       const response = await createBill(billingRequest);
-      setBillResponse(response.data || response);
+      finalResponse = response.data || response; // Handle both axios and fetch responses
+      setBillResponse(finalResponse);
       setCartItems([]);
       localStorage.removeItem("billingCart");
     } catch (error) {
@@ -214,6 +215,8 @@ const handleDobChange = (e) => {
       localStorage.removeItem("billingCart");
     } finally {
       setSubmitting(false);
+      
+      sendWhatsappAlert(finalResponse?.orderId || 1);
     }
   };
 

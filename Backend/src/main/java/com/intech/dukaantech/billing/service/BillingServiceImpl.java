@@ -24,6 +24,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class BillingServiceImpl implements BillingService {
 
+
     private final ItemRepository itemRepository;
     private final BillingRepository billingRepository;
     private final BillingMapper billingMapper; // mapper for DTO conversion
@@ -102,5 +103,18 @@ public class BillingServiceImpl implements BillingService {
 
         // Map to response DTO
         return billingMapper.toBillingResponse(savedBill);
+    }
+
+    @Override
+    public BigDecimal getTotalAmounts(String customerId) {
+        Bill bill=billingRepository.findByCustomerId(customerId).orElseThrow(()->new RuntimeException("Customer not found: " + customerId));
+
+     return bill.getTotalAmount();
+    }
+
+    @Override
+    public Bill getBillByOrderId(String orderId) {
+      return billingRepository.findByOrderId(orderId)
+              .orElseThrow(()->new RuntimeException("Bill not found: " + orderId));
     }
 }
