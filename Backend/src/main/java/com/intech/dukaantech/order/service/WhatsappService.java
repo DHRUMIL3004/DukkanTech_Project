@@ -6,6 +6,8 @@ import com.twilio.type.PhoneNumber;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+
 @Service
 public class WhatsappService {
 
@@ -20,14 +22,16 @@ public class WhatsappService {
 
 
 
-   public void sendMessage(String to, String message){
+   public void sendMessage(String to, String name, BigDecimal amount){
        Twilio.init(sid,authToken);
        System.out.println(from);
        Message.creator(
-               new PhoneNumber("whatsapp:" + to),
+               new PhoneNumber("whatsapp:+91" + to),
                new PhoneNumber(from),
-               message
-       ).create();
+               ""
+       ).setContentSid("HXfc0cca0961b309099e19ee381475ebe7")
+               .setContentVariables("{\"1\":\"" + name + "\",\"2\":\"" + amount + "\"}")
+               .create();
     }
 
 }
