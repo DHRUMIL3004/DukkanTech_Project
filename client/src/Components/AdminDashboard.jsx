@@ -5,6 +5,7 @@ import { getItems } from "../Service/ItemService";
 import { getCategories } from "../Service/CategoryService";
 import { getUsers } from "../Service/UserService";
 import "./AdminDashboard.css";
+import { getTotalRevenue } from "../Service/BillingService";
 
 // ─── Helpers ───────────────────────────────────────────────────────────────
 const formatDate = (d) => new Date(d).toLocaleDateString("en-GB");
@@ -69,9 +70,22 @@ function AdminDashboard() {
   }, []);
 
   // ── Derived stats ──────────────────────────────────────────────────────
-  const totalRevenue = orders
-    .filter((o) => o.paid)
-    .reduce((s, o) => s + Number(o.totalAmount || 0), 0);
+  const [totalRevenue, setTotalRevenue] = useState(0);
+  useEffect(() => {
+
+  const fetchRevenue=async()=>{
+    try{
+      const revenue = await getTotalRevenue();
+      setTotalRevenue(revenue || 0);
+
+    }catch(err){
+      console.error("Error fetching total revenue:", err);
+      setTotalRevenue(0);
+  }
+};
+fetchRevenue();
+}
+, [orders]);
 
   const totalCustomers = new Set(orders.map((o) => o.phone)).size;
   const totalOrdersCount = orders.length;

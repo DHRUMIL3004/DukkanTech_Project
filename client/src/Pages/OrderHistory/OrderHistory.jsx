@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { getOrders } from "../../Service/OrderHistory";
 import Receipt from "../../Components/Billing/Receipt";
 import "./OrderHistory.css";
+import { getTotalRevenue } from "../../Service/BillingService";
 
 const formatItems = (items) => items.map((i) => i.itemName).join(", ");
 const formatDate  = (date)  => new Date(date).toLocaleDateString("en-GB");
@@ -91,7 +92,23 @@ const OrderHistory = () => {
     return "Date Range";
   };
 
-  const totalRevenue   = orders.reduce((s, o) => s + (o.totalAmount || 0), 0);
+const [totalRevenue, setTotalRevenue] = useState(0);
+useEffect(() => {
+
+  const fetchRevenue=async()=>{
+    try{
+      const revenue = await getTotalRevenue();
+      setTotalRevenue(revenue || 0);
+
+    }catch(err){
+      console.error("Error fetching total revenue:", err);
+      setTotalRevenue(0);
+  }
+};
+fetchRevenue();
+}
+, [orders]);
+  
   const uniqueCustomers = new Set(orders.map(o => o.phone)).size;
 
   /* ─── render ─────────────────────────────────────────── */

@@ -16,6 +16,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -104,5 +105,10 @@ public class OrderServiceImpl implements OrderService{
                 .totalElements(billPage.getTotalElements())
                 .data(responseList)
                 .build();
+    }
+
+    @Override
+    public BigDecimal getTotalRevenue() {
+        return billingRepository.getTotalRevenue();
     }
 }

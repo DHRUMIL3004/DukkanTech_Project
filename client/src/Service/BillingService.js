@@ -30,6 +30,8 @@ export const getBills = async () => {
   return response.data;
 };
 
+//whatsapp notification
+
 export const sendWhatsappAlert = async (id) => {
   const token = localStorage.getItem("token");
 
@@ -39,5 +41,18 @@ export const sendWhatsappAlert = async (id) => {
     }
   });
   console.log("WhatsApp alert response:", response.data);
+  return response.data;
+};
+
+// total revenue
+export const getTotalRevenue = async () => {
+  const token = localStorage.getItem("token");
+
+  const response = await axios.get(`${API_URL}/revenue`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+console.log(response.data);
   return response.data;
 };
