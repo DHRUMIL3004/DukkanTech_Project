@@ -4,6 +4,7 @@ package com.intech.dukaantech.inventory.service;
 import com.intech.dukaantech.inventory.model.Item;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,18 @@ public class EmailServices {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void sendOtpEmail(String to,String subject, String txt) {
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject(subject);
+        message.setText(txt);
+
+
+        mailSender.send(message);
+
     }
       private String buildHtml(List<Item> items){
 

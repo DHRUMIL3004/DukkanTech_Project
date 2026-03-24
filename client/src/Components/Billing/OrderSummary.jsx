@@ -182,6 +182,9 @@ const OrderSummary = ({
               UPI
             </button>
           </div>
+          <p style={{ marginTop: "8px", fontSize: "0.9rem", color: "#64748b" }}>
+            Razorpay checkout opens only for UPI payments.
+          </p>
         </div>
 
         {/* Actions */}

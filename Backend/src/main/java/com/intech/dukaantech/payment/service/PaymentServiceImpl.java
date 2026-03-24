@@ -36,6 +36,9 @@ public class PaymentServiceImpl implements PaymentService {
     @Value("${razorpay.key-secret:}")
     private String razorpayKeySecret;
 
+    @Value("${payment.upi-max-transaction-inr:100000}")
+    private BigDecimal upiMaxTransactionInr;
+
     @Override
     @Transactional
     public CreatePaymentOrderResponse createRazorpayOrder(CreatePaymentOrderRequest request) {
@@ -48,6 +51,14 @@ public class PaymentServiceImpl implements PaymentService {
         String currency = (request.getCurrency() == null || request.getCurrency().isBlank())
                 ? "INR"
                 : request.getCurrency().trim().toUpperCase();
+
+        if (!"INR".equals(currency)) {
+            throw new ApiException("Only INR currency is supported for UPI checkout", HttpStatus.BAD_REQUEST);
+        }
+
+        if (request.getAmount().compareTo(upiMaxTransactionInr) > 0) {
+            throw new ApiException("UPI transaction limit exceeded. Maximum allowed amount is INR " + upiMaxTransactionInr, HttpStatus.BAD_REQUEST);
+        }
 
         String receipt = (request.getReceipt() == null || request.getReceipt().isBlank())
                 ? "rcpt_" + UUID.randomUUID().toString().replace("-", "")

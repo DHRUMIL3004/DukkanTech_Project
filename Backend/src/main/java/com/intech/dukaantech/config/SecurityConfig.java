@@ -62,6 +62,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/otp/**").permitAll()
                         .requestMatchers("/billing/orders", "/billing/revenue").authenticated()
                         .requestMatchers("/billing/**").hasAnyRole("ADMIN","EMPLOYEE")
                         .requestMatchers("/payment/**").hasAnyRole("ADMIN","EMPLOYEE")

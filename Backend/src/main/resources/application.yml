@@ -20,7 +20,7 @@ spring:
           starttls:
             enable: true
           ssl:
-            enable: false   # ✅ important fix
+            enable: false
 
   main:
     banner-mode: off

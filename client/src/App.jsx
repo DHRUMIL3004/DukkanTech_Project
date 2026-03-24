@@ -19,6 +19,7 @@ import LandingNavbar from './Components/NavBar/LandingNavbar';
 import NavBar from './Components/NavBar/NavBar';
 import EmployeeNavbar from './Components/NavBar/EmployeeNavbar';
 import Footer from './Components/Footer/Footer';
+import ForgotPassword from './Pages/ForgotPassword/ForgotPassword';
 
 
 function App() {
@@ -100,8 +101,12 @@ function App() {
           <OrderHistory />
          
         </ProtectedRoute>} />
+
+         <Route path="/forgot-password" element={<ForgotPassword />} />
         
       </Routes> 
+
+     
       <Footer/>
 
 

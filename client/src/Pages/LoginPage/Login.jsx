@@ -2,49 +2,48 @@
 
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
+import { Link } from "react-router-dom";
 
 function Login() {
+  const { t, i18n } = useTranslation("login");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const {t,i18n}=useTranslation("login");
-  const [email,setEmail]=useState("");
-  const[password,setPassword]=useState("");
-
-
-  const handleLogin=async(e)=>{
+  const handleLogin = async (e) => {
     e.preventDefault();
 
-    if(!email || !password){
+    if (!email || !password) {
       alert("Please fill all fields");
       return;
     }
 
-    try{
-      const response=await fetch ("http://localhost:8080/api/auth/login",{
-        method:"POST",
-        headers:{
-          "Content-type":"application/json",
+    try {
+      const response = await fetch("http://localhost:8080/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
         },
-        body:JSON.stringify({email,password}),
+        body: JSON.stringify({ email, password }),
       });
-      
-      if(!response.ok){
-        const err=await response.json();
-       alert(err.message || "Login failed");
-       return;
+
+      if (!response.ok) {
+        const err = await response.json();
+        alert(err.message || "Login failed");
+        return;
       }
 
-      const data=await response.json();
-      console.log("Login Success",data);
+      const data = await response.json();
+      console.log("Login Success", data);
 
-      const decoded=jwtDecode(data.token);
+      const decoded = jwtDecode(data.token);
 
       console.log("Decoded JWT:", decoded);
 
       //store jwt
-      const token=data.token;
-      localStorage.setItem("token",token);
-      localStorage.setItem("role",decoded.role);
+      const token = data.token;
+      localStorage.setItem("token", token);
+      localStorage.setItem("role", decoded.role);
 
       console.log(token);
 
@@ -54,10 +53,8 @@ function Login() {
       } else {
         window.location.href = "/billing";
       }
-
-    }
-    catch(err){
-      console.log("Login error : ",err);
+    } catch (err) {
+      console.log("Login error : ", err);
       alert("Something went wrong");
     }
   };
@@ -72,17 +69,17 @@ function Login() {
                 <div className="card-body p-5">
                   <div className="text-center mb-2">
                     <img src="/Logo.png" alt="logo" className="logo" />
-                     <h4 className="mt-4">{t("welcome")}</h4>
-                    <p className="text pt-3">{t('signIn')}</p>
+                    <h4 className="mt-4">{t("welcome")}</h4>
+                    <p className="text pt-3">{t("signIn")}</p>
                   </div>
 
-                  <form onSubmit={handleLogin} >
+                  <form onSubmit={handleLogin}>
                     <div className="mb-3">
                       <input
                         type="email"
                         className="form-control form-control-lg"
-                        placeholder={t('email')}
-                        onChange={(e)=>setEmail(e.target.value)}
+                        placeholder={t("email")}
+                        onChange={(e) => setEmail(e.target.value)}
                       />
                     </div>
 
@@ -90,8 +87,8 @@ function Login() {
                       <input
                         type="password"
                         className="form-control form-control-lg"
-                        placeholder={t('password')}
-                         onChange={(e) => setPassword(e.target.value)}
+                        placeholder={t("password")}
+                        onChange={(e) => setPassword(e.target.value)}
                       />
                     </div>
                     {/* <div className="mb-3">
@@ -103,7 +100,17 @@ function Login() {
                     </div> */}
 
                     <div className="d-grid mb-3">
-                      <button className="btn login_btn btn-lg">{t('login')}</button>
+                      <button className="btn login_btn btn-lg">
+                        {t("login")}
+                      </button>
+                    </div>
+                    <div className="d-flex justify-content-end mb-3">
+                      <Link
+                        to="/forgot-password"
+                        className="small text-primary"
+                      >
+                        Forgot Password?
+                      </Link>
                     </div>
                   </form>
                 </div>
