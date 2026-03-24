@@ -10,8 +10,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: abcd787465@gmail.com
-    password: "nspl sdbf zijf hwyy"   # ✅ MUST be in quotes (has spaces)
+    username: ${USER_NAME}
+    password: ${PASSWORD}   # ✅ MUST be in quotes (has spaces)
     properties:
       mail:
         debug: true
@@ -32,9 +32,9 @@ spring:
     show-sql: true
 
 twilio:
-  account-sid: ACb45886204f9f70d575362ca0b6edfafa
-  auth-token: 61a15bdf41f4737d5cf1a5f7eefa1452
-  phone-number: 7874658874
+  account-sid: ${TWILIO_ACCOUNT_SID}
+  auth-token: ${TWILIO_AUTH_TOKEN}
+  phone-number: ${TWILIO_PHONE_NUMBER}
 
 server:
   servlet:
