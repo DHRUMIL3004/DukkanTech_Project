@@ -4,18 +4,15 @@ import com.intech.dukaantech.common.dto.PageResponse;
 import com.intech.dukaantech.inventory.dto.ItemRequest;
 import com.intech.dukaantech.inventory.dto.ItemResponse;
 import com.intech.dukaantech.inventory.service.ItemService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
-import java.util.List;
-
-import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @RequestMapping("/items")
@@ -24,20 +21,17 @@ public class ItemController {
 
     private final ItemService itemService;
 
+    // Create
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ItemResponse> addItem(
-            @RequestPart("data") String data,
-            @RequestPart("image") MultipartFile file) throws IOException {
+            @RequestPart("data") @Valid ItemRequest request,
+            @RequestPart(value = "image", required = true) MultipartFile file) throws IOException {
 
-        ObjectMapper mapper = new ObjectMapper();
-        ItemRequest request = mapper.readValue(data, ItemRequest.class);
-
-        ItemResponse response = itemService.add(request,file);
-
-        return ResponseEntity.status(201).body(response);
+        return ResponseEntity.ok(itemService.add(request, file));
     }
 
+    // Fetch
     @PreAuthorize("hasAnyRole('ADMIN','EMPLOYEE')")
     @GetMapping
     public ResponseEntity<PageResponse<ItemResponse>> getAllItems(
@@ -48,6 +42,7 @@ public class ItemController {
         return ResponseEntity.ok(itemService.fetchItem(page, size));
     }
 
+    // Delete
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{itemId}")
     public ResponseEntity<String> deleteItem(@PathVariable String itemId) {
@@ -56,13 +51,20 @@ public class ItemController {
         return ResponseEntity.ok("Item deleted successfully");
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN','EMPLOYEE')")
+    // Update
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/{itemId}")
-    public ResponseEntity<String> updateQuantity(@PathVariable String itemId,
-                                                 @RequestParam Long quantity){
+    public ResponseEntity<ItemResponse> updateItem(@PathVariable String itemId,
+                                             @RequestPart("data") @Valid ItemRequest request,
+                                             @RequestPart(value = "image", required = false) MultipartFile file){
+        return ResponseEntity.ok(itemService.updateItem(itemId, request, file));
+    }
 
-        itemService.updateQuantity(itemId, quantity);
-
-        return ResponseEntity.ok("Item Quantity Updated");
+    // Update quantity (used by billing flow)
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLOYEE')")
+    @PatchMapping("/{itemId}/quantity")
+    public ResponseEntity<ItemResponse> updateQuantity(@PathVariable String itemId,
+                                                       @RequestParam Long quantity) {
+        return ResponseEntity.ok(itemService.updateQuantity(itemId, quantity));
     }
 }

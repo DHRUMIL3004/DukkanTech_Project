@@ -8,8 +8,6 @@ import com.intech.dukaantech.category.model.Category;
 import com.intech.dukaantech.category.repository.CategoryRepository;
 import com.intech.dukaantech.category.mapper.CategoryMapper;
 import com.intech.dukaantech.common.exception.ApiException;
-import com.intech.dukaantech.common.exception.custom.CategoryAlreadyExistsException;
-import com.intech.dukaantech.common.exception.custom.CategoryNotFoundException;
 import com.intech.dukaantech.common.service.S3Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -113,5 +111,35 @@ public class CategoryServiceImpl implements CategoryService{
         return categories.stream()
                 .map(categoryMapper::mapToResponse)
                 .toList();
+    }
+
+    // Update Category
+    public CategoryResponse updateCategory(String categoryId, CategoryRequest request, MultipartFile file){
+
+        Category updateCategory = categoryRepository.findByCategoryId(categoryId)
+                .orElseThrow(()->new ApiException("Category not found",HttpStatus.NOT_FOUND));
+
+        if (!updateCategory.getName().equals(request.getName()) && categoryRepository.existsByNameContainingIgnoreCase(request.getName())){
+            throw new ApiException("Category Already Exists",HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        if (file != null && !file.isEmpty()){
+
+            // delete old image
+            s3Service.deleteFile(updateCategory.getImgUrl());
+
+            // upload new image
+            String newImageUrl = s3Service.uploadFile(file);
+            updateCategory.setImgUrl(newImageUrl);
+        }
+
+        updateCategory.setName(request.getName());
+        updateCategory.setDescription(request.getDescription());
+        updateCategory.setBgColor(request.getBgColor());
+        updateCategory.setTax(request.getTax());
+
+        updateCategory = categoryRepository.save(updateCategory);
+
+        return categoryMapper.mapToResponse(updateCategory);
     }
 }

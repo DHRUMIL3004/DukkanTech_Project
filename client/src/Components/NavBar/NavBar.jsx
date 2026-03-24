@@ -32,10 +32,10 @@ const NavBar = () => {
 
         <div className="collapse navbar-collapse" id="appNavbarNav">
 
-          <ul className="navbar-nav ms-4">
+          <ul className="navbar-nav ms-5">
 
             {links.map((link) => (
-              <li key={link.to} className="nav-item">
+              <li key={link.to} className="nav-item me-2">
 
                 {link.disabled ? (
                   <span className="nav-link disabled-link">

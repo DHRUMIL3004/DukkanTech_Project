@@ -1,0 +1,23 @@
+.item-row-card {
+  position: relative;
+  z-index: 1;
+  overflow: visible;
+  transform: none !important;
+  transition: none !important;
+}
+
+.item-row-card:hover {
+  transform: none !important;
+}
+
+.item-row-card:focus-within {
+  z-index: 1060;
+}
+
+.item-actions-dropdown {
+  position: relative;
+}
+
+.item-actions-menu {
+  z-index: 1070;
+}

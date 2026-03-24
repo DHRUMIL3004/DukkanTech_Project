@@ -8,7 +8,6 @@ import {
   sendWhatsappAlert,
   verifyRazorpayPayment
 } from "../../Service/BillingService";
-import { updateItemQuantity } from "../../Service/ItemService";
 import { FaArrowLeft } from "react-icons/fa";
 import { toast } from "react-toastify";
 import {
@@ -47,6 +46,7 @@ const CartPage = () => {
   const [submitting, setSubmitting] = useState(false);
   const [processingPayment, setProcessingPayment] = useState(false);
   const [billResponse, setBillResponse] = useState(null);
+  const [savedOrderResponse, setSavedOrderResponse] = useState(null);
 
   // ============ VALIDATION FUNCTIONS ============
 
@@ -149,19 +149,18 @@ const handleDobChange = (e) => {
     return `rcpt_${phoneSeed}_${stamp}`;
   };
 
-  const updateStockAfterPayment = async () => {
-    try {
-      await Promise.all(
-        cartItems.map(async (item) => {
-          const newQuantity = item.availableQuantity - item.quantity;
-          if (newQuantity < 0) throw new Error(`Not enough stock for ${item.itemName}`);
-          await updateItemQuantity(item.itemId, newQuantity);
-        })
-      );
-    } catch (error) {
-      throw new Error(error.message || "Stock update failed");
-    }
-  };
+  const buildBillingRequest = () => ({
+    customerName: customerName.trim(),
+    phone: phone.trim(),
+    city: city.trim(),
+    dob: dob.trim(),
+    paymentMethod,
+    items: cartItems.map((item) => ({
+      itemId: item.itemId,
+      quantity: item.quantity,
+      tax: item.tax
+    }))
+  });
 
   const openRazorpayCheckout = async (orderPayload) => {
     if (!window.Razorpay) {
@@ -279,17 +278,23 @@ const handleDobChange = (e) => {
             throw new Error("Payment verification failed");
           }
         }
-      } else {
-        toast.info("Cash payment selected.");
       }
 
-      await updateStockAfterPayment();
+      const orderResponse = await createBill(buildBillingRequest());
+      const savedOrder = orderResponse?.data || orderResponse;
+      setSavedOrderResponse(savedOrder);
+
       setSubmitting(true);
       setShowPaymentPopup(true);
-      toast.success("Payment successful. Generate invoice now.");
+
+      if (savedOrder?.orderId) {
+        sendWhatsappAlert(savedOrder.orderId);
+      }
+
+      toast.success("Payment successful. Order saved.");
     } catch (error) {
       console.error(error);
-      toast.error(error.message || "Payment failed");
+      toast.error(error.message || "Payment failed. Order was not saved.");
       setSubmitting(false);
     } finally {
       setProcessingPayment(false);
@@ -302,51 +307,21 @@ const handleDobChange = (e) => {
 
   // Create bill via API and show receipt
   const handleGenerateInvoice = async () => {
-    if (cartItems.length === 0) {
-      toast.error("Please add items to the cart");
+    if (!savedOrderResponse) {
+      toast.error("Please complete payment first");
       return;
     }
 
-    if (!customerName.trim()) {
-      toast.error("Please enter customer name");
-      return;
-    }
-
-    const billingRequest = {
-      customerName: customerName.trim(),
-      phone: phone.trim(),
-      city: city.trim(),
-      dob: dob.trim(),
-      paymentMethod: paymentMethod,
-      items: cartItems.map(item => ({
-        itemId: item.itemId,
-        quantity: item.quantity,
-        tax: item.tax
-      }))
-    };
-let finalResponse = null;
-    try {
-      const response = await createBill(billingRequest);
-      finalResponse = response.data || response; // Handle both axios and fetch responses
-      setBillResponse(finalResponse);
-      setCartItems([]);
-      localStorage.removeItem("billingCart");
-    } catch (error) {
-      console.error("Error creating bill:", error);
-      toast.error("Invoice generation failed");
-      return;
-    } finally {
-      setSubmitting(false);
-      
-      if (finalResponse?.orderId) {
-        sendWhatsappAlert(finalResponse.orderId);
-      }
-    }
+    setBillResponse(savedOrderResponse);
+    setCartItems([]);
+    localStorage.removeItem("billingCart");
+    setSubmitting(false);
   };
 
   // Reset form and start new order
   const handleNewOrder = () => {
     setBillResponse(null);
+    setSavedOrderResponse(null);
     setCustomerName("");
     setPhone("");
     

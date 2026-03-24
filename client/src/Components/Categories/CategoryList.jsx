@@ -1,10 +1,10 @@
 
 import { useEffect, useState } from "react";
 import { getCategories, deleteCategory } from "../../Service/CategoryService";
-import { FaTrash } from "react-icons/fa";
+import { FaEllipsisV } from "react-icons/fa";
 import CardPanel from "../Common/CardPanel";
 
-const CategoryList = ({ refreshFlag }) => {
+const CategoryList = ({ refreshFlag, onEditCategoryClick }) => {
   const [allCategories, setAllCategories] = useState([]);
   const [categories, setCategories] = useState([]);
   const [search, setSearch] = useState("");
@@ -96,13 +96,36 @@ const CategoryList = ({ refreshFlag }) => {
               </div>
             </div>
 
-            <FaTrash
-              color="#dc3545"
-              size={18}
-              style={{ cursor: "pointer" }}
-              title="Delete category"
-              onClick={() => handleDelete(cat.categoryId)}
-            />
+            <div className="dropdown">
+              <button
+                className="btn btn-light btn-sm rounded-circle"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <FaEllipsisV size={14} />
+              </button>
+              <ul className="dropdown-menu dropdown-menu-end">
+                <li>
+                  <button
+                    className="dropdown-item"
+                    type="button"
+                    onClick={() => onEditCategoryClick?.(cat)}
+                  >
+                    Edit
+                  </button>
+                </li>
+                <li>
+                  <button
+                    className="dropdown-item text-danger"
+                    type="button"
+                    onClick={() => handleDelete(cat.categoryId)}
+                  >
+                    Delete
+                  </button>
+                </li>
+              </ul>
+            </div>
           </div>
         ))}
     </CardPanel>

@@ -7,13 +7,16 @@ import com.intech.dukaantech.billing.mapper.BillingMapper;
 import com.intech.dukaantech.billing.model.Bill;
 import com.intech.dukaantech.billing.model.OrderItem;
 import com.intech.dukaantech.billing.repository.BillingRepository;
+import com.intech.dukaantech.common.exception.ApiException;
 import com.intech.dukaantech.customer.model.Customer;
 import com.intech.dukaantech.customer.repository.CustomerRepository;
 import com.intech.dukaantech.inventory.model.Item;
 import com.intech.dukaantech.inventory.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -30,6 +33,8 @@ public class BillingServiceImpl implements BillingService {
     private final BillingMapper billingMapper; // mapper for DTO conversion
     @Autowired
     private CustomerRepository customerRepository;
+
+    @Transactional
     @Override
     public BillingResponse createOrder(BillingRequest request) {
 
@@ -65,6 +70,20 @@ public class BillingServiceImpl implements BillingService {
 
             Item item = itemRepository.findByItemID(itemRequest.getItemId())
                     .orElseThrow(() -> new RuntimeException("Item not found: " + itemRequest.getItemId()));
+
+            long currentStock = item.getQuantity() == null ? 0L : item.getQuantity();
+            long requestedQty = itemRequest.getQuantity();
+
+            if (requestedQty <= 0) {
+                throw new ApiException("Quantity must be greater than zero", HttpStatus.BAD_REQUEST);
+            }
+
+            if (currentStock < requestedQty) {
+                throw new ApiException("Not enough stock for item: " + item.getName(), HttpStatus.BAD_REQUEST);
+            }
+
+            item.setQuantity(currentStock - requestedQty);
+            itemRepository.save(item);
 
             BigDecimal price = item.getPrice();
             BigDecimal quantity = BigDecimal.valueOf(itemRequest.getQuantity());

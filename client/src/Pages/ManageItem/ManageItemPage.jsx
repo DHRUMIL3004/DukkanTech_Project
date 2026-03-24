@@ -7,17 +7,37 @@ import { FaBoxOpen } from "react-icons/fa";
 const ManageItemPage = () => {
 
   const [refreshFlag, setRefreshFlag] = useState(false);
+  const [editingItem, setEditingItem] = useState(null);
 
   const refreshItems = () => {
     setRefreshFlag((prev) => !prev);
+  };
+
+  const handleEditItemClick = (item) => {
+    setEditingItem(item);
+  };
+
+  const handleEditComplete = () => {
+    setEditingItem(null);
   };
 
   return (
     <ManagementLayout
       title="Manage Items"
       Icon={FaBoxOpen}
-      left={<ItemForm refreshItems={refreshItems} />}
-      right={<ItemList refreshFlag={refreshFlag} />}
+      left={
+        <ItemForm
+          refreshItems={refreshItems}
+          editingItem={editingItem}
+          onEditComplete={handleEditComplete}
+        />
+      }
+      right={
+        <ItemList
+          refreshFlag={refreshFlag}
+          onEditItemClick={handleEditItemClick}
+        />
+      }
     />
   );
 };

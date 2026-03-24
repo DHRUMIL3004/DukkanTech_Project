@@ -5,7 +5,7 @@ import { FaEllipsisV } from "react-icons/fa";
 import CardPanel from "../Common/CardPanel";
 import FilterSortControls from "../Common/FilterSortControls";
 
-const UserList = ({ refreshFlag, onAddUserClick }) => {
+const UserList = ({ refreshFlag, onAddUserClick, onEditUserClick }) => {
   // Raw list returned from the API (not filtered/sorted)
   const [allUsers, setAllUsers] = useState([]);
 
@@ -162,6 +162,15 @@ const UserList = ({ refreshFlag, onAddUserClick }) => {
                   <FaEllipsisV size={14} />
                 </button>
                 <ul className="dropdown-menu dropdown-menu-end">
+                  <li>
+                    <button
+                      className="dropdown-item"
+                      type="button"
+                      onClick={() => onEditUserClick(user)}
+                    >
+                      Edit
+                    </button>
+                  </li>
                   <li>
                     <button
                       className="dropdown-item text-danger"

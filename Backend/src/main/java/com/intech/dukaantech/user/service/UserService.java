@@ -14,4 +14,6 @@ public interface UserService {
     List<UserResponse> readUsers();
 
     void deleteUser(String id);
+
+    UserResponse updateUser(String id, UserRequest request);
 }

@@ -18,4 +18,7 @@ public interface CategoryService {
     void deleteCategory(String categoryId);
 
     List<CategoryResponse> searchCategoryByName(String name);
+
+    CategoryResponse updateCategory(String categoryId, CategoryRequest request, MultipartFile file);
+
 }

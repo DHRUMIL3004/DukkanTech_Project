@@ -16,8 +16,11 @@ public interface ItemService {
 
    void deleteItem(String itemId);
 
-    void updateQuantity(String itemId, Long quantity);
+   ItemResponse updateQuantity(String itemId, Long quantity);
 
-    List<Item>getLowStockItems();
+   List<Item>getLowStockItems();
+
+   ItemResponse updateItem(String itemId, ItemRequest request, MultipartFile file);
+
 
 }

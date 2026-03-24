@@ -7,9 +7,25 @@ import { FaUsers } from "react-icons/fa";
 const ManageUser = () => {
   const [refreshFlag, setRefreshFlag] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [editingUser, setEditingUser] = useState(null);
 
   const refreshUsers = () => {
     setRefreshFlag((prev) => !prev);
+  };
+
+  const handleAddUserClick = () => {
+    setEditingUser(null);
+    setShowForm(true);
+  };
+
+  const handleEditUserClick = (user) => {
+    setEditingUser(user);
+    setShowForm(true);
+  };
+
+  const handleEditComplete = () => {
+    setEditingUser(null);
+    setShowForm(false);
   };
 
   return (
@@ -21,10 +37,11 @@ const ManageUser = () => {
         <>
           <UserList
             refreshFlag={refreshFlag}
-            onAddUserClick={() => setShowForm(true)}
+            onAddUserClick={handleAddUserClick}
+            onEditUserClick={handleEditUserClick}
           />
 
-          {/* Modal for creating a new user */}
+          {/* Modal for creating/editing a user */}
           {showForm && (
             <div
               className="modal fade show"
@@ -33,19 +50,25 @@ const ManageUser = () => {
               <div className="modal-dialog modal-dialog-centered">
                 <div className="modal-content">
                   <div className="modal-header">
-                    <h5 className="modal-title">Add User</h5>
+                    <h5 className="modal-title">
+                      {editingUser ? "Edit User" : "Add User"}
+                    </h5>
                     <button
                       type="button"
                       className="btn-close"
-                      onClick={() => setShowForm(false)}
+                      onClick={() => {
+                        setShowForm(false);
+                        setEditingUser(null);
+                      }}
                     />
                   </div>
                   <div className="modal-body">
                     <UserForm
                       refreshUsers={() => {
                         refreshUsers();
-                        setShowForm(false);
                       }}
+                      editingUser={editingUser}
+                      onEditComplete={handleEditComplete}
                     />
                   </div>
                 </div>
