@@ -9,6 +9,11 @@ export const getOrders = async (
   sortBy = "createdAt",
   sortDir = "desc"
 ) => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    throw new Error("Missing auth token. Please login again.");
+  }
+
   let url = `${API_URL}/orders?page=${page}&size=${size}`;
 
   if (search) url += `&search=${search}`;
@@ -19,11 +24,22 @@ export const getOrders = async (
 
   const response = await fetch(url, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
+      Authorization: `Bearer ${token}`,
     },
   });
 
-  if (!response.ok) throw new Error("Failed");
+  if (!response.ok) {
+    let details = "Request failed";
+    try {
+      details = await response.text();
+    } catch {
+      // keep default
+    }
+    if (response.status === 401 || response.status === 403) {
+      throw new Error("Session expired or access denied. Please login again.");
+    }
+    throw new Error(`Failed (${response.status}): ${details}`);
+  }
 
   return await response.json();
 };

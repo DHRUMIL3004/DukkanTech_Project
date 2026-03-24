@@ -26,8 +26,6 @@ public class OrderController {
     private final OrderService orderService;
 
 
-
-    @PreAuthorize("hasAnyRole('ADMIN','EMPLOYEE')")
     @GetMapping("/orders")
     public ResponseEntity<PageResponse<BillingResponse>> fetchOrders(
             @RequestParam(defaultValue = "0") int page,

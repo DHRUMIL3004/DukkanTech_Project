@@ -22,10 +22,9 @@ public class BillingMapper {
         if (bill.getCustomer() != null) {
             response.setCustomerName(bill.getCustomer().getCustomerName());
             response.setPhone(bill.getCustomer().getPhone());
+            response.setCity(bill.getCustomer().getCity());
+            response.setDob(bill.getCustomer().getDob());
         }
-
-        response.setCity(bill.getCustomer().getCity());
-        response.setDob(bill.getCustomer().getDob());
         response.setPaymentMethod(bill.getPaymentMethod());
         response.setSubTotal(bill.getSubTotal());
         response.setTotalTax(bill.getTotalTax());
@@ -35,8 +34,10 @@ public class BillingMapper {
 
 
         List<OrderItemResponse> itemResponses = new ArrayList<>();
-        for (OrderItem item : bill.getItems()) {
-            itemResponses.add(toOrderItemResponse(item));
+        if (bill.getItems() != null) {
+            for (OrderItem item : bill.getItems()) {
+                itemResponses.add(toOrderItemResponse(item));
+            }
         }
         response.setItems(itemResponses);
 

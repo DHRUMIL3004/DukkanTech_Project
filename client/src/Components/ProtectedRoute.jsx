@@ -1,4 +1,5 @@
 import { Navigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
 
@@ -8,9 +9,22 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
     return <Navigate to="/login" />;
   }
 
-  // Decode JWT
-  const payload = JSON.parse(atob(token.split(".")[1]));
-  const userRole = payload.role;
+  let payload;
+  try {
+    payload = jwtDecode(token);
+  } catch {
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    return <Navigate to="/login" />;
+  }
+
+  if (payload?.exp && payload.exp * 1000 < Date.now()) {
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    return <Navigate to="/login" />;
+  }
+
+  const userRole = payload?.role;
 
   // Check role
   if (!allowedRoles.includes(userRole)) {

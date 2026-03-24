@@ -22,7 +22,8 @@ const OrderSummary = ({
   onCompletePayment,
   onGenerateInvoice,
   isFormValid,
-  submitting
+  submitting,
+  processingPayment
 }) => {
   const [customerFound, setCustomerFound] = useState(false);
   const [loadingCustomer, setLoadingCustomer] = useState(false);
@@ -188,9 +189,9 @@ const OrderSummary = ({
           <button
             className="btn-success"
             onClick={onCompletePayment}
-            disabled={submitting || !isFormValid}
+            disabled={submitting || processingPayment || !isFormValid}
           >
-            Complete Payment
+            {processingPayment ? "Processing..." : "Complete Payment"}
           </button>
 
           <button

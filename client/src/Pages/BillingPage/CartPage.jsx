@@ -1,9 +1,14 @@
 
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { createBill, sendWhatsappAlert } from "../../Service/BillingService";
+import {
+  cancelRazorpayPayment,
+  createBill,
+  createRazorpayOrder,
+  sendWhatsappAlert,
+  verifyRazorpayPayment
+} from "../../Service/BillingService";
 import { updateItemQuantity } from "../../Service/ItemService";
-import NavBar from "../../Components/NavBar/NavBar";
 import { FaArrowLeft } from "react-icons/fa";
 import { toast } from "react-toastify";
 import {
@@ -38,6 +43,7 @@ const CartPage = () => {
   // UI state
   const [showPaymentPopup, setShowPaymentPopup] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [processingPayment, setProcessingPayment] = useState(false);
   const [billResponse, setBillResponse] = useState(null);
 
   // ============ VALIDATION FUNCTIONS ============
@@ -135,10 +141,14 @@ const handleDobChange = (e) => {
 
   // ============ PAYMENT & INVOICE HANDLERS ============
 
-  // Process payment and update stock in backend
-  const handleCompleted = async () => {
+  const getReceipt = () => {
+    const stamp = Date.now();
+    const phoneSeed = phone || "guest";
+    return `rcpt_${phoneSeed}_${stamp}`;
+  };
+
+  const updateStockAfterPayment = async () => {
     try {
-      setSubmitting(true);
       await Promise.all(
         cartItems.map(async (item) => {
           const newQuantity = item.availableQuantity - item.quantity;
@@ -146,11 +156,136 @@ const handleDobChange = (e) => {
           await updateItemQuantity(item.itemId, newQuantity);
         })
       );
+    } catch (error) {
+      throw new Error(error.message || "Stock update failed");
+    }
+  };
+
+  const openRazorpayCheckout = async (orderPayload) => {
+    if (!window.Razorpay) {
+      throw new Error("Razorpay SDK not loaded. Please refresh the page.");
+    }
+
+    return new Promise((resolve, reject) => {
+      const options = {
+        key: orderPayload.keyId,
+        amount: orderPayload.amountInPaise,
+        currency: orderPayload.currency,
+        name: "DukaanTech",
+        description: "UPI Payment",
+        order_id: orderPayload.razorpayOrderId,
+        prefill: {
+          name: customerName,
+          contact: phone
+        },
+        method: {
+          upi: true,
+          card: false,
+          netbanking: false,
+          wallet: false,
+          emi: false,
+          paylater: false
+        },
+        theme: {
+          color: "#0b7a5a"
+        },
+        handler: async (response) => {
+          try {
+            const verifyResponse = await verifyRazorpayPayment({
+              receipt: orderPayload.receipt,
+              razorpayOrderId: response.razorpay_order_id,
+              razorpayPaymentId: response.razorpay_payment_id,
+              razorpaySignature: response.razorpay_signature
+            });
+            resolve(verifyResponse);
+          } catch (error) {
+            reject(error);
+          }
+        },
+        modal: {
+          ondismiss: async () => {
+            try {
+              await cancelRazorpayPayment({
+                receipt: orderPayload.receipt,
+                razorpayOrderId: orderPayload.razorpayOrderId,
+                reason: "Checkout closed by user"
+              });
+            } catch (cancelError) {
+              console.error("Cancel payment error:", cancelError);
+            }
+            reject(new Error("Payment cancelled by user"));
+          }
+        }
+      };
+
+      const razorpay = new window.Razorpay(options);
+      razorpay.on("payment.failed", async () => {
+        try {
+          await cancelRazorpayPayment({
+            receipt: orderPayload.receipt,
+            razorpayOrderId: orderPayload.razorpayOrderId,
+            reason: "Payment failed at gateway"
+          });
+        } catch (cancelError) {
+          console.error("Cancel on failure error:", cancelError);
+        }
+        reject(new Error("UPI payment failed"));
+      });
+      razorpay.open();
+    });
+  };
+
+  // Process payment and update stock in backend
+  const handleCompleted = async () => {
+    if (cartItems.length === 0) {
+      toast.error("Please add items to the cart");
+      return;
+    }
+
+    if (!isFormValid()) {
+      toast.error("Please fill valid customer details before payment");
+      return;
+    }
+
+    if (submitting) {
+      toast.info("Payment already completed. You can generate invoice now.");
+      return;
+    }
+
+    try {
+      setProcessingPayment(true);
+
+      if (paymentMethod === "UPI") {
+        const receipt = getReceipt();
+        const orderPayload = await createRazorpayOrder({
+          amount: totalAmount,
+          currency: "INR",
+          receipt,
+          customerName: customerName.trim(),
+          phone: phone.trim()
+        });
+
+        if (orderPayload.status === "PAID") {
+          toast.info("Payment already completed for this receipt. Continuing.");
+        } else {
+          const verifyResult = await openRazorpayCheckout(orderPayload);
+          if (!verifyResult?.verified) {
+            throw new Error("Payment verification failed");
+          }
+        }
+
+      }
+
+      await updateStockAfterPayment();
+      setSubmitting(true);
       setShowPaymentPopup(true);
+      toast.success("Payment successful. Generate invoice now.");
     } catch (error) {
       console.error(error);
-      toast.error(error.message || "Stock update failed");
+      toast.error(error.message || "Payment failed");
       setSubmitting(false);
+    } finally {
+      setProcessingPayment(false);
     }
   };
 
@@ -191,32 +326,14 @@ let finalResponse = null;
       localStorage.removeItem("billingCart");
     } catch (error) {
       console.error("Error creating bill:", error);
-      // Mock response for demo when API fails
-      const mockResponse = {
-        orderId: Math.floor(Math.random() * 10000) + 1000,
-        customerName: customerName.trim(),
-        phone: phone.trim(),
-        paymentMethod: paymentMethod,
-        items: cartItems.map(item => ({
-          itemName: item.itemName,
-          quantity: item.quantity,
-          tax: item.tax,
-          price: item.price,
-          total: item.price * item.quantity
-        })),
-        subTotal,
-        totalTax,
-        totalAmount,
-        paid: true,
-        createdAt: new Date().toISOString()
-      };
-      setBillResponse(mockResponse);
-      setCartItems([]);
-      localStorage.removeItem("billingCart");
+      toast.error("Invoice generation failed");
+      return;
     } finally {
       setSubmitting(false);
       
-      sendWhatsappAlert(finalResponse?.orderId || 1);
+      if (finalResponse?.orderId) {
+        sendWhatsappAlert(finalResponse.orderId);
+      }
     }
   };
 
@@ -331,6 +448,7 @@ let finalResponse = null;
                 onGenerateInvoice={handleGenerateInvoice}
                 isFormValid={isFormValid()}
                 submitting={submitting}
+                processingPayment={processingPayment}
               />
             )}
           </div>
