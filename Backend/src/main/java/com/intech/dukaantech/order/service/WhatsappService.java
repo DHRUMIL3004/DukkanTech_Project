@@ -26,7 +26,7 @@ public class WhatsappService {
        Twilio.init(sid,authToken);
        System.out.println(from);
        Message.creator(
-               new PhoneNumber("whatsapp:+91" + to),
+               new PhoneNumber("whatsapp:" + to),
                new PhoneNumber(from),
                ""
        ).setContentSid("HXfc0cca0961b309099e19ee381475ebe7")

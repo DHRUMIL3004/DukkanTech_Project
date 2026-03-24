@@ -20,6 +20,8 @@ import {
 } from "../../Components/Billing";
 import "./CartPage.css";
 
+const UPI_MAX_TRANSACTION_INR = 100000;
+
 const CartPage = () => {
   
   const navigate = useNavigate();
@@ -256,6 +258,10 @@ const handleDobChange = (e) => {
       setProcessingPayment(true);
 
       if (paymentMethod === "UPI") {
+        if (totalAmount > UPI_MAX_TRANSACTION_INR) {
+          throw new Error(`UPI payment limit exceeded for a single transaction. Please keep total at or below INR ${UPI_MAX_TRANSACTION_INR}.`);
+        }
+
         const receipt = getReceipt();
         const orderPayload = await createRazorpayOrder({
           amount: totalAmount,
@@ -273,7 +279,8 @@ const handleDobChange = (e) => {
             throw new Error("Payment verification failed");
           }
         }
-
+      } else {
+        toast.info("Cash payment selected.");
       }
 
       await updateStockAfterPayment();
