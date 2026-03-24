@@ -36,7 +36,7 @@ public class WhatsappController {
 
        String name= customer.getCustomerName();
 
-//        whatsappService.sendMessage("91"+phone,"Payement Alert :   " +"Hello  "+ name + " Your Payment of  " + bill.getTotalAmount()+" is success , Thanks form DukkanTech ");
+   whatsappService.sendMessage("91"+phone,"Payement Alert :   " +"Hello  "+ name + " Your Payment of  " + bill.getTotalAmount()+" is success , Thanks form DukkanTech ");
 
         return  "msg sent on "+phone;
     }
