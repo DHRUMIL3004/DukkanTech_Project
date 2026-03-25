@@ -2,8 +2,6 @@ import React from 'react'
 import LandingPage from './Pages/LandingPage'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import Login from './Pages/LoginPage/Login'
-import AdminDashboard from './Components/AdminDashboard';
-import EmployeeDashboard from './Components/EmployeeDashboard';
 import ManageCategory from './Pages/ManageCategory/ManageCategory';
 import ManageUser from './Pages/ManageUser/ManageUser';
 import ManageItemPage from './Pages/ManageItem/ManageItemPage';
@@ -13,13 +11,12 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import OrderHistory from './Pages/OrderHistory/OrderHistory';
 import ProtectedRoute from './Components/ProtectedRoute';
-
 import { useLocation } from "react-router-dom";
 import LandingNavbar from './Components/NavBar/LandingNavbar';
 import NavBar from './Components/NavBar/NavBar';
 import EmployeeNavbar from './Components/NavBar/EmployeeNavbar';
-import Footer from './Components/Footer/Footer';
 import ForgotPassword from './Pages/ForgotPassword/ForgotPassword';
+import AdminDashboard from './Pages/AdminDashboard/AdminDashboard';
 
 
 function App() {
@@ -35,8 +32,10 @@ function App() {
   const path = location.pathname;
 
   // Public pages
-  if (path === "/" || path === "/login") {
+  if (path === "/" || path === "/login" || path === "/forgot-password") {
     return <LandingNavbar />;
+    
+    
   }
 
   // Admin routes
@@ -64,14 +63,8 @@ function App() {
           path="/dashboard"
           element={
             token ? <ProtectedRoute allowedRoles={["ADMIN"]}>
-          <AdminDashboard />
+          <AdminDashboard/>
         </ProtectedRoute>  : <Navigate to="/" replace />
-          }
-        />
-        <Route
-          path="/employee-dashboard"
-          element={
-            token ? <EmployeeDashboard /> : <Navigate to="/" replace />
           }
         />
         
@@ -107,7 +100,7 @@ function App() {
       </Routes> 
 
      
-      <Footer/>
+      
 
 
       <ToastContainer position="top-right" autoClose={2000} hideProgressBar />

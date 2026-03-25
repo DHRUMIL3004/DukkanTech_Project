@@ -3,6 +3,7 @@ import { getOrders } from "../../Service/OrderHistory";
 import Receipt from "../../Components/Billing/Receipt";
 import "./OrderHistory.css";
 import { getTotalRevenue } from "../../Service/BillingService";
+import Footer from "../../Components/Footer/Footer";
 
 const formatItems = (items) => items.map((i) => i.itemName).join(", ");
 const formatDate  = (date)  => new Date(date).toLocaleDateString("en-GB");
@@ -419,6 +420,8 @@ fetchRevenue();
           </div>
         </div>
       )}
+
+      <Footer/>
     </div>
   );
 };

@@ -15,6 +15,7 @@ import {
   Pagination
 } from "../../Components/Billing";
 import "./BillingPage.css";
+import Footer from "../../Components/Footer/Footer";
 
 const BillingPage = () => {
   const navigate = useNavigate();
@@ -279,6 +280,8 @@ const BillingPage = () => {
           />
         </div>
       </div>
+
+      <Footer/>
     </>
   );
 };

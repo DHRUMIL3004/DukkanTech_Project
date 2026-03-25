@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
-import NavBar from "./NavBar/NavBar";
-import { getOrders } from "../Service/OrderHistory";
-import { getItems } from "../Service/ItemService";
-import { getCategories } from "../Service/CategoryService";
-import { getUsers } from "../Service/UserService";
-import "./AdminDashboard.css";
-import { getTotalRevenue } from "../Service/BillingService";
+import { getOrders } from "../../Service/OrderHistory";
+import { getItems } from "../../Service/ItemService";
+import { getCategories } from "../../Service/CategoryService";
+import { getUsers } from "../../Service/UserService";
+import "./Dashboard.css";
+import { getTotalRevenue } from "../../Service/BillingService";
 
 // ─── Helpers ───────────────────────────────────────────────────────────────
 const formatDate = (d) => new Date(d).toLocaleDateString("en-GB");
@@ -36,7 +35,7 @@ function StatCard({ icon, label, value, accent }) {
 }
 
 // ─── Main Component ────────────────────────────────────────────────────────
-function AdminDashboard() {
+function Dashboard() {
   const [orders, setOrders] = useState([]);
   const [items, setItems] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -443,4 +442,4 @@ fetchRevenue();
   );
 }
 
-export default AdminDashboard;
+export default Dashboard;

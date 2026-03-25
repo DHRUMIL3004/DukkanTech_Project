@@ -19,6 +19,7 @@ import {
   EmptyCart
 } from "../../Components/Billing";
 import "./CartPage.css";
+import Footer from "../../Components/Footer/Footer";
 
 const UPI_MAX_TRANSACTION_INR = 100000;
 
@@ -461,6 +462,7 @@ let finalResponse = null;
           </div>
         </div>
       </div>
+      <Footer/>
     </>
   );
 };
