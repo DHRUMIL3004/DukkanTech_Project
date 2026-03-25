@@ -18,11 +18,11 @@ public class UserMapper {
     private final PasswordEncoder passwordEncoder;
 
 
-    public UserEntity mapToEntity(UserRequest request){
+    public UserEntity toEntity(UserRequest request){
         return modelMapper.map(request, UserEntity.class);
     }
 
-    public UserResponse mapToResponse(UserEntity entity){
+    public UserResponse toResponse(UserEntity entity){
         return modelMapper.map(entity, UserResponse.class);
     }
 }

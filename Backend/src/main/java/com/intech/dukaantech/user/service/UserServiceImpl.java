@@ -1,3 +1,4 @@
+
 package com.intech.dukaantech.user.service;
 
 import com.intech.dukaantech.common.exception.ApiException;
@@ -27,7 +28,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final ModelMapper modelMapper;
+    private final UserMapper userMapper;
 
     @Override
     public UserResponse createUser(UserRequest request) {
