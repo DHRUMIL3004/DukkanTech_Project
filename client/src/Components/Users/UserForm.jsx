@@ -1,8 +1,8 @@
-import { useState } from "react";
-import { createUser } from "../../Service/UserService";
+import { useState, useEffect } from "react";
+import { createUser, updateUser } from "../../Service/UserService";
 import CardPanel from "../Common/CardPanel";
 
-const UserForm = ({ refreshUsers }) => {
+const UserForm = ({ refreshUsers, editingUser, onEditComplete }) => {
   const [user, setUser] = useState({
     name: "",
     email: "",
@@ -10,10 +10,28 @@ const UserForm = ({ refreshUsers }) => {
     password: "",
   });
 
+  useEffect(() => {
+    if (editingUser) {
+      setUser({
+        name: editingUser.name || "",
+        email: editingUser.email || "",
+        role: editingUser.role || "",
+        password: "",
+      });
+    }
+  }, [editingUser]);
+
   const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    // Prevent immutable fields during edit mode
+    if (editingUser && (name === "email" || name === "role")) {
+      return;
+    }
+
     setUser({
       ...user,
-      [e.target.name]: e.target.value
+      [name]: value
     });
   };
 
@@ -46,7 +64,14 @@ const UserForm = ({ refreshUsers }) => {
     e.preventDefault();
 
     try {
-      await createUser(user);
+      if (editingUser) {
+        // Update existing user
+        await updateUser(editingUser.userId, user);
+      } else {
+        // Create new user
+        await createUser(user);
+      }
+
       refreshUsers();
 
       setUser({
@@ -56,6 +81,10 @@ const UserForm = ({ refreshUsers }) => {
         password: ""
       });
 
+      if (onEditComplete) {
+        onEditComplete();
+      }
+
     } catch (error) {
       const message = getErrorMessage(error);
       alert(message);
@@ -63,7 +92,7 @@ const UserForm = ({ refreshUsers }) => {
   };
 
   return (
-    <CardPanel title="Create User" className="fade-expand">
+    <CardPanel title={editingUser ? "Edit User" : "Create User"} className="fade-expand">
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label className="form-label">Name</label>
@@ -86,8 +115,13 @@ const UserForm = ({ refreshUsers }) => {
             name="email"
             value={user.email}
             onChange={handleChange}
+            disabled={editingUser ? true : false}
+            style={editingUser ? { backgroundColor: "#f5f5f5", cursor: "not-allowed" } : {}}
             required
           />
+          {editingUser && (
+            <small className="text-muted">Email cannot be changed</small>
+          )}
         </div>
 
         <div className="mb-3">
@@ -97,12 +131,17 @@ const UserForm = ({ refreshUsers }) => {
             name="role"
             value={user.role}
             onChange={handleChange}
+            disabled={editingUser ? true : false}
+            style={editingUser ? { backgroundColor: "#f5f5f5", cursor: "not-allowed" } : {}}
             required
           >
             <option value="">Select Role</option>
             <option value="ADMIN">ADMIN</option>
             <option value="EMPLOYEE">EMPLOYEE</option>
           </select>
+          {editingUser && (
+            <small className="text-muted">Role cannot be changed</small>
+          )}
         </div>
 
         <div className="mb-4">
@@ -110,16 +149,16 @@ const UserForm = ({ refreshUsers }) => {
           <input
             type="password"
             className="form-control"
-            placeholder="Password"
+            placeholder={editingUser ? "Leave blank to keep current password" : "Password"}
             name="password"
             value={user.password}
             onChange={handleChange}
-            required
+            required={!editingUser}
           />
         </div>
 
         <button className="btn btn-primary w-100" type="submit">
-          Save
+          {editingUser ? "Update User" : "Create User"}
         </button>
       </form>
     </CardPanel>

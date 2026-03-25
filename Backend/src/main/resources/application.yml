@@ -11,7 +11,7 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: ${USER_NAME}
-    password: ${PASSWORD}   # ✅ MUST be in quotes (has spaces)
+    password: ${PASSWORD}
     properties:
       mail:
         debug: true
@@ -35,6 +35,9 @@ twilio:
   account-sid: ${TWILIO_ACCOUNT_SID}
   auth-token: ${TWILIO_AUTH_TOKEN}
   phone-number: ${TWILIO_PHONE_NUMBER}
+
+payment:
+  upi-max-transaction-inr: 100000
 
 server:
   servlet:

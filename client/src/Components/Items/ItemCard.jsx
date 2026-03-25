@@ -1,6 +1,9 @@
-const ItemCard = ({ item, deleteItem }) => {
+import { FaEllipsisV } from "react-icons/fa";
+import "./ItemCard.css";
+
+const ItemCard = ({ item, deleteItem, onEditItemClick }) => {
   return (
-    <div className="card mb-2 shadow-sm">
+    <div className="card mb-2 shadow-sm item-row-card">
       <div className="card-body d-flex justify-content-between align-items-center">
         <div className="d-flex align-items-center">
           {item.imgUrl && (
@@ -25,12 +28,36 @@ const ItemCard = ({ item, deleteItem }) => {
           </div>
         </div>
 
-        <button
-          className="btn btn-danger btn-sm"
-          onClick={() => deleteItem(item.itemId)}
-        >
-          Delete
-        </button>
+        <div className="dropdown item-actions-dropdown">
+          <button
+            className="btn btn-light btn-sm rounded-circle"
+            type="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <FaEllipsisV size={14} />
+          </button>
+          <ul className="dropdown-menu dropdown-menu-end item-actions-menu">
+            <li>
+              <button
+                className="dropdown-item"
+                type="button"
+                onClick={() => onEditItemClick?.(item)}
+              >
+                Edit
+              </button>
+            </li>
+            <li>
+              <button
+                className="dropdown-item text-danger"
+                type="button"
+                onClick={() => deleteItem(item.itemId)}
+              >
+                Delete
+              </button>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   );

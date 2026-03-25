@@ -112,7 +112,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public void updateQuantity(String itemId, Long quantity) {
+    public ItemResponse updateQuantity(String itemId, Long quantity) {
 
         log.info("Updating quantity for item: {} with quantity: {}", itemId, quantity);
 
@@ -127,14 +127,57 @@ public class ItemServiceImpl implements ItemService {
                 });
 
         item.setQuantity(quantity);
+        item = itemRepository.save(item);
 
-        itemRepository.save(item);
-
-        log.info("Quantity updated successfully for item: {}", itemId);
+        return itemMapper.mapToResponse(item);
     }
 
     @Override
     public List<Item> getLowStockItems() {
         return itemRepository.findByQuantityLessThan(2);
+    }
+
+    @Override
+    public ItemResponse updateItem(String itemId, ItemRequest request, MultipartFile file){
+
+        log.info("Updating item: {}", itemId);
+
+        Item updateItem = itemRepository.findByItemID(itemId)
+                .orElseThrow(()-> new ApiException("Item not found", HttpStatus.NOT_FOUND));
+
+        Category category = categoryRepository
+                .findByCategoryId(request.getCategoryId())
+                .orElseThrow(() -> {
+                    log.warn("Category not found: {}", request.getCategoryId());
+                    return new ApiException("Category not found", HttpStatus.NOT_FOUND);
+                });
+
+        if (request.getQuantity() < 0) {
+            throw new ApiException("Quantity must be non-negative", HttpStatus.BAD_REQUEST);
+        }
+
+        if (!updateItem.getName().equals(request.getName()) && itemRepository.existsByNameContainingIgnoreCase(request.getName())){
+            throw new ApiException("Item Exists Already", HttpStatus.ALREADY_REPORTED);
+        }
+
+        if (file != null && !file.isEmpty()){
+
+            // delete old image
+            s3Service.deleteFile(updateItem.getImgUrl());
+
+            // upload new image
+            String newImageUrl = s3Service.uploadFile(file);
+            updateItem.setImgUrl(newImageUrl);
+        }
+
+        updateItem.setName(request.getName());
+        updateItem.setCategory(category);
+        updateItem.setPrice(request.getPrice());
+        updateItem.setDescription(request.getDescription());
+        updateItem.setQuantity(request.getQuantity());
+
+        updateItem = itemRepository.save(updateItem);
+
+        return itemMapper.mapToResponse(updateItem);
     }
 }

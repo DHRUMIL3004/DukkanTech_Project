@@ -38,6 +38,19 @@ export const createUser = async (user) => {
   return response.data;
 };
 
+export const updateUser = async (id, user) => {
+
+  const token = localStorage.getItem("token");
+
+  const response = await axios.patch(`${API_URL}/${id}`, user, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  return response.data;
+};
+
 export const deleteUser = async (id) => {
 
   const token = localStorage.getItem("token");

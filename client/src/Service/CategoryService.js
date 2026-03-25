@@ -50,10 +50,24 @@ export const searchCategories = async (name) => {
 
 export const createCategory = async (category, file) => {
   const form = new FormData();
-  form.append("data", JSON.stringify(category));
+  form.append("data",  new Blob([JSON.stringify(category)], { type: "application/json" }));
   if (file) form.append("image", file);
 
   const response = await axios.post(API_URL, form, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Authorization: `Bearer ${getToken()}`,
+    },
+  });
+  return response.data;
+};
+
+export const updateCategory = async (id, category, file) => {
+  const form = new FormData();
+  form.append("data", new Blob([JSON.stringify(category)], { type: "application/json" }));
+  if (file) form.append("image", file);
+
+  const response = await axios.patch(`${API_URL}/${id}`, form, {
     headers: {
       "Content-Type": "multipart/form-data",
       Authorization: `Bearer ${getToken()}`,

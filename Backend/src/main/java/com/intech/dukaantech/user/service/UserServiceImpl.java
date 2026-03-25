@@ -3,9 +3,12 @@ package com.intech.dukaantech.user.service;
 import com.intech.dukaantech.common.exception.ApiException;
 import com.intech.dukaantech.user.dto.UserRequest;
 import com.intech.dukaantech.user.dto.UserResponse;
+import com.intech.dukaantech.user.mapper.UserMapper;
 import com.intech.dukaantech.user.model.UserEntity;
 import com.intech.dukaantech.user.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,6 +21,8 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
+@Transactional
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -32,23 +37,14 @@ public class UserServiceImpl implements UserService {
             throw new ApiException("Email already exists", HttpStatus.BAD_REQUEST);
         }
 
-        UserEntity newUser = createNewUserInEntity(request);
+        UserEntity newUser = userMapper.toEntity(request);
+
+        newUser.setUserId(UUID.randomUUID().toString());
+        newUser.setPassword(passwordEncoder.encode(request.getPassword()));
+
         newUser = userRepository.save(newUser);
-        return createUserResponse(newUser);
-    }
 
-    private UserResponse createUserResponse(UserEntity user) {
-        return modelMapper.map(user, UserResponse.class);
-    }
-
-    private UserEntity createNewUserInEntity(UserRequest request) {
-
-        UserEntity user = modelMapper.map(request, UserEntity.class);
-
-        user.setUserId(UUID.randomUUID().toString());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-
-        return user;
+        return userMapper.toResponse(newUser);
     }
 
     @Override
@@ -63,7 +59,7 @@ public class UserServiceImpl implements UserService {
     public List<UserResponse> readUsers() {
         return userRepository.findAll()
                 .stream()
-                .map(this::createUserResponse)
+                .map(userMapper::toResponse)
                 .collect(Collectors.toList());
     }
 
@@ -76,4 +72,27 @@ public class UserServiceImpl implements UserService {
         userRepository.delete(getUser);
     }
 
+    @Override
+    public UserResponse updateUser(String id, UserRequest request){
+
+        log.info("Updating user with ID: {}", id);
+
+        UserEntity updateUser = userRepository.findByUserId(id)
+                .orElseThrow(() ->
+                        new ApiException("User not found", HttpStatus.NOT_FOUND));
+
+        updateUser.setName(request.getName());
+
+        if (request.getPassword() != null && !request.getPassword().isBlank()){
+            updateUser.setPassword(passwordEncoder.encode(request.getPassword()));
+        }
+        updateUser.setPassword(request.getPassword());
+
+        log.info("User updated successfully: {}", id);
+
+        updateUser = userRepository.save(updateUser);
+
+        return userMapper.toResponse(updateUser);
+
+    }
 }

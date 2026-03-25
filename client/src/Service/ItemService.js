@@ -40,13 +40,35 @@ export const createItem = async (item, file) => {
   const token = localStorage.getItem("token");
 
   const form = new FormData();
-  form.append("data", JSON.stringify(item));
+  form.append("data", new Blob([JSON.stringify(item)], { type: "application/json" }));
 
   if (file) {
     form.append("image", file);
   }
 
   const response = await axios.post(API_URL, form, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  return response.data;
+};
+
+
+// UPDATE ITEM
+export const updateItem = async (id, item, file) => {
+
+  const token = localStorage.getItem("token");
+
+  const form = new FormData();
+  form.append("data", new Blob([JSON.stringify(item)], { type: "application/json" }));
+
+  if (file) {
+    form.append("image", file);
+  }
+
+  const response = await axios.patch(`${API_URL}/${id}`, form, {
     headers: {
       Authorization: `Bearer ${token}`
     }
@@ -75,7 +97,7 @@ export const updateItemQuantity = async (id, quantity) => {
   const token = localStorage.getItem("token");
 
   return axios.patch(
-    `${API_URL}/${id}?quantity=${quantity}`, // query param
+    `${API_URL}/${id}/quantity?quantity=${quantity}`, // query param
     {}, // empty body
     {
       headers: {

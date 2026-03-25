@@ -4,7 +4,7 @@ import ItemCard from "./ItemCard";
 import ItemSearch from "./ItemSearch";
 import { deleteItem, getItems } from "../../Service/ItemService";
 
-const ItemList = ({ refreshFlag }) => {
+const ItemList = ({ refreshFlag, onEditItemClick }) => {
   const [items, setItems] = useState([]);
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("ALL");
@@ -102,6 +102,7 @@ const ItemList = ({ refreshFlag }) => {
             key={item.itemId}
             item={item}
             deleteItem={handleDelete}
+            onEditItemClick={onEditItemClick}
           />
         ))}
       </div>

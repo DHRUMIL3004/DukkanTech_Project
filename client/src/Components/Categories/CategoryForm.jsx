@@ -1,8 +1,8 @@
-import { useState } from "react";
-import { createCategory } from "../../Service/CategoryService";
+import { useEffect, useState } from "react";
+import { createCategory, updateCategory } from "../../Service/CategoryService";
 import CardPanel from "../Common/CardPanel";
 
-const CategoryForm = ({ refreshCategories }) => {
+const CategoryForm = ({ refreshCategories, editingCategory, onEditComplete }) => {
   const [category, setCategory] = useState({
     name: "",
     description: "",
@@ -10,6 +10,18 @@ const CategoryForm = ({ refreshCategories }) => {
     tax: "",
   });
   const [file, setFile] = useState(null);
+
+  useEffect(() => {
+    if (editingCategory) {
+      setCategory({
+        name: editingCategory.name || "",
+        description: editingCategory.description || "",
+        bgColor: editingCategory.bgColor || "#ffffff",
+        tax: editingCategory.tax ?? "",
+      });
+      setFile(null);
+    }
+  }, [editingCategory]);
 
   const handleChange = (e) => {
     setCategory({
@@ -26,13 +38,21 @@ const CategoryForm = ({ refreshCategories }) => {
     e.preventDefault();
 
     try {
-      await createCategory(category, file);
+      if (editingCategory) {
+        await updateCategory(editingCategory.categoryId, category, file);
+      } else {
+        await createCategory(category, file);
+      }
       refreshCategories();
 
       setCategory({ name: "", description: "", bgColor: "#ffffff" ,tax:""});
       setFile(null);
       // clear file input manually - later if needed
       document.getElementById("category-image").value = "";
+
+      if (onEditComplete) {
+        onEditComplete();
+      }
     } catch (error) {
       const message =
         error.response?.data?.errors
@@ -43,7 +63,7 @@ const CategoryForm = ({ refreshCategories }) => {
   };
 
   return (
-    <CardPanel title="Create Category" className="fade-expand">
+    <CardPanel title={editingCategory ? "Edit Category" : "Create Category"} className="fade-expand">
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label className="form-label">Name</label>
@@ -99,13 +119,28 @@ const CategoryForm = ({ refreshCategories }) => {
             id="category-image"
             accept="image/*"
             onChange={handleFileChange}
-            required
+            required={!editingCategory}
           />
         </div>
 
         <button className="btn btn-primary w-100" type="submit">
-          Save
+          {editingCategory ? "Update" : "Save"}
         </button>
+
+        {editingCategory && (
+          <button
+            className="btn btn-outline-secondary w-100 mt-2"
+            type="button"
+            onClick={() => {
+              setCategory({ name: "", description: "", bgColor: "#ffffff", tax: "" });
+              setFile(null);
+              document.getElementById("category-image").value = "";
+              onEditComplete?.();
+            }}
+          >
+            Cancel Edit
+          </button>
+        )}
       </form>
     </CardPanel>
   );

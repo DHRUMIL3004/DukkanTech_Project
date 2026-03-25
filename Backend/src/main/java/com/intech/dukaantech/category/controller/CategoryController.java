@@ -19,29 +19,22 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/categories")
+@PreAuthorize("hasRole('ADMIN')")
 @RequiredArgsConstructor
 public class CategoryController {
 
     private final CategoryService categoryService;
 
     // Create Category
-    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<CategoryResponse> createCategory(
-            @RequestPart("data") String data,
+            @RequestPart("data") CategoryRequest request,
             @RequestPart("image") MultipartFile file) throws IOException {
 
-        ObjectMapper mapper = new ObjectMapper();
-        CategoryRequest request = mapper.readValue(data, CategoryRequest.class);
-
-        CategoryResponse response =
-                categoryService.createCategory(request, file);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(categoryService.createCategory(request, file));
     }
 
     // fetch categories
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<PageResponse<CategoryResponse>> readCategories(
             @RequestParam(defaultValue = "0") int page,
@@ -51,7 +44,6 @@ public class CategoryController {
     }
 
     // Delete Category
-    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{categoryId}")
     public ResponseEntity<String> deleteCategory(@PathVariable String categoryId){
 
@@ -61,13 +53,21 @@ public class CategoryController {
     }
 
     // searching
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/search")
     public ResponseEntity<List<CategoryResponse>> searchCategory(
             @RequestParam String name){
 
         return ResponseEntity.ok(
                 categoryService.searchCategoryByName(name));
+    }
+
+    // Update Category
+    @PatchMapping("/{categoryId}")
+    public ResponseEntity<CategoryResponse> updateCategory(@PathVariable String categoryId,
+                                                           @RequestPart("data") @Valid CategoryRequest request,
+                                                           @RequestPart(value = "image", required = false) MultipartFile file){
+
+        return ResponseEntity.ok(categoryService.updateCategory(categoryId, request, file));
     }
 }
 
