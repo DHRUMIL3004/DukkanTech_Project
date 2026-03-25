@@ -1,12 +1,9 @@
 package com.intech.dukaantech.inventory.repository;
 
-<<<<<<< HEAD
-public interface ItemRepository {
-}
-=======
 import com.intech.dukaantech.inventory.model.Item;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {
@@ -15,5 +12,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
     Integer countByCategory_CategoryId(String categoryId);
 
+    List<Item> findByNameContainingIgnoreCase(String name);
+
+    List<Item> findByQuantityLessThan(int quantity);
 }
->>>>>>> Manage_item

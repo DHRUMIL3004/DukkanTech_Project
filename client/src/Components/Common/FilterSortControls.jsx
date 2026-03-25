@@ -6,7 +6,7 @@ import { FaSort } from "react-icons/fa";
 const defaultRoles = [
   { value: "ALL", label: "All roles" },
   { value: "ADMIN", label: "ADMIN" },
-  { value: "CASHIER", label: "CASHIER" },
+  { value: "EMPLOYEE", label: "EMPLOYEE" },
 ];
 
 // A reusable filter + sort control panel.

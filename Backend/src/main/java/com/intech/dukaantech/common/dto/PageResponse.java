@@ -1,3 +1,4 @@
+
 package com.intech.dukaantech.common.dto;
 
 import lombok.*;

@@ -1,12 +1,23 @@
-.Nav-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: rgb(24, 23, 23);
+.landing-navbar {
+  transition: all 0.3s ease;
 }
 
-.nav-container{
-  display: flex;
-  
+.logo{
+  height:40px;
 }
 
+.brand-title{
+  font-weight:700;
+  font-size:1.2rem;
+  color:#333;
+}
 
+.nav-hover{
+  font-weight:500;
+  transition:all 0.2s ease;
+}
+
+.nav-hover:hover{
+  color:#0d6efd;
+  transform:translateY(-1px);
+}

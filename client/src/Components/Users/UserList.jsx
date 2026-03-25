@@ -1,10 +1,11 @@
+
 import { useEffect, useState } from "react";
 import { getUsers, deleteUser } from "../../Service/UserService";
-import { FaTrash } from "react-icons/fa";
+import { FaEllipsisV } from "react-icons/fa";
 import CardPanel from "../Common/CardPanel";
 import FilterSortControls from "../Common/FilterSortControls";
 
-const UserList = ({ refreshFlag }) => {
+const UserList = ({ refreshFlag, onAddUserClick }) => {
   // Raw list returned from the API (not filtered/sorted)
   const [allUsers, setAllUsers] = useState([]);
 
@@ -81,7 +82,22 @@ const UserList = ({ refreshFlag }) => {
   };
 
   return (
-    <CardPanel title="Users" className="fade-expand">
+    <CardPanel title="Manage Users" className="fade-expand">
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <div className="text-muted" style={{ fontSize: "0.9rem" }}>
+            All registered customers in your store
+          </div>
+        </div>
+        <button
+          type="button"
+          className="btn btn-primary d-flex align-items-center"
+          onClick={onAddUserClick}
+        >
+          <span className="me-1">+</span> Add User
+        </button>
+      </div>
+
       <FilterSortControls
         search={search}
         onSearchChange={setSearch}
@@ -89,6 +105,7 @@ const UserList = ({ refreshFlag }) => {
         onRoleChange={setRoleFilter}
         sortOrder={sortOrder}
         onSortChange={setSortOrder}
+        className="mb-2"
       />
 
       {loading && <div className="text-muted">Loading users…</div>}
@@ -99,25 +116,66 @@ const UserList = ({ refreshFlag }) => {
       )}
 
       {!loading &&
-        users.map((user) => (
-          <div
-            key={user.userId}
-            className="d-flex justify-content-between align-items-center border rounded p-3 mb-2"
-          >
-            <div>
-              <strong>{user.name}</strong>
-              <div className="text-muted">{user.email}</div>
-            </div>
+        users.map((user) => {
+          const initials =
+            (user.name || "")
+              .split(" ")
+              .filter(Boolean)
+              .slice(0, 2)
+              .map((n) => n[0]?.toUpperCase())
+              .join("") || "?";
 
-            <FaTrash
-              color="#dc3545"
-              size={18}
-              style={{ cursor: "pointer" }}
-              title="Delete user"
-              onClick={() => handleDelete(user.userId)}
-            />
-          </div>
-        ))}
+          return (
+            <div
+              key={user.userId}
+              className="d-flex justify-content-between align-items-center rounded-3 p-3 mb-2"
+              style={{ background: "#fff", border: "1px solid #e5e7eb" }}
+            >
+              <div className="d-flex align-items-center">
+                <div
+                  className="rounded-circle d-flex align-items-center justify-content-center me-3"
+                  style={{
+                    width: 40,
+                    height: 40,
+                    background: "#0d6efd20",
+                    color: "#0d6efd",
+                    fontWeight: 600,
+                  }}
+                >
+                  {initials}
+                </div>
+                <div>
+                  <div style={{ fontWeight: 600 }}>{user.name}</div>
+                  <div className="text-muted" style={{ fontSize: "0.85rem" }}>
+                    {user.email}
+                  </div>
+                </div>
+              </div>
+
+              <div className="dropdown">
+                <button
+                  className="btn btn-light btn-sm rounded-circle"
+                  type="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <FaEllipsisV size={14} />
+                </button>
+                <ul className="dropdown-menu dropdown-menu-end">
+                  <li>
+                    <button
+                      className="dropdown-item text-danger"
+                      type="button"
+                      onClick={() => handleDelete(user.userId)}
+                    >
+                      Delete
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          );
+        })}
     </CardPanel>
   );
 };

@@ -7,12 +7,12 @@ import java.util.Map;
 
 // we use this class to response errors in the formate like...
 /*{
-*   timestamp: current time,
-*   status: status code
-*   errors: {
-*              message: ""
-*           }
-* }*/
+ *   timestamp: current time,
+ *   status: status code
+ *   errors: {
+ *              message: ""
+ *           }
+ * }*/
 
 @Data
 @AllArgsConstructor

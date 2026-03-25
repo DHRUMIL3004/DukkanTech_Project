@@ -1,103 +1,74 @@
-.app-navbar,
-.landing-navbar {
-  animation: fadeInDown 0.5s ease both;
-  position: sticky;
-  top: 0;
-  z-index: 1030;
+.admin-navbar {
+  transition: all 0.3s ease;
 }
 
-@keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-15px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.logo{
+  height:40px;
 }
 
-.app-navbar .nav-link {
-  font-weight: 600;
-  transition: color 150ms ease, background 150ms ease;
+.brand-title{
+  font-weight:700;
+  font-size:1.2rem;
+  color:#333;
 }
 
-.app-navbar .nav-link {
-  font-weight: 600;
-  transition: color 150ms ease, background 150ms ease;
+.nav-hover{
+  font-weight:500;
+  transition:all 0.2s ease;
+  padding:8px 14px;
 }
 
-.app-navbar .nav-link:hover {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.25);
-  border-radius: 0.5rem;
-  text-decoration: none;
+.nav-hover:hover{
+  color:#0d6efd;
+  background:rgba(13,110,253,0.08);
+  border-radius:6px;
 }
 
-/* stronger hover feedback for disabled items */
-.app-navbar .nav-link.disabled:hover {
-  background: rgba(255, 255, 255, 0.18);
-  text-decoration: none;
+.nav-link.active{
+  color:#0d6efd;
+  background:rgba(13,110,253,0.12);
+  border-radius:6px;
 }
 
-.app-navbar .nav-link.active {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.25);
-  border-radius: 0.5rem;
+.disabled-link{
+  color:#aaa;
+  padding:8px 14px;
 }
 
-.app-navbar .nav-link.disabled {
-  cursor: pointer;
-  pointer-events: auto;
-  color: rgba(255, 255, 255, 0.9);
+.user-pill{
+  background:#f8f9fa;
+  color:#333;
+  padding:6px 16px;
+  border-radius:20px;
+  font-weight:500;
 }
 
-.app-navbar .nav-link.disabled:hover {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.user-pill {
-  font-size: 0.9rem;
-  letter-spacing: 0.02em;
-}
-
-.landing-navbar .nav-link {
-  color: #212529;
-}
-
-.landing-navbar .nav-link:hover {
-  color: #0d6efd;
+/* Management layout + card styling (shared by manage pages) */
+.management-page {
+  background: #f5f7fb;
 }
 
 .card-panel {
-  opacity: 0;
-  animation: fadeInUp 0.4s ease forwards;
+  border-radius: 16px;
+  border: 1px solid #e3e8f4;
+  box-shadow: 0 18px 35px rgba(15, 23, 42, 0.06);
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.card-panel .card-header h5 {
+  font-weight: 600;
 }
 
 .fade-expand {
-  opacity: 0;
-  transform: scale(0.96);
-  animation: fadeExpand 0.35s ease forwards;
+  animation: fadeExpand 0.25s ease-out;
 }
 
 @keyframes fadeExpand {
   from {
     opacity: 0;
-    transform: scale(0.96);
+    transform: translateY(6px) scale(0.98);
   }
   to {
     opacity: 1;
-    transform: scale(1);
+    transform: translateY(0) scale(1);
   }
 }

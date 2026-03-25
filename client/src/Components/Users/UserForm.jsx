@@ -17,6 +17,31 @@ const UserForm = ({ refreshUsers }) => {
     });
   };
 
+  const getErrorMessage = (error) => {
+
+    console.log(error);
+
+    if (!error.response) {
+      return "Server not responding";
+    }
+
+    const data = error.response.data;
+
+    if (data?.errors?.message) {
+      return data.errors.message;
+    }
+
+    if (data?.errors) {
+      return Object.values(data.errors)[0];
+    }
+
+    if (data?.message) {
+      return data.message;
+    }
+
+    return "Something went wrong";
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -32,7 +57,7 @@ const UserForm = ({ refreshUsers }) => {
       });
 
     } catch (error) {
-      const message = Object.values(error.response.data.errors)[0];
+      const message = getErrorMessage(error);
       alert(message);
     }
   };
@@ -76,7 +101,7 @@ const UserForm = ({ refreshUsers }) => {
           >
             <option value="">Select Role</option>
             <option value="ADMIN">ADMIN</option>
-            <option value="CASHIER">CASHIER</option>
+            <option value="EMPLOYEE">EMPLOYEE</option>
           </select>
         </div>
 

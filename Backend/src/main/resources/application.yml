@@ -1,46 +1,40 @@
 spring:
+  config:
+    import: optional:application-secret.yml
+
   datasource:
     url: jdbc:mysql://localhost:3306/billing_app
     username: root
     password: root
-<<<<<<< HEAD
-=======
-  security:
-    user:
-      name: akshay
-      password: akshay
-  main:
-    banner-mode: off
->>>>>>> Manage_item
 
-  security:
-    user:
-      name: akshay
-      password: akshay
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${USER_NAME}
+    password: ${PASSWORD}   # ✅ MUST be in quotes (has spaces)
+    properties:
+      mail:
+        debug: true
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          ssl:
+            enable: false
 
   main:
     banner-mode: off
 
   jpa:
+    open-in-view: false
     hibernate:
       ddl-auto: update
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-server:
-  servlet:
-    context.path: /api
-=======
     show-sql: true
 
-server:
-  servlet:
-    context:
-      path: /api
-
->>>>>>> Manage_item
-=======
-    show-sql: true
+twilio:
+  account-sid: ${TWILIO_ACCOUNT_SID}
+  auth-token: ${TWILIO_AUTH_TOKEN}
+  phone-number: ${TWILIO_PHONE_NUMBER}
 
 server:
   servlet:
@@ -48,11 +42,9 @@ server:
 
 logging:
   level:
-    root: INFO                 # Default logging level for the entire application
-
-    org.springframework: WARN  # Reduce Spring framework logs (only show warnings or errors)
-
-    org.hibernate: WARN       # Hide verbose Hibernate logs like SQL and internal details
-
-    com.intech.dukaantech: DEBUG  # Enable detailed logs for our application package for debugging
->>>>>>> user-manage
+    root: INFO
+    org.springframework: WARN
+    org.hibernate: WARN
+    org.eclipse.angus.mail: DEBUG
+    jakarta.mail: DEBUG
+    com.intech.dukaantech: DEBUG

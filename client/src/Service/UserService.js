@@ -4,8 +4,18 @@ import axios from "axios";
 const API_URL = "http://localhost:8080/api/users";
 
 export const getUsers = async () => {
-  const response = await axios.get(API_URL, { params: { page: 0, size: 50 } });
+
+  const token = localStorage.getItem("token");
+
+  const response = await axios.get(API_URL, {
+    params: { page: 0, size: 50 },
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+console.log(response.data);
   return response.data;
+
 };
 
 export const searchUsers = async (name) => {
@@ -16,10 +26,26 @@ export const searchUsers = async (name) => {
 };
 
 export const createUser = async (user) => {
-  const response = await axios.post(API_URL, user);
+
+  const token = localStorage.getItem("token");
+
+  const response = await axios.post(API_URL, user, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
   return response.data;
 };
 
 export const deleteUser = async (id) => {
-  return axios.delete(`${API_URL}/${id}`);
+
+  const token = localStorage.getItem("token");
+
+  return axios.delete(`${API_URL}/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
 };

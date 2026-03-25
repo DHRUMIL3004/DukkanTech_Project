@@ -1,2 +1,5 @@
 /mvnw text eol=lf
 *.cmd text eol=crlf
+/src/resources/application-secret.yml
+/target
+/.idea

@@ -2,62 +2,70 @@ import { NavLink } from "react-router-dom";
 import "./NavBar.css";
 
 const NavBar = () => {
+
   const links = [
-    { to: "/", label: "Dashboard", disabled: true },
-    { to: "/billing", label: "Billing", disabled: true },
-    { to: "/manage-item", label: "Manage Item", disabled: true },
-    { to: "/manage-category", label: "Manage Category", disabled: true },
+    { to: "/dashboard", label: "Dashboard" },
+    { to: "/billing", label: "Billing"},
+    { to: "/manage-item", label: "Manage Item" },
+    { to: "/manage-category", label: "Manage Category" },
     { to: "/manage-user", label: "Manage User" },
-    { to: "/order-history", label: "Order History", disabled: true },
+    { to: "/order-history", label: "Order History" },
   ];
 
   return (
-    <nav className="app-navbar navbar navbar-expand-lg navbar-dark bg-primary shadow-sm sticky-top">
+    <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top admin-navbar">
       <div className="container">
-        <NavLink className="navbar-brand fw-bold" to="/">
-          DukaanTech
-        </NavLink>
+
+        <a className="navbar-brand d-flex align-items-center" href="/">
+          <img className="logo me-2" src="/Logo.png" alt="logo" />
+
+        </a>
 
         <button
           className="navbar-toggler"
           type="button"
           data-bs-toggle="collapse"
           data-bs-target="#appNavbarNav"
-          aria-controls="appNavbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
         >
-          <span className="navbar-toggler-icon" />
+          <span className="navbar-toggler-icon"></span>
         </button>
 
         <div className="collapse navbar-collapse" id="appNavbarNav">
-          <ul className="navbar-nav ms-3">
+
+          <ul className="navbar-nav ms-4">
+
             {links.map((link) => (
               <li key={link.to} className="nav-item">
+
                 {link.disabled ? (
-                  <span className="nav-link disabled" title="Coming soon">
+                  <span className="nav-link disabled-link">
                     {link.label}
                   </span>
                 ) : (
                   <NavLink
                     to={link.to}
                     className={({ isActive }) =>
-                      `nav-link ${isActive ? "active" : ""}`
+                      `nav-link nav-hover ${isActive ? "active" : ""}`
                     }
                   >
                     {link.label}
                   </NavLink>
                 )}
+
               </li>
             ))}
+
           </ul>
 
           <div className="ms-auto d-flex align-items-center">
-            <div className="user-pill px-3 py-2 rounded-pill bg-white text-primary shadow-sm">
+
+            <div className="user-pill">
               <i className="bi bi-person-circle me-2"></i>
               Admin
             </div>
+
           </div>
+
         </div>
       </div>
     </nav>
