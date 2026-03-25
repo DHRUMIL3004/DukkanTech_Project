@@ -71,7 +71,7 @@ public class BillingServiceImpl implements BillingService {
             Item item = itemRepository.findByItemID(itemRequest.getItemId())
                     .orElseThrow(() -> new RuntimeException("Item not found: " + itemRequest.getItemId()));
 
-            long currentStock = item.getQuantity() == null ? 0L : item.getQuantity();
+            long currentStock = String.valueOf(item.getQuantity()) == null ? 0L : item.getQuantity();
             long requestedQty = itemRequest.getQuantity();
 
             if (requestedQty <= 0) {
