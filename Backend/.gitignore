@@ -1,4 +1,4 @@
-Backend/src/main/resources/application.yml
+
 Backend/src/main/resources/application-secret.yml
 
 target/

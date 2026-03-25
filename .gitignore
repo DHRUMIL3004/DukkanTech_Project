@@ -1,2 +1,42 @@
-/.idea
-/.vscode
+
+#  React (Frontend)
+
+node_modules/
+build/
+dist/
+coverage/
+.env*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+
+#  Spring Boot (Backend)
+
+target/
+*.jar
+*.war
+*.log
+logs/
+
+
+#  Environment & Secrets
+
+.env
+.env.local
+.env.development
+.env.production
+
+application.properties
+application.yml
+application-secret.yml
+
+
+.idea/
+.vscode/
+*.iml
+
+
+
+tmp/
+.cache/
