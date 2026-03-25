@@ -1,4 +1,4 @@
-import axios from 'axios';
+
 
 
 // export const searchCategories = async (name) => {
