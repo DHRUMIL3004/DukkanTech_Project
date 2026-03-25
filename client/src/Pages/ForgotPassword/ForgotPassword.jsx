@@ -43,15 +43,24 @@ function ForgotPassword() {
       return;
     }
 
-    try {
-      await verifyOtp(email, otp);
+    
+  try {
+    const response = await verifyOtp(email, otp);
+
+    //  Check backend response
+    if (response === "otp is varified") {
       toast.success("OTP verified!");
       setStep(3);
-    } catch (error) {
-      console.error(error);
+    } else {
       toast.error("Invalid OTP");
     }
-  };
+
+  } catch (error) {
+    console.error(error);
+    toast.error("Something went wrong");
+  }
+};
+  
 
   //  Reset Password
   const handleResetPassword = async (e) => {

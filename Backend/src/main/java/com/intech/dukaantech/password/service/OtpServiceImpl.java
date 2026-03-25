@@ -10,20 +10,20 @@ import java.time.LocalDateTime;
 import java.util.Random;
 
 @Service
-public class OtpServiceImpl implements OtpService{
+public class OtpServiceImpl implements OtpService {
 
     @Autowired
-    private  OtpRepository otpRepository;
+    private OtpRepository otpRepository;
 
     @Override
     public String generateOtp(String email) {
 
-        String  otp=String.valueOf(new Random().nextInt(900000)+100000);
+        String otp = String.valueOf(new Random().nextInt(900000) + 100000);
 
-        OtpEntity token =otpRepository.findByEmail(email);
-        if(token ==null){
-          token =new OtpEntity();
-          token.setEmail(email);
+        OtpEntity token = otpRepository.findByEmail(email);
+        if (token == null) {
+            token = new OtpEntity();
+            token.setEmail(email);
         }
 
         token.setOtp(otp);
@@ -32,33 +32,36 @@ public class OtpServiceImpl implements OtpService{
         otpRepository.save(token);
 
         return otp;
-
     }
 
     @Override
-    public boolean validateOtp(String email,String otp) {
+    public boolean validateOtp(String email, String otp) {
 
-        OtpEntity token =otpRepository.findByEmail(email);
+        OtpEntity token = otpRepository.findByEmail(email);
 
-        if(token ==null){
+        if (token == null) {
             return false;
         }
 
-        if(!token.getOtp().equals(otp)){
+        // Normalize values
+        String storedOtp = token.getOtp().trim();
+        String enteredOtp = otp.trim();
+
+        // Strict match check
+        if (!storedOtp.equals(enteredOtp)) {
             return false;
         }
 
-        if(token.getExpiryTime().equals(LocalDateTime.now().plusMinutes(5))){
+        // Expiry check
+        if (token.getExpiryTime().isBefore(LocalDateTime.now())) {
             return false;
         }
 
         return true;
     }
-
     @Override
     @Transactional
     public void deleteOtp(String email) {
-
         otpRepository.deleteByEmail(email);
     }
 }

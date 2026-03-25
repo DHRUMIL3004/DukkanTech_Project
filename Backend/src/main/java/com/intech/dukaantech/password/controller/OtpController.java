@@ -47,7 +47,12 @@ public class OtpController {
 
     @PostMapping("/verify")
     public String varifyOtp(@RequestParam String email,@RequestParam String otp){
-      if (!otpService.validateOtp(email,otp)){
+
+        boolean isValid = otpService.validateOtp(email, otp);
+
+
+
+      if (!isValid){
         return "otp is invalid";
       }
       return "otp is varified";
