@@ -1,0 +1,42 @@
+.user-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border: none;
+  background: #f8f9fa;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s;
+  
+}
+
+.user-btn:hover {
+  background: #e9ecef;
+}
+
+.dropdown-menu {
+  border-radius: 8px;
+  padding: 6px 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.dropdown-item {
+  font-size: 14px;
+  padding: 8px 14px;
+}
+
+.logout {
+  color: #dc3545;
+}
+
+.logout:hover {
+  background: #ffeaea;
+}
+
+@media (max-width: 992px) {
+  .user-btn {
+    margin-left: 35px;
+  }
+}

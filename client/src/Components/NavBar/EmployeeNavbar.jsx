@@ -1,7 +1,30 @@
 import { NavLink } from "react-router-dom";
 import "./NavBar.css";
+import { useEffect, useState } from "react";
+import { showName } from "../../Service/UserService";
+import Logout from "../Logout/Logout";
 
 const EmployeeNavbar = () => {
+
+   const [userName, setUserName] = useState("Employee");
+  
+    useEffect(() => {
+      
+        try {const data = showName();
+        setUserName(data);
+        }
+        catch (err) {
+          console.error("Error fetching user name:", err);
+        }
+      
+    }, []);
+
+     const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    window.location.href = "/";
+  };
+
 
   const links = [
     { to: "/billing", label: "Billing"},
@@ -26,12 +49,12 @@ const EmployeeNavbar = () => {
           <span className="navbar-toggler-icon"></span>
         </button>
 
-        <div className="collapse navbar-collapse" id="appNavbarNav">
+        <div className="collapse navbar-collapse " id="appNavbarNav">
 
           <ul className="navbar-nav ms-4">
 
             {links.map((link) => (
-              <li key={link.to} className="nav-item">
+              <li key={link.to} className="nav-item me-3">
 
                 {link.disabled ? (
                   <span className="nav-link disabled-link">
@@ -53,14 +76,7 @@ const EmployeeNavbar = () => {
 
           </ul>
 
-          <div className="ms-auto d-flex align-items-center">
-
-            <div className="user-pill">
-              <i className="bi bi-person-circle me-2"></i>
-             Employee
-            </div>
-
-          </div>
+          <Logout/>
 
         </div>
       </div>

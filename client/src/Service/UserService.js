@@ -2,11 +2,9 @@ import axios from "axios";
 
 // Backend exposes user APIs at /users (Spring Boot controller uses @RequestMapping("/users"))
 const API_URL = "http://localhost:8080/api/users";
+ const token = localStorage.getItem("token");
 
 export const getUsers = async () => {
-
-  const token = localStorage.getItem("token");
-
   const response = await axios.get(API_URL, {
     params: { page: 0, size: 50 },
     headers: {
@@ -26,9 +24,6 @@ export const searchUsers = async (name) => {
 };
 
 export const createUser = async (user) => {
-
-  const token = localStorage.getItem("token");
-
   const response = await axios.post(API_URL, user, {
     headers: {
       Authorization: `Bearer ${token}`
@@ -39,9 +34,6 @@ export const createUser = async (user) => {
 };
 
 export const updateUser = async (id, user) => {
-
-  const token = localStorage.getItem("token");
-
   const response = await axios.patch(`${API_URL}/${id}`, user, {
     headers: {
       Authorization: `Bearer ${token}`
@@ -53,8 +45,6 @@ export const updateUser = async (id, user) => {
 
 export const deleteUser = async (id) => {
 
-  const token = localStorage.getItem("token");
-
   return axios.delete(`${API_URL}/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`
@@ -62,3 +52,18 @@ export const deleteUser = async (id) => {
   });
 
 };
+
+export const showName = async () => {
+
+  const response = await axios.get(API_URL + "/me", {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  
+  console.log(response.data);
+  return response.data;
+};
+
+

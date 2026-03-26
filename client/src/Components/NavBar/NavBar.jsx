@@ -1,11 +1,30 @@
 import { NavLink } from "react-router-dom";
 import "./NavBar.css";
+import { use, useEffect, useState } from "react";
+import { showName } from "../../Service/UserService";
+import Logout from "../Logout/Logout";
 
 const NavBar = () => {
+  const [userName, setUserName] = useState("admin");
+
+  useEffect(() => {
+    try {
+      const data = showName();
+      setUserName(data);
+    } catch (err) {
+      console.error("Error fetching user name:", err);
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    window.location.href = "/";
+  };
 
   const links = [
     { to: "/dashboard", label: "Dashboard" },
-    { to: "/billing", label: "Billing"},
+    { to: "/billing", label: "Billing" },
     { to: "/manage-item", label: "Manage Item" },
     { to: "/manage-category", label: "Manage Category" },
     { to: "/manage-user", label: "Manage User" },
@@ -15,10 +34,8 @@ const NavBar = () => {
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top admin-navbar">
       <div className="container">
-
         <a className="navbar-brand d-flex align-items-center" href="/">
           <img className="logo me-2" src="/Logo.png" alt="logo" />
-
         </a>
 
         <button
@@ -31,16 +48,11 @@ const NavBar = () => {
         </button>
 
         <div className="collapse navbar-collapse" id="appNavbarNav">
-
           <ul className="navbar-nav ms-5">
-
             {links.map((link) => (
               <li key={link.to} className="nav-item me-2">
-
                 {link.disabled ? (
-                  <span className="nav-link disabled-link">
-                    {link.label}
-                  </span>
+                  <span className="nav-link disabled-link">{link.label}</span>
                 ) : (
                   <NavLink
                     to={link.to}
@@ -51,21 +63,10 @@ const NavBar = () => {
                     {link.label}
                   </NavLink>
                 )}
-
               </li>
             ))}
-
           </ul>
-
-          <div className="ms-auto d-flex align-items-center">
-
-            <div className="user-pill">
-              <i className="bi bi-person-circle me-2"></i>
-              Admin
-            </div>
-
-          </div>
-
+          <Logout />
         </div>
       </div>
     </nav>

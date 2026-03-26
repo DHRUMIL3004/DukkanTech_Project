@@ -27,13 +27,15 @@ function Login() {
         body: JSON.stringify({ email, password }),
       });
 
+     const data = await response.json();
+      console.log("RAW RESPONSE:", data);
       if (!response.ok) {
-        const err = await response.json();
-        alert(err.message || "Login failed");
+        
+        alert(data.message || "Login failed");
         return;
       }
 
-      const data = await response.json();
+      
       console.log("Login Success", data);
 
       const decoded = jwtDecode(data.token);
