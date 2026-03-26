@@ -1,5 +1,8 @@
 
 Backend/src/main/resources/application-secret.yml
 
-target/
-
+/target/
+/.idea/
+/mvnw
+/.mvn/
+/mvnw.cmd
