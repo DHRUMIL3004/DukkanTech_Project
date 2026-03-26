@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { showName } from "../../Service/UserService";
+import Swal from "sweetalert2";
 
 import "./logout.css";
+import { confirmAction } from "../../Service/DeleteService";
 
 function Logout() {
     const [userName, setUserName] = useState("User");
@@ -17,11 +19,16 @@ function Logout() {
         }
     }, []);
 
-    const handleLogout = () => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("role");
-        window.location.href = "/";
-    };
+    const handleLogout = async() => {
+        const ok=await confirmAction("Are you sure?","You will be logged out!");
+
+        if(ok){
+            localStorage.removeItem("token");
+            localStorage.removeItem("role");
+            window.location.href = "/";
+        }
+};
+  
 
     return ( 
         <div className="dropdown user-menu ms-auto">

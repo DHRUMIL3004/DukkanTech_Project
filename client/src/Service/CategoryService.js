@@ -38,8 +38,18 @@ export const getCategories = async () => {
     params: { page: 0, size: 50 },
     headers: { Authorization: `Bearer ${getToken()}` },
   });
+  console.log(response.data);
   return response.data;
 };
+
+// find itemCount 
+export const getItemCountByCategory = async (id) => {
+  const response = await axios.get(`${API_URL}/${id}`, {
+    headers: { Authorization: `Bearer ${getToken()}` },
+  });
+  return response.data;
+};
+
 
 export const searchCategories = async (name) => {
   const data = await getCategories();
@@ -80,4 +90,7 @@ export const deleteCategory = async (id) => {
   return axios.delete(`${API_URL}/${id}`, {
     headers: { Authorization: `Bearer ${getToken()}` },
   });
+
+
+  
 };

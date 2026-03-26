@@ -3,6 +3,9 @@ import { useEffect, useMemo, useState } from "react";
 import ItemCard from "./ItemCard";
 import ItemSearch from "./ItemSearch";
 import { deleteItem, getItems } from "../../Service/ItemService";
+import { confirmAction } from "../../Service/DeleteService";
+
+
 
 const ItemList = ({ refreshFlag, onEditItemClick }) => {
   const [items, setItems] = useState([]);
@@ -57,11 +60,18 @@ const ItemList = ({ refreshFlag, onEditItemClick }) => {
     return result;
   }, [items, search, categoryFilter, sortOrder]);
 
-  const handleDelete = (id) => {
-    if (!id) {
+  const handleDelete = async(id) => {
+   
+     const ok=await confirmAction("Are you sure?","This item will be deleted!");
+
+     if(!ok){
+      return;
+     }
+
+     if (!id) {
       console.error("Item id missing");
       return;
-    }
+      }
 
     deleteItem(id).then(() => {
       loadItems();

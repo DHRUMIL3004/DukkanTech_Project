@@ -5,6 +5,7 @@ import com.intech.dukaantech.category.dto.CategoryRequest;
 import com.intech.dukaantech.category.dto.CategoryResponse;
 import com.intech.dukaantech.category.model.Category;
 import com.intech.dukaantech.common.dto.PageResponse;
+import com.intech.dukaantech.inventory.dto.ItemResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -20,5 +21,7 @@ public interface CategoryService {
     List<CategoryResponse> searchCategoryByName(String name);
 
     CategoryResponse updateCategory(String categoryId, CategoryRequest request, MultipartFile file);
+
+
 
 }

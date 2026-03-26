@@ -87,7 +87,7 @@ public class UserServiceImpl implements UserService {
         if (request.getPassword() != null && !request.getPassword().isBlank()){
             updateUser.setPassword(passwordEncoder.encode(request.getPassword()));
         }
-        updateUser.setPassword(request.getPassword());
+
 
         log.info("User updated successfully: {}", id);
 

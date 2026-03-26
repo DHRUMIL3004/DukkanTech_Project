@@ -9,6 +9,9 @@ import com.intech.dukaantech.category.repository.CategoryRepository;
 import com.intech.dukaantech.category.mapper.CategoryMapper;
 import com.intech.dukaantech.common.exception.ApiException;
 import com.intech.dukaantech.common.service.S3Service;
+import com.intech.dukaantech.inventory.dto.ItemResponse;
+import com.intech.dukaantech.inventory.model.Item;
+import com.intech.dukaantech.inventory.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -30,6 +33,7 @@ public class CategoryServiceImpl implements CategoryService{
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
     private final S3Service s3Service;
+    private final ItemRepository itemRepository;
 
     // Creating Categories
     @Override
@@ -142,4 +146,6 @@ public class CategoryServiceImpl implements CategoryService{
 
         return categoryMapper.mapToResponse(updateCategory);
     }
+
+
 }

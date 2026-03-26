@@ -19,6 +19,7 @@ import {
 } from "../../Components/Billing";
 import "./CartPage.css";
 import Footer from "../../Components/Footer/Footer";
+import { confirmAction } from "../../Service/DeleteService";
 
 const UPI_MAX_TRANSACTION_INR = 100000;
 
@@ -131,7 +132,15 @@ const handleDobChange = (e) => {
     ));
   };
 
-  const removeFromCart = (itemId) => {
+  const removeFromCart =async (itemId) => {
+
+    const ok = await confirmAction("Are you sure?", "This item will be removed from the cart!");
+
+    if (!ok) {
+      return;
+    }
+
+
     setCartItems(cartItems.filter(ci => ci.itemId !== itemId));
   };
 

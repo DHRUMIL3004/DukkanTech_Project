@@ -4,6 +4,7 @@ import { getUsers, deleteUser } from "../../Service/UserService";
 import { FaEllipsisV } from "react-icons/fa";
 import CardPanel from "../Common/CardPanel";
 import FilterSortControls from "../Common/FilterSortControls";
+import { confirmAction } from "../../Service/DeleteService";
 
 const UserList = ({ refreshFlag, onAddUserClick, onEditUserClick }) => {
   // Raw list returned from the API (not filtered/sorted)
@@ -77,6 +78,13 @@ const UserList = ({ refreshFlag, onAddUserClick, onEditUserClick }) => {
   }, [search, roleFilter, allUsers, sortOrder]);
 
   const handleDelete = async (id) => {
+
+    const ok=await confirmAction("Are you sure?","This user will be deleted!");
+    
+    if(!ok){
+      return;
+    }
+
     await deleteUser(id);
     loadUsers();
   };

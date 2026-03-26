@@ -1,8 +1,15 @@
-
 import { useEffect, useState } from "react";
-import { getCategories, deleteCategory } from "../../Service/CategoryService";
+import {
+  getCategories,
+  deleteCategory,
+  getItemCountByCategory,
+} from "../../Service/CategoryService";
 import { FaEllipsisV } from "react-icons/fa";
 import CardPanel from "../Common/CardPanel";
+import Logout from "../Logout/Logout";
+import { Delete } from "lucide-react";
+import Swal from "sweetalert2";
+import { confirmAction } from "../../Service/DeleteService";
 
 const CategoryList = ({ refreshFlag, onEditCategoryClick }) => {
   const [allCategories, setAllCategories] = useState([]);
@@ -17,14 +24,17 @@ const CategoryList = ({ refreshFlag, onEditCategoryClick }) => {
       setError(null);
       const data = await getCategories();
       const list = data.data || data;
+      // console.log("Loaded categories:", data.data[0].itemCount);
       setAllCategories(list);
       setCategories(
         list.filter((c) =>
-          c.name?.toLowerCase().includes(search.trim().toLowerCase())
-        )
+          c.name?.toLowerCase().includes(search.trim().toLowerCase()),
+        ),
       );
     } catch (err) {
-      setError(err.response?.data || err.message || "Unable to load categories");
+      setError(
+        err.response?.data || err.message || "Unable to load categories",
+      );
     } finally {
       setLoading(false);
     }
@@ -38,17 +48,39 @@ const CategoryList = ({ refreshFlag, onEditCategoryClick }) => {
     const timeout = setTimeout(() => {
       setCategories(
         allCategories.filter((c) =>
-          c.name?.toLowerCase().includes(search.trim().toLowerCase())
-        )
+          c.name?.toLowerCase().includes(search.trim().toLowerCase()),
+        ),
       );
     }, 300);
     return () => clearTimeout(timeout);
   }, [search, allCategories]);
 
   const handleDelete = async (id) => {
-    await deleteCategory(id);
+   const count = await getItemCountByCategory(id);
+   
+  if(count > 0){
+    Swal.fire({
+      icon:"info",
+      title: "Cannot delete",
+      text: "This category has items associated with it. Please delete those items first.",
+      width:"300px",
+      padding:"1.5rem"
+    });
+    return;
+  }
+      
+   const ok =await confirmAction("Are you sure?", "This category will be deleted!");
+
+   if(!ok){
+    return;
+   }
+
+       await deleteCategory(id);
     loadCategories();
-  };
+  }
+
+  
+
 
   return (
     <CardPanel title="Categories" className="fade-expand">
@@ -76,7 +108,7 @@ const CategoryList = ({ refreshFlag, onEditCategoryClick }) => {
             style={{ background: cat.bgColor || "white" }}
           >
             <div className="d-flex align-items-center">
-                  {cat.imgUrl && (
+              {cat.imgUrl && (
                 <img
                   src={cat.imgUrl}
                   alt={cat.name}
@@ -87,12 +119,8 @@ const CategoryList = ({ refreshFlag, onEditCategoryClick }) => {
               )}
               <div>
                 <strong>{cat.name}</strong>
-                <div className="text-muted">
-                  Tax: {cat.tax}%
-                </div>
-                <div className="text-muted">
-                  {(cat.itemCount ?? 0)} Items
-                </div>
+                <div className="text-muted">Tax: {cat.tax}%</div>
+                <div className="text-muted">{cat.itemCount ?? 0} Items</div>
               </div>
             </div>
 
