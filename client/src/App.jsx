@@ -26,7 +26,6 @@ function App() {
 
   const location = useLocation();
   const role = localStorage.getItem("role");
-  console.log("Current Role:", role);
 
   const renderNavbar = () => {
   const path = location.pathname;

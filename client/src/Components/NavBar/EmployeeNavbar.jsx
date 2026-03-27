@@ -35,7 +35,7 @@ const EmployeeNavbar = () => {
     <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top admin-navbar">
       <div className="container">
 
-        <a className="navbar-brand d-flex align-items-center" href="/">
+        <a className="navbar-brand d-flex align-items-center" href="/billing">
           <img className="logo me-2" src="/Logo.png" alt="logo" />
          
         </a>
