@@ -2,6 +2,7 @@ package com.intech.dukaantech.order.service;
 
 import com.intech.dukaantech.billing.dto.BillingResponse;
 import com.intech.dukaantech.common.dto.PageResponse;
+import com.intech.dukaantech.order.dto.OrderHistorySummaryResponse;
 
 import java.math.BigDecimal;
 
@@ -16,6 +17,12 @@ public interface OrderService {
             String sortBy,
             String sortDir
     );
+
+            OrderHistorySummaryResponse fetchOrderSummary(
+                String search,
+                String fromDate,
+                String toDate
+            );
 
     BigDecimal getTotalRevenue();
 }

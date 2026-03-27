@@ -14,7 +14,6 @@ import {
   CartItemRow,
   OrderSummary,
   Receipt,
-  Popup,
   EmptyCart
 } from "../../Components/Billing";
 import "./CartPage.css";
@@ -44,11 +43,8 @@ const CartPage = () => {
   const [phoneError, setPhoneError] = useState("");
   
   // UI state
-  const [showPaymentPopup, setShowPaymentPopup] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
   const [processingPayment, setProcessingPayment] = useState(false);
   const [billResponse, setBillResponse] = useState(null);
-  const [savedOrderResponse, setSavedOrderResponse] = useState(null);
 
   // ============ VALIDATION FUNCTIONS ============
 
@@ -258,11 +254,6 @@ const handleDobChange = (e) => {
       return;
     }
 
-    if (submitting) {
-      toast.info("Payment already completed. You can generate invoice now.");
-      return;
-    }
-
     try {
       setProcessingPayment(true);
 
@@ -294,81 +285,27 @@ const handleDobChange = (e) => {
 
       const orderResponse = await createBill(buildBillingRequest());
       const savedOrder = orderResponse?.data || orderResponse;
-      setSavedOrderResponse(savedOrder);
 
-      setSubmitting(true);
-      setShowPaymentPopup(true);
+      setBillResponse(savedOrder);
+      setCartItems([]);
+      localStorage.removeItem("billingCart");
 
       if (savedOrder?.orderId) {
         sendWhatsappAlert(savedOrder.orderId);
       }
 
-      toast.success("Payment successful. Order saved.");
+      toast.success("Payment successful. Invoice generated.");
     } catch (error) {
       console.error(error);
       toast.error(error.message || "Payment failed. Order was not saved.");
-      setSubmitting(false);
     } finally {
       setProcessingPayment(false);
-    }
-  };
-
-  const handlePaymentPopupOk = () => {
-    setShowPaymentPopup(false);
-  };
-
-  // Create bill via API and show receipt
-  const handleGenerateInvoice = async () => {
-    if (!savedOrderResponse) {
-      toast.error("Please complete payment first");
-      return;
-    }
-
-    if (!customerName.trim()) {
-      toast.error("Please enter customer name");
-      return;
-    }
-setBillResponse(savedOrderResponse);
-    setCartItems([]);
-    localStorage.removeItem("billingCart");
-    setSubmitting(false);
-
-    const billingRequest = {
-      customerName: customerName.trim(),
-      phone: phone.trim(),
-      city: city.trim(),
-      dob: dob.trim(),
-      paymentMethod: paymentMethod,
-      items: cartItems.map(item => ({
-        itemId: item.itemId,
-        quantity: item.quantity,
-        tax: item.tax
-      }))
-    };
-let finalResponse = null;
-    try {
-      const response = await createBill(billingRequest);
-      finalResponse = response.data || response; // Handle both axios and fetch responses
-      setBillResponse(finalResponse);
-      setCartItems([]);
-      localStorage.removeItem("billingCart");
-    } catch (error) {
-      console.error("Error creating bill:", error);
-      toast.error("Invoice generation failed");
-      return;
-    } finally {
-      setSubmitting(false);
-
-      if (finalResponse?.orderId) {
-        sendWhatsappAlert(finalResponse.orderId);
-      }
     }
   };
 
   // Reset form and start new order
   const handleNewOrder = () => {
     setBillResponse(null);
-    setSavedOrderResponse(null);
     setCustomerName("");
     setPhone("");
     
@@ -399,18 +336,6 @@ let finalResponse = null;
   // Main cart view
   return (
     <>
-   
-
-      {/* Payment Success Popup */}
-      {showPaymentPopup && (
-        <Popup
-          type="success"
-          title="Payment Received Successfully"
-          message="The payment has been processed successfully."
-          onClose={handlePaymentPopupOk}
-        />
-      )}
-
       <div className="cart-page">
         <div className="cart-wrapper">
           
@@ -474,9 +399,7 @@ let finalResponse = null;
                 paymentMethod={paymentMethod}
                 onPaymentMethodChange={setPaymentMethod}
                 onCompletePayment={handleCompleted}
-                onGenerateInvoice={handleGenerateInvoice}
                 isFormValid={isFormValid()}
-                submitting={submitting}
                 processingPayment={processingPayment}
               />
             )}

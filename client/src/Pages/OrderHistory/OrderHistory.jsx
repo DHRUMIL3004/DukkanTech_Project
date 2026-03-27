@@ -1,8 +1,7 @@
 import { useEffect, useState, useRef } from "react";
-import { getOrders } from "../../Service/OrderHistory";
+import { getOrderSummary, getOrders } from "../../Service/OrderHistory";
 import Receipt from "../../Components/Billing/Receipt";
 import "./OrderHistory.css";
-import { getTotalRevenue } from "../../Service/BillingService";
 import Footer from "../../Components/Footer/Footer";
 
 const formatItems = (items) => items.map((i) => i.itemName).join(", ");
@@ -46,6 +45,12 @@ const OrderHistory = () => {
 
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showInvoice,   setShowInvoice]   = useState(false);
+  const [summary, setSummary] = useState({
+    totalCustomers: 0,
+    totalOrders: 0,
+    totalRevenue: 0,
+    averageOrderValue: 0,
+  });
 
   const [sortBy, sortDir] = sortCombo.split("|");
 
@@ -80,6 +85,31 @@ const OrderHistory = () => {
     return () => clearTimeout(t);
   }, [page, search, fromDate, toDate, sortCombo]);
 
+  useEffect(() => {
+    const fetchSummary = async () => {
+      try {
+        const data = await getOrderSummary(search, fromDate, toDate);
+        setSummary({
+          totalCustomers: data?.totalCustomers ?? 0,
+          totalOrders: data?.totalOrders ?? 0,
+          totalRevenue: Number(data?.totalRevenue ?? 0),
+          averageOrderValue: Number(data?.averageOrderValue ?? 0),
+        });
+      } catch (err) {
+        console.error("Error fetching order summary:", err);
+        setSummary({
+          totalCustomers: 0,
+          totalOrders: 0,
+          totalRevenue: 0,
+          averageOrderValue: 0,
+        });
+      }
+    };
+
+    const t = setTimeout(fetchSummary, 400);
+    return () => clearTimeout(t);
+  }, [search, fromDate, toDate]);
+
   const applyPreset = (p) => {
     setActivePreset(p.label); setFromDate(p.from); setToDate(p.to);
     setPage(0); setShowDatePanel(false);
@@ -92,25 +122,6 @@ const OrderHistory = () => {
     if (toDate)   return `Until ${toDate}`;
     return "Date Range";
   };
-
-const [totalRevenue, setTotalRevenue] = useState(0);
-useEffect(() => {
-
-  const fetchRevenue=async()=>{
-    try{
-      const revenue = await getTotalRevenue();
-      setTotalRevenue(revenue || 0);
-
-    }catch(err){
-      console.error("Error fetching total revenue:", err);
-      setTotalRevenue(0);
-  }
-};
-fetchRevenue();
-}
-, [orders]);
-  
-  const uniqueCustomers = new Set(orders.map(o => o.phone)).size;
 
   /* ─── render ─────────────────────────────────────────── */
   return (
@@ -222,7 +233,7 @@ fetchRevenue();
                 <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
               </svg>
               <div>
-                <span className="oh-stat-val">{uniqueCustomers}</span>
+                <span className="oh-stat-val">{summary.totalCustomers}</span>
                 <span className="oh-stat-lbl">Customers</span>
               </div>
             </div>
@@ -231,7 +242,7 @@ fetchRevenue();
                 <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
               </svg>
               <div>
-                <span className="oh-stat-val">{orders.length}</span>
+                <span className="oh-stat-val">{summary.totalOrders}</span>
                 <span className="oh-stat-lbl">Orders</span>
               </div>
             </div>
@@ -241,7 +252,7 @@ fetchRevenue();
                 <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
               </svg>
               <div>
-                <span className="oh-stat-val">₹{totalRevenue.toFixed(2)}</span>
+                <span className="oh-stat-val">₹{summary.totalRevenue.toFixed(2)}</span>
                 <span className="oh-stat-lbl">Total Revenue</span>
               </div>
             </div>
@@ -250,9 +261,7 @@ fetchRevenue();
                 <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
               </svg>
               <div>
-                <span className="oh-stat-val">
-                  ₹{orders.length ? (totalRevenue / orders.length).toFixed(2) : "0.00"}
-                </span>
+                <span className="oh-stat-val">₹{summary.averageOrderValue.toFixed(2)}</span>
                 <span className="oh-stat-lbl">Avg Order</span>
               </div>
             </div>
