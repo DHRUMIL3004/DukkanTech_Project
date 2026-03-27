@@ -244,6 +244,13 @@ const handleDobChange = (e) => {
 
   // Process payment and update stock in backend
   const handleCompleted = async () => {
+ 
+    const ok= await confirmAction("Confirm Payment", `Total amount to be paid: INR ${totalAmount.toFixed(2)}. Do you want to proceed?`);
+    
+    if (!ok) {
+      return;
+    }
+
     if (cartItems.length === 0) {
       toast.error("Please add items to the cart");
       return;
