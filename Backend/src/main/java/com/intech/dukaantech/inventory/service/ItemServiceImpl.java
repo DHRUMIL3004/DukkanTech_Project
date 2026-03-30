@@ -3,7 +3,9 @@ package com.intech.dukaantech.inventory.service;
 import com.intech.dukaantech.category.model.Category;
 import com.intech.dukaantech.category.repository.CategoryRepository;
 import com.intech.dukaantech.common.dto.PageResponse;
-import com.intech.dukaantech.common.exception.ApiException;
+import com.intech.dukaantech.common.exception.custom.DuplicateResourceException;
+import com.intech.dukaantech.common.exception.custom.ResourceNotFoundException;
+import com.intech.dukaantech.common.exception.custom.TypeNotPresentException;
 import com.intech.dukaantech.common.service.S3Service;
 import com.intech.dukaantech.inventory.dto.ItemRequest;
 import com.intech.dukaantech.inventory.dto.ItemResponse;
@@ -26,6 +28,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
@@ -42,18 +45,18 @@ public class ItemServiceImpl implements ItemService {
         Category category = categoryRepository
                 .findByCategoryId(itemRequest.getCategoryId())
                 .orElseThrow(() -> {
-                    log.warn("Category not found: {}", itemRequest.getCategoryId());
-                    return new ApiException("Category not found", HttpStatus.NOT_FOUND);
+                    log.warn("Category Already Exists: {}", itemRequest.getCategoryId());
+                    return new DuplicateResourceException("Category Already Exists");
                 });
 
         if (file == null || file.isEmpty()) {
             log.warn("Image file missing for item: {}", itemRequest.getName());
-            throw new ApiException("Image file is required", HttpStatus.BAD_REQUEST);
+            throw new ResourceNotFoundException("Image file is required");
         }
 
         if (!file.getContentType().startsWith("image/")) {
             log.warn("Invalid image type: {}", file.getContentType());
-            throw new ApiException("Only image files allowed", HttpStatus.BAD_REQUEST);
+            throw new TypeNotPresentException("Only image files allowed");
         }
 
         Item newItem = itemMapper.mapToEntity(itemRequest);
@@ -103,7 +106,7 @@ public class ItemServiceImpl implements ItemService {
         Item existingItem = itemRepository.findByItemID(itemId)
                 .orElseThrow(() -> {
                     log.warn("Item not found: {}", itemId);
-                    return new ApiException("Item not found", HttpStatus.NOT_FOUND);
+                    return new ResourceNotFoundException("Item not found");
                 });
 
         itemRepository.delete(existingItem);
@@ -117,13 +120,13 @@ public class ItemServiceImpl implements ItemService {
         log.info("Updating quantity for item: {} with quantity: {}", itemId, quantity);
 
         if (quantity == null || quantity < 0) {
-            throw new ApiException("Quantity must be non-negative", HttpStatus.BAD_REQUEST);
+            throw new RuntimeException("Quantity must be non-negative");
         }
 
         Item item = itemRepository.findByItemID(itemId)
                 .orElseThrow(() -> {
                     log.warn("Item not found: {}", itemId);
-                    return new ApiException("Item not found", HttpStatus.NOT_FOUND);
+                    return new ResourceNotFoundException("Item not found");
                 });
 
         item.setQuantity(quantity);
@@ -143,21 +146,21 @@ public class ItemServiceImpl implements ItemService {
         log.info("Updating item: {}", itemId);
 
         Item updateItem = itemRepository.findByItemID(itemId)
-                .orElseThrow(()-> new ApiException("Item not found", HttpStatus.NOT_FOUND));
+                .orElseThrow(()-> new ResourceNotFoundException("Item not found"));
 
         Category category = categoryRepository
                 .findByCategoryId(request.getCategoryId())
                 .orElseThrow(() -> {
                     log.warn("Category not found: {}", request.getCategoryId());
-                    return new ApiException("Category not found", HttpStatus.NOT_FOUND);
+                    return new ResourceNotFoundException("Category not found");
                 });
 
         if (request.getQuantity() < 0) {
-            throw new ApiException("Quantity must be non-negative", HttpStatus.BAD_REQUEST);
+            throw new RuntimeException("Quantity must be non-negative");
         }
 
         if (!updateItem.getName().equals(request.getName()) && itemRepository.existsByNameContainingIgnoreCase(request.getName())){
-            throw new ApiException("Item Exists Already", HttpStatus.ALREADY_REPORTED);
+            throw new DuplicateResourceException("Item Exists Already");
         }
 
         if (file != null && !file.isEmpty()){

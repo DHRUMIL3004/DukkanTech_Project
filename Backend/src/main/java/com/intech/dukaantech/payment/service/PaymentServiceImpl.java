@@ -1,6 +1,10 @@
 package com.intech.dukaantech.payment.service;
 
-import com.intech.dukaantech.common.exception.ApiException;
+import com.intech.dukaantech.common.exception.custom.BadRequestException;
+import com.intech.dukaantech.common.exception.custom.ConflictException;
+import com.intech.dukaantech.common.exception.custom.ExternalServiceException;
+import com.intech.dukaantech.common.exception.custom.InternalServerException;
+import com.intech.dukaantech.common.exception.custom.ResourceNotFoundException;
 import com.intech.dukaantech.payment.dto.*;
 import com.intech.dukaantech.payment.model.PaymentStatus;
 import com.intech.dukaantech.payment.model.PaymentTransaction;
@@ -12,7 +16,6 @@ import com.razorpay.RazorpayException;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +29,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentTransactionRepository paymentTransactionRepository;
@@ -45,7 +49,7 @@ public class PaymentServiceImpl implements PaymentService {
         validateRazorpayConfig();
 
         if (request.getAmount() == null || request.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
-            throw new ApiException("Amount must be greater than 0", HttpStatus.BAD_REQUEST);
+            throw new BadRequestException("Amount must be greater than 0");
         }
 
         String currency = (request.getCurrency() == null || request.getCurrency().isBlank())
@@ -53,11 +57,11 @@ public class PaymentServiceImpl implements PaymentService {
                 : request.getCurrency().trim().toUpperCase();
 
         if (!"INR".equals(currency)) {
-            throw new ApiException("Only INR currency is supported for UPI checkout", HttpStatus.BAD_REQUEST);
+            throw new BadRequestException("Only INR currency is supported for UPI checkout");
         }
 
         if (request.getAmount().compareTo(upiMaxTransactionInr) > 0) {
-            throw new ApiException("UPI transaction limit exceeded. Maximum allowed amount is INR " + upiMaxTransactionInr, HttpStatus.BAD_REQUEST);
+            throw new BadRequestException("UPI transaction limit exceeded. Maximum allowed amount is INR " + upiMaxTransactionInr);
         }
 
         String receipt = (request.getReceipt() == null || request.getReceipt().isBlank())
@@ -121,7 +125,7 @@ public class PaymentServiceImpl implements PaymentService {
             return response;
 
         } catch (RazorpayException ex) {
-            throw new ApiException("Unable to create Razorpay order: " + ex.getMessage(), HttpStatus.BAD_GATEWAY);
+            throw new ExternalServiceException("Unable to create Razorpay order: " + ex.getMessage());
         }
     }
 
@@ -131,14 +135,14 @@ public class PaymentServiceImpl implements PaymentService {
         validateRazorpayConfig();
 
         if (isBlank(request.getRazorpayOrderId()) || isBlank(request.getRazorpayPaymentId()) || isBlank(request.getRazorpaySignature())) {
-            throw new ApiException("razorpayOrderId, razorpayPaymentId and razorpaySignature are required", HttpStatus.BAD_REQUEST);
+            throw new BadRequestException("razorpayOrderId, razorpayPaymentId and razorpaySignature are required");
         }
 
         PaymentTransaction tx = paymentTransactionRepository.findByRazorpayOrderId(request.getRazorpayOrderId())
-                .orElseThrow(() -> new ApiException("Payment order not found", HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new ResourceNotFoundException("Payment order not found"));
 
         if (tx.getStatus() == PaymentStatus.CANCELLED) {
-            throw new ApiException("Payment already cancelled", HttpStatus.CONFLICT);
+            throw new ConflictException("Payment already cancelled");
         }
 
         if (tx.getStatus() == PaymentStatus.PAID) {
@@ -154,14 +158,14 @@ public class PaymentServiceImpl implements PaymentService {
                 duplicatePaid.setPaymentMethod(tx.getPaymentMethod());
                 return duplicatePaid;
             }
-            throw new ApiException("Duplicate payment attempt detected with a different payment id", HttpStatus.CONFLICT);
+            throw new ConflictException("Duplicate payment attempt detected with a different payment id");
         }
 
         boolean validSignature = verifySignature(request.getRazorpayOrderId(), request.getRazorpayPaymentId(), request.getRazorpaySignature());
         if (!validSignature) {
             tx.setStatus(PaymentStatus.FAILED);
             paymentTransactionRepository.save(tx);
-            throw new ApiException("Invalid payment signature", HttpStatus.BAD_REQUEST);
+            throw new BadRequestException("Invalid payment signature");
         }
 
         try {
@@ -173,13 +177,13 @@ public class PaymentServiceImpl implements PaymentService {
             String method = payment.get("method");
 
             if (!request.getRazorpayOrderId().equals(orderIdFromGateway)) {
-                throw new ApiException("Order mismatch while verifying payment", HttpStatus.BAD_REQUEST);
+                throw new BadRequestException("Order mismatch while verifying payment");
             }
 
             if (!("captured".equalsIgnoreCase(paymentStatus) || "authorized".equalsIgnoreCase(paymentStatus))) {
                 tx.setStatus(PaymentStatus.FAILED);
                 paymentTransactionRepository.save(tx);
-                throw new ApiException("Payment is not successful. Current gateway status: " + paymentStatus, HttpStatus.BAD_REQUEST);
+                throw new BadRequestException("Payment is not successful. Current gateway status: " + paymentStatus);
             }
 
             tx.setRazorpayPaymentId(request.getRazorpayPaymentId());
@@ -200,7 +204,7 @@ public class PaymentServiceImpl implements PaymentService {
             return response;
 
         } catch (RazorpayException ex) {
-            throw new ApiException("Unable to verify payment from Razorpay: " + ex.getMessage(), HttpStatus.BAD_GATEWAY);
+            throw new ExternalServiceException("Unable to verify payment from Razorpay: " + ex.getMessage());
         }
     }
 
@@ -221,7 +225,7 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         if (tx.getStatus() == PaymentStatus.PAID) {
-            throw new ApiException("Paid payment cannot be cancelled", HttpStatus.CONFLICT);
+            throw new ConflictException("Paid payment cannot be cancelled");
         }
 
         tx.setStatus(PaymentStatus.CANCELLED);
@@ -260,11 +264,11 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         if (tx.getStatus() == PaymentStatus.CANCELLED) {
-            throw new ApiException("This receipt is already cancelled. Use a new receipt.", HttpStatus.CONFLICT);
+            throw new ConflictException("This receipt is already cancelled. Use a new receipt.");
         }
 
         if (tx.getStatus() == PaymentStatus.FAILED) {
-            throw new ApiException("Previous attempt for this receipt failed. Use a new receipt.", HttpStatus.BAD_REQUEST);
+            throw new BadRequestException("Previous attempt for this receipt failed. Use a new receipt.");
         }
 
         response.setMessage("Payment order already exists for this receipt. Reusing existing order.");
@@ -274,15 +278,15 @@ public class PaymentServiceImpl implements PaymentService {
     private PaymentTransaction findTransactionByOrderOrReceipt(String razorpayOrderId, String receipt) {
         if (!isBlank(razorpayOrderId)) {
             return paymentTransactionRepository.findByRazorpayOrderId(razorpayOrderId)
-                    .orElseThrow(() -> new ApiException("Payment order not found", HttpStatus.NOT_FOUND));
+                    .orElseThrow(() -> new ResourceNotFoundException("Payment order not found"));
         }
 
         if (!isBlank(receipt)) {
             return paymentTransactionRepository.findByReceipt(receipt)
-                    .orElseThrow(() -> new ApiException("Payment receipt not found", HttpStatus.NOT_FOUND));
+                    .orElseThrow(() -> new ResourceNotFoundException("Payment receipt not found"));
         }
 
-        throw new ApiException("Either razorpayOrderId or receipt is required", HttpStatus.BAD_REQUEST);
+        throw new BadRequestException("Either razorpayOrderId or receipt is required");
     }
 
     private boolean verifySignature(String orderId, String paymentId, String signature) {
@@ -299,13 +303,13 @@ public class PaymentServiceImpl implements PaymentService {
             }
             return expected.toString().equals(signature);
         } catch (Exception ex) {
-            throw new ApiException("Unable to validate signature", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new InternalServerException("Unable to validate signature");
         }
     }
 
     private void validateRazorpayConfig() {
         if (isBlank(razorpayKeyId) || isBlank(razorpayKeySecret)) {
-            throw new ApiException("Razorpay configuration missing. Please set razorpay.key-id and razorpay.key-secret", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new InternalServerException("Razorpay configuration missing. Please set razorpay.key-id and razorpay.key-secret");
         }
     }
 

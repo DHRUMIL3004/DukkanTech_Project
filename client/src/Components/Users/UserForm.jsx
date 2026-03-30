@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { createUser, updateUser } from "../../Service/UserService";
 import CardPanel from "../Common/CardPanel";
+import { getBackendErrorMessage } from "../../Service/errorMessage";
 
 const UserForm = ({ refreshUsers, editingUser, onEditComplete }) => {
   const [user, setUser] = useState({
@@ -35,31 +36,6 @@ const UserForm = ({ refreshUsers, editingUser, onEditComplete }) => {
     });
   };
 
-  const getErrorMessage = (error) => {
-
-    console.log(error);
-
-    if (!error.response) {
-      return "Server not responding";
-    }
-
-    const data = error.response.data;
-
-    if (data?.errors?.message) {
-      return data.errors.message;
-    }
-
-    if (data?.errors) {
-      return Object.values(data.errors)[0];
-    }
-
-    if (data?.message) {
-      return data.message;
-    }
-
-    return "Something went wrong";
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -86,7 +62,7 @@ const UserForm = ({ refreshUsers, editingUser, onEditComplete }) => {
       }
 
     } catch (error) {
-      const message = getErrorMessage(error);
+      const message = getBackendErrorMessage(error, "Server not responding");
       alert(message);
     }
   };

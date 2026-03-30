@@ -19,6 +19,7 @@ import {
 import "./CartPage.css";
 import Footer from "../../Components/Footer/Footer";
 import { confirmAction } from "../../Service/DeleteService";
+import { getBackendErrorMessage } from "../../Service/errorMessage";
 
 const UPI_MAX_TRANSACTION_INR = 100000;
 
@@ -297,7 +298,7 @@ const handleDobChange = (e) => {
       toast.success("Payment successful. Invoice generated.");
     } catch (error) {
       console.error(error);
-      toast.error(error.message || "Payment failed. Order was not saved.");
+      toast.error(getBackendErrorMessage(error, "Payment failed. Order was not saved."));
     } finally {
       setProcessingPayment(false);
     }

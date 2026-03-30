@@ -6,6 +6,7 @@ import {
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { getBackendErrorMessage } from "../../Service/errorMessage";
 
 function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -30,7 +31,7 @@ function ForgotPassword() {
       setStep(2);
     } catch (error) {
       console.error(error);
-      toast.error("Failed to send OTP");
+      toast.error(getBackendErrorMessage(error, "Failed to send OTP"));
     }
   };
 
@@ -57,7 +58,7 @@ function ForgotPassword() {
 
   } catch (error) {
     console.error(error);
-    toast.error("Something went wrong");
+    toast.error(getBackendErrorMessage(error, "Something went wrong"));
   }
 };
   
@@ -94,7 +95,7 @@ function ForgotPassword() {
 
     } catch (error) {
       console.error(error);
-      toast.error("Failed to reset password");
+      toast.error(getBackendErrorMessage(error, "Failed to reset password"));
     }
   };
 

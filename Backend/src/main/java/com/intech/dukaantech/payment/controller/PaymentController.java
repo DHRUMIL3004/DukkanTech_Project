@@ -12,7 +12,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/payment")
 @RequiredArgsConstructor
-@PreAuthorize("hasAnyRole('ADMIN','EMPLOYEE')")
+@PreAuthorize("hasAnyRole('ADMIN','CASHIER')")
 public class PaymentController {
 
     private final PaymentService paymentService;

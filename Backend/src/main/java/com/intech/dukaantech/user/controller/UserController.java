@@ -59,16 +59,13 @@ public class UserController {
         return ResponseEntity.ok(userService.updateUser(userId, request));
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN','EMPLOYEE')")
+    @PreAuthorize("hasAnyRole('ADMIN','CASHIER')")
     @GetMapping("/me")
     public ResponseEntity<String> getCurrentUser(Authentication authentication) {
-       String email=authentication.getName();
 
-   Optional<UserEntity> user=userRepository.findByEmail(email);
-   return ResponseEntity.ok(user.get().getName());
+        String email=authentication.getName();
 
-
-
-        
+        Optional<UserEntity> user=userRepository.findByEmail(email);
+        return ResponseEntity.ok(user.get().getName());
     }
 }

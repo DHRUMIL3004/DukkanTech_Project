@@ -10,6 +10,7 @@ import Logout from "../Logout/Logout";
 import { Delete } from "lucide-react";
 import Swal from "sweetalert2";
 import { confirmAction } from "../../Service/DeleteService";
+import { getBackendErrorMessage } from "../../Service/errorMessage";
 
 const CategoryList = ({ refreshFlag, onEditCategoryClick }) => {
   const [allCategories, setAllCategories] = useState([]);
@@ -32,9 +33,7 @@ const CategoryList = ({ refreshFlag, onEditCategoryClick }) => {
         ),
       );
     } catch (err) {
-      setError(
-        err.response?.data || err.message || "Unable to load categories",
-      );
+      setError(getBackendErrorMessage(err, "Unable to load categories"));
     } finally {
       setLoading(false);
     }

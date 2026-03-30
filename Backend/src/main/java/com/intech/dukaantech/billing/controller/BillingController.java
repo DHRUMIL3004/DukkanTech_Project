@@ -18,7 +18,7 @@ public class BillingController {
 
     private final BillingService billingService;
 
-    @PreAuthorize("hasAnyRole('ADMIN','EMPLOYEE')")
+    @PreAuthorize("hasAnyRole('ADMIN','CASHIER')")
     @PostMapping("/create")
     public ResponseEntity<BillingResponse> createOrder(@RequestBody BillingRequest request){
         return   ResponseEntity.ok(billingService.createOrder(request));

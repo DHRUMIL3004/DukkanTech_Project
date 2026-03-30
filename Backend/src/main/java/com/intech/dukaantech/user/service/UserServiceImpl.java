@@ -1,7 +1,8 @@
 
 package com.intech.dukaantech.user.service;
 
-import com.intech.dukaantech.common.exception.ApiException;
+import com.intech.dukaantech.common.exception.custom.DuplicateResourceException;
+import com.intech.dukaantech.common.exception.custom.ResourceNotFoundException;
 import com.intech.dukaantech.user.dto.UserRequest;
 import com.intech.dukaantech.user.dto.UserResponse;
 import com.intech.dukaantech.user.mapper.UserMapper;
@@ -10,9 +11,6 @@ import com.intech.dukaantech.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -33,14 +31,23 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse createUser(UserRequest request) {
 
+        String requestedName = request.getName() == null ? null : request.getName().trim();
+
         // Check if email already exists
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new ApiException("Email already exists", HttpStatus.BAD_REQUEST);
+            throw new DuplicateResourceException("Email already exists");
+        }
+
+        if (requestedName != null && !requestedName.isBlank() && userRepository.findByNameIgnoreCase(requestedName).isPresent()) {
+            throw new DuplicateResourceException("Name already exists");
         }
 
         UserEntity newUser = userMapper.toEntity(request);
 
         newUser.setUserId(UUID.randomUUID().toString());
+        if (requestedName != null && !requestedName.isBlank()) {
+            newUser.setName(requestedName);
+        }
         newUser.setPassword(passwordEncoder.encode(request.getPassword()));
 
         newUser = userRepository.save(newUser);
@@ -51,7 +58,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public String getUserRole(String email) {
         UserEntity getUser = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User Not Found"));
 
         return getUser.getRole().name();
     }
@@ -68,7 +75,7 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(String id) {
         UserEntity getUser = userRepository.findByUserId(id)
                 .orElseThrow(() ->
-                        new ApiException("User not found", HttpStatus.NOT_FOUND));
+                        new ResourceNotFoundException("User not found"));
 
         userRepository.delete(getUser);
     }
@@ -80,9 +87,16 @@ public class UserServiceImpl implements UserService {
 
         UserEntity updateUser = userRepository.findByUserId(id)
                 .orElseThrow(() ->
-                        new ApiException("User not found", HttpStatus.NOT_FOUND));
+                        new ResourceNotFoundException("User not found"));
 
-        updateUser.setName(request.getName());
+        String requestedName = request.getName() == null ? null : request.getName().trim();
+        if (requestedName != null && !requestedName.isBlank()) {
+            UserEntity existingUser = userRepository.findByNameIgnoreCase(requestedName).orElse(null);
+            if (existingUser != null && !existingUser.getUserId().equals(updateUser.getUserId())) {
+                throw new DuplicateResourceException("Name already exists");
+            }
+            updateUser.setName(requestedName);
+        }
 
         if (request.getPassword() != null && !request.getPassword().isBlank()){
             updateUser.setPassword(passwordEncoder.encode(request.getPassword()));

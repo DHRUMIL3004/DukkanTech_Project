@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { createCategory, updateCategory } from "../../Service/CategoryService";
 import CardPanel from "../Common/CardPanel";
+import { getBackendErrorMessage } from "../../Service/errorMessage";
 
 const CategoryForm = ({ refreshCategories, editingCategory, onEditComplete }) => {
   const [category, setCategory] = useState({
@@ -54,11 +55,7 @@ const CategoryForm = ({ refreshCategories, editingCategory, onEditComplete }) =>
         onEditComplete();
       }
     } catch (error) {
-      const message =
-        error.response?.data?.errors
-          ? Object.values(error.response.data.errors)[0]
-          : error.response?.data || error.message;
-      alert(message);
+      alert(getBackendErrorMessage(error, "Unable to save category"));
     }
   };
 

@@ -5,6 +5,7 @@ import { FaEllipsisV } from "react-icons/fa";
 import CardPanel from "../Common/CardPanel";
 import FilterSortControls from "../Common/FilterSortControls";
 import { confirmAction } from "../../Service/DeleteService";
+import { getBackendErrorMessage } from "../../Service/errorMessage";
 
 const UserList = ({ refreshFlag, onAddUserClick, onEditUserClick }) => {
   // Raw list returned from the API (not filtered/sorted)
@@ -57,7 +58,7 @@ const UserList = ({ refreshFlag, onAddUserClick, onEditUserClick }) => {
       setAllUsers(usersData);
       setUsers(applySort(applyFilters(usersData, search, roleFilter), sortOrder));
     } catch (err) {
-      setError(err.response?.data || err.message || "Unable to load users");
+      setError(getBackendErrorMessage(err, "Unable to load users"));
     } finally {
       setLoading(false);
     }

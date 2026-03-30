@@ -16,6 +16,7 @@ import {
 } from "../../Components/Billing";
 import "./BillingPage.css";
 import Footer from "../../Components/Footer/Footer";
+import { getBackendErrorMessage } from "../../Service/errorMessage";
 
 const BillingPage = () => {
   const navigate = useNavigate();
@@ -123,6 +124,7 @@ const BillingPage = () => {
       }
     } catch (error) {
       console.error("Error fetching items:", error);
+      toast.error(getBackendErrorMessage(error, "Unable to load items"));
     } finally {
       setLoading(false);
     }

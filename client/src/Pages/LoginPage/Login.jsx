@@ -27,11 +27,22 @@ function Login() {
         body: JSON.stringify({ email, password }),
       });
 
-     const data = await response.json();
+      const raw = await response.text();
+      let data;
+      try {
+        data = raw ? JSON.parse(raw) : {};
+      } catch {
+        data = raw;
+      }
+
       console.log("RAW RESPONSE:", data);
       if (!response.ok) {
-        
-        alert(data.message || "Login failed");
+
+        if (typeof data === "string") {
+          alert(data || "Login failed");
+        } else {
+          alert(data?.message || "Login failed");
+        }
         return;
       }
 

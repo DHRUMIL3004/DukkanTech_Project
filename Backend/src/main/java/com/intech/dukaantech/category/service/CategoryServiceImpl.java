@@ -7,7 +7,9 @@ import com.intech.dukaantech.common.dto.PageResponse;
 import com.intech.dukaantech.category.model.Category;
 import com.intech.dukaantech.category.repository.CategoryRepository;
 import com.intech.dukaantech.category.mapper.CategoryMapper;
-import com.intech.dukaantech.common.exception.ApiException;
+import com.intech.dukaantech.common.exception.custom.DuplicateResourceException;
+import com.intech.dukaantech.common.exception.custom.ResourceNotFoundException;
+import com.intech.dukaantech.common.exception.custom.TypeNotPresentException;
 import com.intech.dukaantech.common.service.S3Service;
 import com.intech.dukaantech.inventory.dto.ItemResponse;
 import com.intech.dukaantech.inventory.model.Item;
@@ -17,8 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -28,6 +30,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class CategoryServiceImpl implements CategoryService{
 
     private final CategoryRepository categoryRepository;
@@ -41,17 +44,17 @@ public class CategoryServiceImpl implements CategoryService{
 
         // check is category exists
         if(categoryRepository.findByName(request.getName()).isPresent()){
-            throw new ApiException("Category already exists", HttpStatus.BAD_REQUEST);
+            throw new DuplicateResourceException("Category already exists");
         }
 
         // check file is not empty
         if(file.isEmpty()){
-            throw new ApiException("File is empty", HttpStatus.BAD_REQUEST);
+            throw new ResourceNotFoundException("File is empty");
         }
 
         // file is not image type
         if(!file.getContentType().startsWith("image/")){
-            throw new ApiException("Only image files are allowed", HttpStatus.BAD_REQUEST);
+            throw new TypeNotPresentException("Only image files are allowed");
         }
 
         Category newCategory = categoryMapper.mapToEntity(request);
@@ -94,7 +97,7 @@ public class CategoryServiceImpl implements CategoryService{
 
         Category category = categoryRepository.findByCategoryId(categoryId)
                 .orElseThrow(() ->
-                        new ApiException("Category not found", HttpStatus.NOT_FOUND));
+                new ResourceNotFoundException("Category not found"));
 
         if(category.getImgUrl() != null){
             s3Service.deleteFile(category.getImgUrl());
@@ -121,10 +124,10 @@ public class CategoryServiceImpl implements CategoryService{
     public CategoryResponse updateCategory(String categoryId, CategoryRequest request, MultipartFile file){
 
         Category updateCategory = categoryRepository.findByCategoryId(categoryId)
-                .orElseThrow(()->new ApiException("Category not found",HttpStatus.NOT_FOUND));
+                .orElseThrow(()->new ResourceNotFoundException("Category not found"));
 
         if (!updateCategory.getName().equals(request.getName()) && categoryRepository.existsByNameContainingIgnoreCase(request.getName())){
-            throw new ApiException("Category Already Exists",HttpStatus.NOT_ACCEPTABLE);
+            throw new DuplicateResourceException("Category Already Exists");
         }
 
         if (file != null && !file.isEmpty()){
