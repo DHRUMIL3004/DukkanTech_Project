@@ -18,7 +18,7 @@ public class CustomerController {
 
     private final CustomerService customerService;
 
-    @PreAuthorize("hasAnyRole('ADMIN','CASHIER')")
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLOYEE')")
     @GetMapping("/{phone}")
     public ResponseEntity<?> getCustomer(@PathVariable String phone){
         return customerService.findByPhone(phone)

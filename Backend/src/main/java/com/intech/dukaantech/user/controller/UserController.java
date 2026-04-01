@@ -59,7 +59,7 @@ public class UserController {
         return ResponseEntity.ok(userService.updateUser(userId, request));
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN','CASHIER')")
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLOYEE')")
     @GetMapping("/me")
     public ResponseEntity<String> getCurrentUser(Authentication authentication) {
 

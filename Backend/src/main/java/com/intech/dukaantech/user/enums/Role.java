@@ -4,8 +4,5 @@ public enum Role {
 
     ADMIN,
 
-    CASHIER
-
-
-
+    EMPLOYEE
 }

@@ -32,7 +32,7 @@ public class ItemController {
     }
 
     // Fetch
-    @PreAuthorize("hasAnyRole('ADMIN','CASHIER')")
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLOYEE')")
     @GetMapping
     public ResponseEntity<PageResponse<ItemResponse>> getAllItems(
             @RequestParam(defaultValue = "0") int page,
@@ -61,7 +61,7 @@ public class ItemController {
     }
 
     // Update quantity (used by billing flow)
-    @PreAuthorize("hasAnyRole('ADMIN','CASHIER')")
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLOYEE')")
     @PatchMapping("/{itemId}/quantity")
     public ResponseEntity<ItemResponse> updateQuantity(@PathVariable String itemId,
                                                        @RequestParam Long quantity) {
