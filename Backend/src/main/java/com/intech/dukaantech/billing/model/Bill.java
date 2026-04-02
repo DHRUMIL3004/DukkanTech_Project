@@ -37,8 +37,7 @@ public class Bill {
     private String paymentMethod;
 
     @OneToMany(mappedBy = "bill" , cascade = CascadeType.ALL)
-
-   private List<OrderItem> items;
+    private List<OrderItem> items;
 
     private boolean paid;
 

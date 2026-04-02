@@ -3,12 +3,20 @@ import axios from "axios";
 // Item APIs
 const API_URL = "http://localhost:8080/api/items";
 
-// GET ITEMS with pagination
-export const getItems = async (page = 0, size = 12) => {
+// GET ITEMS with pagination, search, filtering, and sorting
+export const getItems = async (
+  page = 0,
+  size = 12,
+  search = "",
+  category = "ALL",
+  sortBy = "name",
+  sortDir = "ASC"
+) => {
 
   const token = localStorage.getItem("token");
 
-  const response = await axios.get(`${API_URL}?page=${page}&size=${size}`, {
+  const response = await axios.get(API_URL, {
+    params: { page, size, search, category, sortBy, sortDir },
     headers: {
       Authorization: `Bearer ${token}`
     }
@@ -20,16 +28,10 @@ export const getItems = async (page = 0, size = 12) => {
 };
 
 
-// SEARCH ITEMS (local filter)
+// SEARCH ITEMS (backend filter)
 export const searchItems = async (name) => {
-
-  const data = await getItems();
-
-  return data.data
-    ? data.data.filter((i) =>
-        i.name?.toLowerCase().includes(name.toLowerCase())
-      )
-    : [];
+  const data = await getItems(0, 1000, name);
+  return data.data ?? [];
 
 };
 

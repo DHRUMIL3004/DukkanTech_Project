@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
 import "./NavBar.css";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { showName } from "../../Service/UserService";
 import Logout from "../Logout/Logout";
 
@@ -8,12 +8,16 @@ const NavBar = () => {
   const [userName, setUserName] = useState("admin");
 
   useEffect(() => {
-    try {
-      const data = showName();
-      setUserName(data);
-    } catch (err) {
-      console.error("Error fetching user name:", err);
-    }
+    const fetchUserName = async () => {
+      try {
+        const data = await showName();
+        setUserName(data || "admin");
+      } catch (err) {
+        console.error("Error fetching user name:", err);
+      }
+    };
+
+    fetchUserName();
   }, []);
 
   const handleLogout = () => {

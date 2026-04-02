@@ -36,10 +36,14 @@ public class ItemController {
     @GetMapping
     public ResponseEntity<PageResponse<ItemResponse>> getAllItems(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String category,
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "ASC") String sortDir
     ) {
 
-        return ResponseEntity.ok(itemService.fetchItem(page, size));
+        return ResponseEntity.ok(itemService.fetchItem(page, size, search, category, sortBy, sortDir));
     }
 
     // Delete

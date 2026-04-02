@@ -12,12 +12,12 @@ import com.intech.dukaantech.inventory.dto.ItemResponse;
 import com.intech.dukaantech.inventory.mapper.ItemMapper;
 import com.intech.dukaantech.inventory.model.Item;
 import com.intech.dukaantech.inventory.repository.ItemRepository;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,19 +25,23 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.UUID;
 
+import static com.intech.dukaantech.category.model.QCategory.category;
+import static com.intech.dukaantech.inventory.model.QItem.item;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@Transactional
 public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
     private final CategoryRepository categoryRepository;
     private final ItemMapper itemMapper;
     private final S3Service s3Service;
+    private final JPAQueryFactory queryFactory;
 
     // Creating Item
     @Override
+    @Transactional
     public ItemResponse add(ItemRequest itemRequest, MultipartFile file) {
 
         log.info("Adding new item: {}", itemRequest.getName());
@@ -77,28 +81,84 @@ public class ItemServiceImpl implements ItemService {
     // Fetching Items
 
     @Override
-    public PageResponse<ItemResponse> fetchItem(int page, int size) {
+    @Transactional(readOnly = true)
+    public PageResponse<ItemResponse> fetchItem(int page, int size, String search, String categoryFilter, String sortBy, String sortDir) {
 
-        Pageable pageable = PageRequest.of(page, size);
+        BooleanBuilder where = new BooleanBuilder();
 
-        Page<Item> itemPage = itemRepository.findAll(pageable);
+        if (search != null && !search.isBlank()) {
+            where.and(
+                    item.name.containsIgnoreCase(search)
+                            .or(item.category.name.containsIgnoreCase(search))
+                            .or(item.price.stringValue().contains(search))
+            );
+        }
 
-        List<ItemResponse> items = itemPage.getContent()
+        if (categoryFilter != null && !categoryFilter.isBlank() && !"ALL".equalsIgnoreCase(categoryFilter)) {
+            String[] categories = categoryFilter.split(",");
+            BooleanBuilder categoryFilterBuilder = new BooleanBuilder();
+            for (String value : categories) {
+                String normalized = value.trim();
+                if (!normalized.isEmpty()) {
+                    categoryFilterBuilder.or(
+                            item.category.categoryId.eq(normalized)
+                                    .or(item.category.name.equalsIgnoreCase(normalized))
+                    );
+                }
+            }
+            where.and(categoryFilterBuilder);
+        }
+
+        OrderSpecifier<?> orderSpecifier = null;
+        if (sortBy != null && !sortBy.isBlank()) {
+            Order direction = "DESC".equalsIgnoreCase(sortDir) ? Order.DESC : Order.ASC;
+            orderSpecifier = switch (sortBy.toLowerCase()) {
+                case "price" -> new OrderSpecifier<>(direction, item.price);
+                case "category" -> new OrderSpecifier<>(direction, item.category.name);
+                default -> new OrderSpecifier<>(direction, item.name);
+            };
+        }
+
+        var query = queryFactory
+            .selectFrom(item)
+            .leftJoin(item.category, category).fetchJoin()
+            .where(where);
+
+        if (orderSpecifier != null) {
+            query.orderBy(orderSpecifier);
+        }
+
+        List<Item> itemList = query
+            .offset((long) page * size)
+            .limit(size)
+            .fetch();
+
+        Long totalElements = queryFactory
+                .select(item.count())
+                .from(item)
+                .leftJoin(item.category, category)
+                .where(where)
+                .fetchOne();
+
+        long safeTotal = totalElements == null ? 0L : totalElements;
+
+        List<ItemResponse> items = itemList
                 .stream()
                 .map(itemMapper::mapToResponse)
                 .toList();
 
         return PageResponse.<ItemResponse>builder()
-                .page(itemPage.getNumber())
-                .size(itemPage.getSize())
-                .totalPages(itemPage.getTotalPages())
-                .totalElements(itemPage.getTotalElements())
+                .page(page)
+                .size(size)
+                .totalPages((int) Math.ceil((double) safeTotal / size))
+                .totalElements(safeTotal)
                 .data(items)
                 .build();
     }
 
     // Delete Item
     @Override
+    @Transactional
     public void deleteItem(String itemId) {
 
         log.info("Deleting item: {}", itemId);
@@ -115,6 +175,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public ItemResponse updateQuantity(String itemId, Long quantity) {
 
         log.info("Updating quantity for item: {} with quantity: {}", itemId, quantity);
@@ -136,11 +197,13 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Item> getLowStockItems() {
         return itemRepository.findByQuantityLessThan(2);
     }
 
     @Override
+    @Transactional
     public ItemResponse updateItem(String itemId, ItemRequest request, MultipartFile file){
 
         log.info("Updating item: {}", itemId);

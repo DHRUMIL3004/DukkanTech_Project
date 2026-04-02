@@ -44,6 +44,7 @@ server:
     context-path: /api
 
 logging:
+
   level:
     root: INFO
     org.springframework: WARN

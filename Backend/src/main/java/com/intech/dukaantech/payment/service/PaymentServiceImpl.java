@@ -29,7 +29,6 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentTransactionRepository paymentTransactionRepository;
@@ -44,7 +43,6 @@ public class PaymentServiceImpl implements PaymentService {
     private BigDecimal upiMaxTransactionInr;
 
     @Override
-    @Transactional
     public CreatePaymentOrderResponse createRazorpayOrder(CreatePaymentOrderRequest request) {
         validateRazorpayConfig();
 
@@ -130,7 +128,6 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    @Transactional
     public VerifyPaymentResponse verifyRazorpayPayment(VerifyPaymentRequest request) {
         validateRazorpayConfig();
 
@@ -209,7 +206,6 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    @Transactional
     public CancelPaymentResponse cancelPayment(CancelPaymentRequest request) {
         PaymentTransaction tx = findTransactionByOrderOrReceipt(request.getRazorpayOrderId(), request.getReceipt());
 

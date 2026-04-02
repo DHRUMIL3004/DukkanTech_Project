@@ -2,13 +2,13 @@ import axios from "axios";
 
 // Backend exposes user APIs at /users (Spring Boot controller uses @RequestMapping("/users"))
 const API_URL = "http://localhost:8080/api/users";
- const token = localStorage.getItem("token");
+const getToken = () => localStorage.getItem("token");
 
-export const getUsers = async () => {
+export const getUsers = async (page = 0, size = 50, search = "", role = "ALL", sortBy = "name", sortDir = "ASC") => {
   const response = await axios.get(API_URL, {
-    params: { page: 0, size: 50 },
+    params: { page, size, search, role, sortBy, sortDir },
     headers: {
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${getToken()}`
     }
   });
 console.log(response.data);
@@ -26,7 +26,7 @@ export const searchUsers = async (name) => {
 export const createUser = async (user) => {
   const response = await axios.post(API_URL, user, {
     headers: {
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${getToken()}`
     }
   });
 
@@ -36,7 +36,7 @@ export const createUser = async (user) => {
 export const updateUser = async (id, user) => {
   const response = await axios.patch(`${API_URL}/${id}`, user, {
     headers: {
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${getToken()}`
     }
   });
 
@@ -47,7 +47,7 @@ export const deleteUser = async (id) => {
 
   return axios.delete(`${API_URL}/${id}`, {
     headers: {
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${getToken()}`
     }
   });
 
@@ -57,7 +57,7 @@ export const showName = async () => {
 
   const response = await axios.get(API_URL + "/me", {
     headers: {
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${getToken()}`
     }
   });
 

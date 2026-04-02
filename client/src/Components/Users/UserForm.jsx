@@ -42,7 +42,7 @@ const UserForm = ({ refreshUsers, editingUser, onEditComplete }) => {
     try {
       if (editingUser) {
         // Update existing user
-        await updateUser(editingUser.userId, user);
+        await updateUser(editingUser.userId, { name: user.name });
       } else {
         // Create new user
         await createUser(user);
@@ -120,18 +120,20 @@ const UserForm = ({ refreshUsers, editingUser, onEditComplete }) => {
           )}
         </div>
 
-        <div className="mb-4">
-          <label className="form-label">Password</label>
-          <input
-            type="password"
-            className="form-control"
-            placeholder={editingUser ? "Leave blank to keep current password" : "Password"}
-            name="password"
-            value={user.password}
-            onChange={handleChange}
-            required={!editingUser}
-          />
-        </div>
+        {!editingUser && (
+          <div className="mb-4">
+            <label className="form-label">Password</label>
+            <input
+              type="password"
+              className="form-control"
+              placeholder="Password"
+              name="password"
+              value={user.password}
+              onChange={handleChange}
+              required
+            />
+          </div>
+        )}
 
         <button className="btn btn-primary w-100" type="submit">
           {editingUser ? "Update User" : "Create User"}

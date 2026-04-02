@@ -24,7 +24,6 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class BillingServiceImpl implements BillingService {
 
 
@@ -34,8 +33,8 @@ public class BillingServiceImpl implements BillingService {
     @Autowired
     private CustomerRepository customerRepository;
 
-    @Transactional
     @Override
+    @Transactional
     public BillingResponse createOrder(BillingRequest request) {
 
         Customer customer =customerRepository.findByPhone(request.getPhone())
@@ -125,6 +124,7 @@ public class BillingServiceImpl implements BillingService {
     }
 
     @Override
+        @Transactional(readOnly = true)
     public BigDecimal getTotalAmounts(String customerId) {
         Bill bill=billingRepository.findByCustomerId(customerId).orElseThrow(()->new ResourceNotFoundException("Customer not found: " + customerId));
 
@@ -132,6 +132,7 @@ public class BillingServiceImpl implements BillingService {
     }
 
     @Override
+        @Transactional(readOnly = true)
     public Bill getBillByOrderId(String orderId) {
       return billingRepository.findByOrderId(orderId)
               .orElseThrow(()->new ResourceNotFoundException("Bill not found: " + orderId));
