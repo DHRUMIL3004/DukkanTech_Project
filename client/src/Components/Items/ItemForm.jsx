@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import { createItem, updateItem } from "../../Service/ItemService";
 import { getCategories } from "../../Service/CategoryService";
+import { getBackendErrorMessage } from "../../Service/errorMessage";
 
 
 const ItemForm = ({ refreshItems, editingItem, onEditComplete }) => {
@@ -75,8 +76,8 @@ const ItemForm = ({ refreshItems, editingItem, onEditComplete }) => {
         onEditComplete?.();
        
       })
-      .catch(() => {
-        alert(editingItem ? "Error updating item" : "Error creating item");
+      .catch((error) => {
+        alert(getBackendErrorMessage(error, editingItem ? "Error updating item" : "Error creating item"));
       })
      
       

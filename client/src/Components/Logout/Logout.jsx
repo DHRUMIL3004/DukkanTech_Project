@@ -11,12 +11,16 @@ function Logout() {
     const role = localStorage.getItem("role");
 
     useEffect(() => {
+      const fetchUserName = async () => {
         try {
-            const data = showName();
-            setUserName(data);
+          const data = await showName();
+          setUserName(data || "User");
         } catch (err) {
-            console.error("Error fetching user name:", err);
+          console.error("Error fetching user name:", err);
         }
+      };
+
+      fetchUserName();
     }, []);
 
     const handleLogout = async() => {

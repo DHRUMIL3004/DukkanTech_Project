@@ -2,6 +2,7 @@ package com.intech.dukaantech.user.controller;
 
 import com.intech.dukaantech.authentication.dto.LoginResponse;
 import com.intech.dukaantech.authentication.security.JwtUtil;
+import com.intech.dukaantech.common.dto.PageResponse;
 import com.intech.dukaantech.user.dto.UserRequest;
 import com.intech.dukaantech.user.dto.UserResponse;
 import com.intech.dukaantech.user.model.UserEntity;
@@ -13,14 +14,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.Authenticator;
-import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ADMIN')")
 public class UserController {
 
     private final UserService userService;
@@ -38,9 +36,16 @@ public class UserController {
     // Get All Users
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
-    public ResponseEntity<List<UserResponse>> getUsers() {
+    public ResponseEntity<PageResponse<UserResponse>> getUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "50") int size,
+            @RequestParam(required = false) String search,
+            @RequestParam(defaultValue = "ALL") String role,
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "ASC") String sortDir
+    ) {
 
-        return ResponseEntity.ok(userService.readUsers());
+        return ResponseEntity.ok(userService.readUsers(page, size, search, role, sortBy, sortDir));
     }
 
     // Delete User
@@ -62,13 +67,10 @@ public class UserController {
     @PreAuthorize("hasAnyRole('ADMIN','EMPLOYEE')")
     @GetMapping("/me")
     public ResponseEntity<String> getCurrentUser(Authentication authentication) {
-       String email=authentication.getName();
 
-   Optional<UserEntity> user=userRepository.findByEmail(email);
-   return ResponseEntity.ok(user.get().getName());
+        String email=authentication.getName();
 
-
-
-        
+        Optional<UserEntity> user=userRepository.findByEmail(email);
+        return ResponseEntity.ok(user.get().getName());
     }
 }

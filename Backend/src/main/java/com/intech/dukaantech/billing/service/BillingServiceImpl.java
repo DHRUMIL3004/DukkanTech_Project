@@ -7,14 +7,13 @@ import com.intech.dukaantech.billing.mapper.BillingMapper;
 import com.intech.dukaantech.billing.model.Bill;
 import com.intech.dukaantech.billing.model.OrderItem;
 import com.intech.dukaantech.billing.repository.BillingRepository;
-import com.intech.dukaantech.common.exception.ApiException;
+import com.intech.dukaantech.common.exception.custom.ResourceNotFoundException;
 import com.intech.dukaantech.customer.model.Customer;
 import com.intech.dukaantech.customer.repository.CustomerRepository;
 import com.intech.dukaantech.inventory.model.Item;
 import com.intech.dukaantech.inventory.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,8 +33,8 @@ public class BillingServiceImpl implements BillingService {
     @Autowired
     private CustomerRepository customerRepository;
 
-    @Transactional
     @Override
+    @Transactional
     public BillingResponse createOrder(BillingRequest request) {
 
         Customer customer =customerRepository.findByPhone(request.getPhone())
@@ -69,17 +68,17 @@ public class BillingServiceImpl implements BillingService {
         for (OrderItemRequest itemRequest : request.getItems()) {
 
             Item item = itemRepository.findByItemID(itemRequest.getItemId())
-                    .orElseThrow(() -> new RuntimeException("Item not found: " + itemRequest.getItemId()));
+                    .orElseThrow(() -> new ResourceNotFoundException("Item not found: " + itemRequest.getItemId()));
 
             long currentStock = String.valueOf(item.getQuantity()) == null ? 0L : Long.parseLong(String.valueOf(item.getQuantity()));
             long requestedQty = itemRequest.getQuantity();
 
             if (requestedQty <= 0) {
-                throw new ApiException("Quantity must be greater than zero", HttpStatus.BAD_REQUEST);
+                throw new RuntimeException("Quantity must be greater than zero");
             }
 
             if (currentStock < requestedQty) {
-                throw new ApiException("Not enough stock for item: " + item.getName(), HttpStatus.BAD_REQUEST);
+                throw new RuntimeException("Not enough stock for item: " + item.getName());
             }
 
             item.setQuantity(currentStock - requestedQty);
@@ -125,16 +124,18 @@ public class BillingServiceImpl implements BillingService {
     }
 
     @Override
+        @Transactional(readOnly = true)
     public BigDecimal getTotalAmounts(String customerId) {
-        Bill bill=billingRepository.findByCustomerId(customerId).orElseThrow(()->new RuntimeException("Customer not found: " + customerId));
+        Bill bill=billingRepository.findByCustomerId(customerId).orElseThrow(()->new ResourceNotFoundException("Customer not found: " + customerId));
 
      return bill.getTotalAmount();
     }
 
     @Override
+        @Transactional(readOnly = true)
     public Bill getBillByOrderId(String orderId) {
       return billingRepository.findByOrderId(orderId)
-              .orElseThrow(()->new RuntimeException("Bill not found: " + orderId));
+              .orElseThrow(()->new ResourceNotFoundException("Bill not found: " + orderId));
     }
 
 

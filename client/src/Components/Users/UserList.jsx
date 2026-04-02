@@ -5,16 +5,14 @@ import { FaEllipsisV } from "react-icons/fa";
 import CardPanel from "../Common/CardPanel";
 import FilterSortControls from "../Common/FilterSortControls";
 import { confirmAction } from "../../Service/DeleteService";
+import { getBackendErrorMessage } from "../../Service/errorMessage";
 
 const UserList = ({ refreshFlag, onAddUserClick, onEditUserClick }) => {
-  // Raw list returned from the API (not filtered/sorted)
-  const [allUsers, setAllUsers] = useState([]);
-
-  // Filtered/sorted list shown in the UI
   const [users, setUsers] = useState([]);
 
   // Controls for the filter/sort UI
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("ALL");
   const [sortOrder, setSortOrder] = useState("NONE");
 
@@ -22,42 +20,24 @@ const UserList = ({ refreshFlag, onAddUserClick, onEditUserClick }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Filter by search term (name) and role.
-  // This is kept separate from sorting so they can be composed.
-  const applyFilters = (list, term, role) => {
-    const normalized = term.trim().toLowerCase();
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 400);
 
-    return list.filter((u) => {
-      const matchesName = !normalized || u.name?.toLowerCase().includes(normalized);
-      const matchesRole = role === "ALL" || u.role === role;
-      return matchesName && matchesRole;
-    });
-  };
-
-  // Sort list by name based on selected order.
-  // Returns a new array so we don't mutate state directly.
-  const applySort = (list, order) => {
-    if (order === "NONE") return list;
-
-    return [...list].sort((a, b) => {
-      const nameA = (a.name || "").toLowerCase();
-      const nameB = (b.name || "").toLowerCase();
-      if (nameA === nameB) return 0;
-      const comparison = nameA < nameB ? -1 : 1;
-      return order === "ASC" ? comparison : -comparison;
-    });
-  };
+    return () => clearTimeout(t);
+  }, [search]);
 
   const loadUsers = async () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await getUsers();
-      const usersData = data.data || data;
-      setAllUsers(usersData);
-      setUsers(applySort(applyFilters(usersData, search, roleFilter), sortOrder));
+      const sortBy = sortOrder === "NONE" ? "" : "name";
+      const sortDir = sortOrder === "DESC" ? "DESC" : sortOrder === "ASC" ? "ASC" : "";
+      const data = await getUsers(0, 50, debouncedSearch, roleFilter, sortBy, sortDir);
+      setUsers(data.data || data || []);
     } catch (err) {
-      setError(err.response?.data || err.message || "Unable to load users");
+      setError(getBackendErrorMessage(err, "Unable to load users"));
     } finally {
       setLoading(false);
     }
@@ -65,17 +45,7 @@ const UserList = ({ refreshFlag, onAddUserClick, onEditUserClick }) => {
 
   useEffect(() => {
     loadUsers();
-  }, [refreshFlag]);
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      setUsers(
-        applySort(applyFilters(allUsers, search, roleFilter), sortOrder)
-      );
-    }, 300);
-
-    return () => clearTimeout(timeout);
-  }, [search, roleFilter, allUsers, sortOrder]);
+  }, [refreshFlag, debouncedSearch, roleFilter, sortOrder]);
 
   const handleDelete = async (id) => {
 

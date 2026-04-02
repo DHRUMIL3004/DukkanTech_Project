@@ -6,14 +6,11 @@ import com.intech.dukaantech.billing.model.Bill;
 import com.intech.dukaantech.billing.repository.BillingRepository;
 import com.intech.dukaantech.common.dto.PageResponse;
 import com.intech.dukaantech.order.dto.OrderHistorySummaryResponse;
-import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.Predicate;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,12 +20,16 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.intech.dukaantech.billing.model.QBill.bill;
+import static com.intech.dukaantech.customer.model.QCustomer.customer;
+
 @Service
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService{
 
     private final BillingRepository billingRepository;
     private final BillingMapper billingMapper;
+        private final JPAQueryFactory queryFactory;
 
     @Override
     @Transactional(readOnly = true)
@@ -42,32 +43,53 @@ public class OrderServiceImpl implements OrderService{
             String sortDir
     ) {
 
-        if (sortBy.equals("customerName")) {
-            sortBy = "customer.customerName";
-        }
+        BooleanBuilder where = buildOrderFilters(search, fromDate, toDate);
 
-        Pageable pageable = PageRequest.of(
-                page,
-                size,
-                sortDir.equalsIgnoreCase("asc")
-                        ? Sort.by(sortBy).ascending()
-                        : Sort.by(sortBy).descending()
-        );
+                OrderSpecifier<?> orderSpecifier = null;
+                if (sortBy != null && !sortBy.isBlank()) {
+                        Order direction = "asc".equalsIgnoreCase(sortDir) ? Order.ASC : Order.DESC;
+                        orderSpecifier = switch (sortBy) {
+                                case "customerName" -> new OrderSpecifier<>(direction, customer.customerName);
+                                case "phone" -> new OrderSpecifier<>(direction, customer.phone);
+                                case "totalAmount" -> new OrderSpecifier<>(direction, bill.totalAmount);
+                                case "paymentMethod" -> new OrderSpecifier<>(direction, bill.paymentMethod);
+                                default -> new OrderSpecifier<>(direction, bill.createdAt);
+                        };
+                }
 
-        Specification<Bill> spec = buildOrderFilters(search, fromDate, toDate);
+                var query = queryFactory
+                .selectFrom(bill)
+                .leftJoin(bill.customer, customer).fetchJoin()
+                                .where(where);
 
-        Page<Bill> billPage = billingRepository.findAll(spec, pageable);
+                if (orderSpecifier != null) {
+                        query.orderBy(orderSpecifier);
+                }
 
-        List<BillingResponse> responseList = billPage.getContent()
+                List<Bill> bills = query
+                .offset((long) page * size)
+                .limit(size)
+                .fetch();
+
+        Long totalElements = queryFactory
+                .select(bill.count())
+                .from(bill)
+                .leftJoin(bill.customer, customer)
+                .where(where)
+                .fetchOne();
+
+        long safeTotal = totalElements == null ? 0L : totalElements;
+
+        List<BillingResponse> responseList = bills
                 .stream()
                 .map(billingMapper::toBillingResponse)
                 .toList();
 
         return PageResponse.<BillingResponse>builder()
-                .page(billPage.getNumber())
-                .size(billPage.getSize())
-                .totalPages(billPage.getTotalPages())
-                .totalElements(billPage.getTotalElements())
+                .page(page)
+                .size(size)
+                .totalPages((int) Math.ceil((double) safeTotal / size))
+                .totalElements(safeTotal)
                 .data(responseList)
                 .build();
     }
@@ -75,8 +97,13 @@ public class OrderServiceImpl implements OrderService{
     @Override
     @Transactional(readOnly = true)
     public OrderHistorySummaryResponse fetchOrderSummary(String search, String fromDate, String toDate) {
-        Specification<Bill> spec = buildOrderFilters(search, fromDate, toDate);
-        List<Bill> bills = billingRepository.findAll(spec);
+        BooleanBuilder where = buildOrderFilters(search, fromDate, toDate);
+
+        List<Bill> bills = queryFactory
+                .selectFrom(bill)
+                .leftJoin(bill.customer, customer).fetchJoin()
+                .where(where)
+                .fetch();
 
         long totalOrders = bills.size();
         long totalCustomers = bills.stream()
@@ -103,46 +130,29 @@ public class OrderServiceImpl implements OrderService{
                 .build();
     }
 
-    private Specification<Bill> buildOrderFilters(String search, String fromDate, String toDate) {
-        return (root, query, cb) -> {
+        private BooleanBuilder buildOrderFilters(String search, String fromDate, String toDate) {
+                BooleanBuilder where = new BooleanBuilder();
 
-            List<Predicate> predicates = new ArrayList<>();
+                if (search != null && !search.isBlank()) {
+                        where.and(
+                                        customer.customerName.containsIgnoreCase(search)
+                                                        .or(customer.phone.contains(search))
+                                                        .or(bill.totalAmount.stringValue().contains(search))
+                        );
+                }
 
-            if (search != null && !search.isBlank()) {
+                if (fromDate != null && !fromDate.isBlank() && toDate != null && !toDate.isBlank()) {
+                        where.and(bill.createdAt.between(
+                                        Timestamp.valueOf(fromDate + " 00:00:00"),
+                                        Timestamp.valueOf(toDate + " 23:59:59")
+                        ));
+                }
 
-                Join<Object, Object> customerJoin = root.join("customer");
-
-                Predicate name = cb.like(
-                        cb.lower(customerJoin.get("customerName")),
-                        "%" + search.toLowerCase() + "%"
-                );
-
-                Predicate phone = cb.like(
-                        customerJoin.get("phone"),
-                        "%" + search + "%"
-                );
-
-                Predicate amount = cb.like(
-                        root.get("totalAmount").as(String.class),
-                        "%" + search + "%"
-                );
-
-                predicates.add(cb.or(name, phone, amount));
-            }
-
-            if (fromDate != null && !fromDate.isBlank() && toDate != null && !toDate.isBlank()) {
-                predicates.add(cb.between(
-                        root.get("createdAt"),
-                        Timestamp.valueOf(fromDate + " 00:00:00"),
-                        Timestamp.valueOf(toDate + " 23:59:59")
-                ));
-            }
-
-            return cb.and(predicates.toArray(new Predicate[0]));
-        };
+                return where;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public BigDecimal getTotalRevenue() {
         return billingRepository.getTotalRevenue();
     }

@@ -12,7 +12,7 @@ public interface ItemService {
 
    ItemResponse add(ItemRequest itemRequest, MultipartFile file);
 
-   PageResponse<ItemResponse> fetchItem(int page, int size);
+   PageResponse<ItemResponse> fetchItem(int page, int size, String search, String categoryFilter, String sortBy, String sortDir);
 
    void deleteItem(String itemId);
 

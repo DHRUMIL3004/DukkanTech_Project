@@ -16,6 +16,8 @@ const SORT_OPTIONS = [
   { label: "Name (Z → A)",         value: "customerName|desc" },
   { label: "Amount (High → Low)",  value: "totalAmount|desc"  },
   { label: "Amount (Low → High)",  value: "totalAmount|asc"   },
+  { label: "Payment Method (A → Z)", value: "paymentMethod|asc" },
+  { label: "Payment Method (Z → A)", value: "paymentMethod|desc" },
 ];
 
 const TODAY    = new Date().toISOString().split("T")[0];

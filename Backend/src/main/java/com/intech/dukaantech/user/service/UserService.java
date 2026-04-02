@@ -2,8 +2,7 @@ package com.intech.dukaantech.user.service;
 
 import com.intech.dukaantech.user.dto.UserRequest;
 import com.intech.dukaantech.user.dto.UserResponse;
-
-import java.util.List;
+import com.intech.dukaantech.common.dto.PageResponse;
 
 public interface UserService {
 
@@ -11,7 +10,7 @@ public interface UserService {
 
     String getUserRole(String email);
 
-    List<UserResponse> readUsers();
+    PageResponse<UserResponse> readUsers(int page, int size, String search, String roleFilter, String sortBy, String sortDir);
 
     void deleteUser(String id);
 

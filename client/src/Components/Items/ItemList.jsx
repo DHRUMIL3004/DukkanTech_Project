@@ -10,11 +10,22 @@ import { confirmAction } from "../../Service/DeleteService";
 const ItemList = ({ refreshFlag, onEditItemClick }) => {
   const [items, setItems] = useState([]);
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("ALL");
   const [sortOrder, setSortOrder] = useState("NONE"); // NONE | ASC | DESC
 
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 400);
+
+    return () => clearTimeout(t);
+  }, [search]);
+
   const loadItems = () => {
-    getItems(0, 1000).then((response) => {
+    const sortBy = sortOrder === "NONE" ? "" : "name";
+    const sortDir = sortOrder === "DESC" ? "DESC" : sortOrder === "ASC" ? "ASC" : "";
+    getItems(0, 1000, debouncedSearch, categoryFilter, sortBy, sortDir).then((response) => {
       // Handle paginated response - extract data array
       if (response && response.data && Array.isArray(response.data)) {
         setItems(response.data);
@@ -28,37 +39,7 @@ const ItemList = ({ refreshFlag, onEditItemClick }) => {
 
   useEffect(() => {
     loadItems();
-  }, [refreshFlag]);
-
-  const filteredAndSortedItems = useMemo(() => {
-    let result = [...items];
-
-    // Search by name
-    const term = search.trim().toLowerCase();
-    if (term) {
-      result = result.filter((item) =>
-        item.name?.toLowerCase().includes(term)
-      );
-    }
-
-    // Filter by category
-    if (categoryFilter !== "ALL") {
-      result = result.filter((item) => item.categoryId === categoryFilter);
-    }
-
-    // Sort by name
-    if (sortOrder !== "NONE") {
-      result.sort((a, b) => {
-        const nameA = (a.name || "").toLowerCase();
-        const nameB = (b.name || "").toLowerCase();
-        if (nameA === nameB) return 0;
-        const cmp = nameA < nameB ? -1 : 1;
-        return sortOrder === "ASC" ? cmp : -cmp;
-      });
-    }
-
-    return result;
-  }, [items, search, categoryFilter, sortOrder]);
+  }, [refreshFlag, debouncedSearch, categoryFilter, sortOrder]);
 
   const handleDelete = async(id) => {
    
@@ -107,7 +88,7 @@ const ItemList = ({ refreshFlag, onEditItemClick }) => {
           categories={categoryOptions}
         />
 
-        {filteredAndSortedItems.map((item) => (
+        {items.map((item) => (
           <ItemCard
             key={item.itemId}
             item={item}

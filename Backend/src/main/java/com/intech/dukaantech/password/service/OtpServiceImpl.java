@@ -16,6 +16,7 @@ public class OtpServiceImpl implements OtpService {
     private OtpRepository otpRepository;
 
     @Override
+    @Transactional
     public String generateOtp(String email) {
 
         String otp = String.valueOf(new Random().nextInt(900000) + 100000);
@@ -35,6 +36,7 @@ public class OtpServiceImpl implements OtpService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean validateOtp(String email, String otp) {
 
         OtpEntity token = otpRepository.findByEmail(email);

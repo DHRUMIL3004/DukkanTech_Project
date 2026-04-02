@@ -10,31 +10,31 @@ import Logout from "../Logout/Logout";
 import { Delete } from "lucide-react";
 import Swal from "sweetalert2";
 import { confirmAction } from "../../Service/DeleteService";
+import { getBackendErrorMessage } from "../../Service/errorMessage";
 
 const CategoryList = ({ refreshFlag, onEditCategoryClick }) => {
-  const [allCategories, setAllCategories] = useState([]);
   const [categories, setCategories] = useState([]);
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 400);
+
+    return () => clearTimeout(t);
+  }, [search]);
 
   const loadCategories = async () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await getCategories();
-      const list = data.data || data;
-      // console.log("Loaded categories:", data.data[0].itemCount);
-      setAllCategories(list);
-      setCategories(
-        list.filter((c) =>
-          c.name?.toLowerCase().includes(search.trim().toLowerCase()),
-        ),
-      );
+      const data = await getCategories(0, 50, debouncedSearch, "name", "ASC");
+      setCategories(data.data || data || []);
     } catch (err) {
-      setError(
-        err.response?.data || err.message || "Unable to load categories",
-      );
+      setError(getBackendErrorMessage(err, "Unable to load categories"));
     } finally {
       setLoading(false);
     }
@@ -42,18 +42,7 @@ const CategoryList = ({ refreshFlag, onEditCategoryClick }) => {
 
   useEffect(() => {
     loadCategories();
-  }, [refreshFlag]);
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      setCategories(
-        allCategories.filter((c) =>
-          c.name?.toLowerCase().includes(search.trim().toLowerCase()),
-        ),
-      );
-    }, 300);
-    return () => clearTimeout(timeout);
-  }, [search, allCategories]);
+  }, [refreshFlag, debouncedSearch]);
 
   const handleDelete = async (id) => {
    const count = await getItemCountByCategory(id);

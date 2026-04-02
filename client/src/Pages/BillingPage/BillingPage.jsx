@@ -5,6 +5,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getItems } from "../../Service/ItemService";
+import { getCategories } from "../../Service/CategoryService";
 import NavBar from "../../Components/NavBar/NavBar";
 import { FaShoppingCart } from "react-icons/fa";
 import { toast } from "react-toastify";
@@ -16,6 +17,7 @@ import {
 } from "../../Components/Billing";
 import "./BillingPage.css";
 import Footer from "../../Components/Footer/Footer";
+import { getBackendErrorMessage } from "../../Service/errorMessage";
 
 const BillingPage = () => {
   const navigate = useNavigate();
@@ -29,6 +31,7 @@ const BillingPage = () => {
 
   // Search and filter controls
   const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("name-asc");
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
@@ -58,48 +61,32 @@ const BillingPage = () => {
     localStorage.setItem("billingCart", JSON.stringify(cartItems));
   }, [cartItems]);
 
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 400);
+
+    return () => clearTimeout(t);
+  }, [searchTerm]);
+
   // Fetch products when page changes
   useEffect(() => {
     fetchItems(currentPage);
-  }, [currentPage]);
+  }, [currentPage, debouncedSearchTerm, sortBy, selectedCategories]);
 
-  // Apply client-side filtering and sorting when data or filters change
   useEffect(() => {
-    let result = [...items];
+    const loadCategories = async () => {
+      try {
+        const response = await getCategories(0, 1000);
+        const list = response.data || response || [];
+        setCategories(list.map((category) => category.name).filter(Boolean));
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
 
-    // Search filter
-    if (searchTerm.trim()) {
-      result = result.filter(item =>
-        item.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.description?.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    // Category filter
-    if (selectedCategories.length > 0) {
-      result = result.filter(item => selectedCategories.includes(item.categoryName));
-    }
-
-    // Sorting
-    switch (sortBy) {
-      case "name-asc":
-        result.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
-        break;
-      case "name-desc":
-        result.sort((a, b) => (b.name || "").localeCompare(a.name || ""));
-        break;
-      case "price-asc":
-        result.sort((a, b) => (parseFloat(a.price) || 0) - (parseFloat(b.price) || 0));
-        break;
-      case "price-desc":
-        result.sort((a, b) => (parseFloat(b.price) || 0) - (parseFloat(a.price) || 0));
-        break;
-      default:
-        break;
-    }
-
-    setFilteredItems(result);
-  }, [searchTerm, sortBy, selectedCategories, items]);
+    loadCategories();
+  }, []);
 
   // ============ API FUNCTIONS ============
 
@@ -107,7 +94,15 @@ const BillingPage = () => {
   const fetchItems = async (page) => {
     setLoading(true);
     try {
-      const response = await getItems(page, itemsPerPage);
+      const [sortField, sortDirection] = sortBy.split("-");
+      const response = await getItems(
+        page,
+        itemsPerPage,
+        debouncedSearchTerm,
+        selectedCategories.join(","),
+        sortField,
+        sortDirection?.toUpperCase() || "ASC"
+      );
 
       if (response && response.data) {
         setItems(response.data);
@@ -123,6 +118,7 @@ const BillingPage = () => {
       }
     } catch (error) {
       console.error("Error fetching items:", error);
+      toast.error(getBackendErrorMessage(error, "Unable to load items"));
     } finally {
       setLoading(false);
     }
