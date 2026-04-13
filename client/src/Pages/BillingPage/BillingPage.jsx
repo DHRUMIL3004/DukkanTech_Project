@@ -12,7 +12,7 @@ import {
   SearchBox,
   FilterDropdown,
   ProductCard,
-  Pagination
+  Pagination,
 } from "../../Modules/Billing";
 import "./BillingPage.css";
 import Footer from "../../Components/Footer/Footer";
@@ -22,7 +22,7 @@ const BillingPage = () => {
   const navigate = useNavigate();
 
   // ============ STATE MANAGEMENT ============
-  
+
   // Product data from API
   const [items, setItems] = useState([]);
   const [filteredItems, setFilteredItems] = useState([]);
@@ -100,7 +100,7 @@ const BillingPage = () => {
         debouncedSearchTerm,
         selectedCategories.join(","),
         sortField,
-        sortDirection?.toUpperCase() || "ASC"
+        sortDirection?.toUpperCase() || "ASC",
       );
 
       if (response && response.data) {
@@ -111,9 +111,11 @@ const BillingPage = () => {
 
         // Extract unique categories for filter dropdown
         const uniqueCategories = [
-          ...new Set(response.data.map(item => item.categoryName).filter(Boolean))
+          ...new Set(
+            response.data.map((item) => item.categoryName).filter(Boolean),
+          ),
         ];
-        setCategories(prev => [...new Set([...prev, ...uniqueCategories])]);
+        setCategories((prev) => [...new Set([...prev, ...uniqueCategories])]);
       }
     } catch (error) {
       console.error("Error fetching items:", error);
@@ -127,7 +129,7 @@ const BillingPage = () => {
 
   // Add item to cart or increase quantity if already exists
   const addToCart = (item) => {
-    const existingItem = cartItems.find(ci => ci.itemId === item.itemId);
+    const existingItem = cartItems.find((ci) => ci.itemId === item.itemId);
 
     // Check stock limit
     if (existingItem && existingItem.quantity >= item.quantity) {
@@ -137,11 +139,11 @@ const BillingPage = () => {
 
     if (existingItem) {
       // Increase quantity
-      setCartItems(cartItems.map(ci =>
-        ci.itemId === item.itemId
-          ? { ...ci, quantity: ci.quantity + 1 }
-          : ci
-      ));
+      setCartItems(
+        cartItems.map((ci) =>
+          ci.itemId === item.itemId ? { ...ci, quantity: ci.quantity + 1 } : ci,
+        ),
+      );
       toast.info(`${item.name} quantity increased`);
     } else {
       // Add new item
@@ -154,8 +156,8 @@ const BillingPage = () => {
           tax: parseFloat(item.tax) || 0,
           quantity: 1,
           image: item.imgUrl,
-          availableQuantity: item.quantity
-        }
+          availableQuantity: item.quantity,
+        },
       ]);
       toast.success(`${item.name} added to cart`);
     }
@@ -163,28 +165,31 @@ const BillingPage = () => {
 
   // ============ PAGINATION HANDLERS ============
 
-  const totalCartItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const totalCartItems = cartItems.reduce(
+    (sum, item) => sum + item.quantity,
+    0,
+  );
   const startIndex = currentPage * itemsPerPage;
   const endIndex = Math.min(startIndex + itemsPerPage, totalElements);
 
   const goToPrevPage = () => {
     if (currentPage > 0) {
       setCurrentPage(currentPage - 1);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
   const goToNextPage = () => {
     if (currentPage < totalPages - 1) {
       setCurrentPage(currentPage + 1);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
   // Toggle category in filter
   const toggleCategory = (category) => {
     if (selectedCategories.includes(category)) {
-      setSelectedCategories(selectedCategories.filter(c => c !== category));
+      setSelectedCategories(selectedCategories.filter((c) => c !== category));
     } else {
       setSelectedCategories([...selectedCategories, category]);
     }
@@ -194,10 +199,8 @@ const BillingPage = () => {
 
   return (
     <>
-      
       <div className="billing-page">
         <div className="billing-container">
-          
           {/* Page Header */}
           <div className="billing-header">
             <div className="header-text">
@@ -234,7 +237,10 @@ const BillingPage = () => {
               <option value="price-desc">Price (High to Low)</option>
             </select>
 
-            <button className="cart-btn" onClick={() => navigate("/billing/cart")}>
+            <button
+              className="cart-btn"
+              onClick={() => navigate("/billing/cart")}
+            >
               <FaShoppingCart />
               <span>Cart</span>
               {totalCartItems > 0 && (
@@ -245,7 +251,8 @@ const BillingPage = () => {
 
           {/* Products Count Display */}
           <div className="products-count">
-            Showing {totalElements > 0 ? startIndex + 1 : 0}-{endIndex} of {totalElements} products
+            Showing {totalElements > 0 ? startIndex + 1 : 0}-{endIndex} of{" "}
+            {totalElements} products
           </div>
 
           {/* Products Grid - Shows loading, empty, or product cards */}
@@ -255,12 +262,15 @@ const BillingPage = () => {
             ) : filteredItems.length === 0 ? (
               <div className="empty-state">No products found</div>
             ) : (
-              filteredItems.map(item => (
+              filteredItems.map((item) => (
                 <ProductCard
                   key={item.itemId}
                   item={item}
                   onAddToCart={addToCart}
-                  isDisabled={cartItems.find(ci => ci.itemId === item.itemId)?.quantity >= item.quantity}
+                  isDisabled={
+                    cartItems.find((ci) => ci.itemId === item.itemId)
+                      ?.quantity >= item.quantity
+                  }
                 />
               ))
             )}
@@ -276,7 +286,7 @@ const BillingPage = () => {
         </div>
       </div>
 
-      <Footer/>
+      <Footer />
     </>
   );
 };

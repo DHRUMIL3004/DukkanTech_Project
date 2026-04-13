@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -6,7 +5,7 @@ import {
   createBill,
   createRazorpayOrder,
   sendWhatsappAlert,
-  verifyRazorpayPayment
+  verifyRazorpayPayment,
 } from "../../Service/BillingService";
 import { FaArrowLeft } from "react-icons/fa";
 import { toast } from "react-toastify";
@@ -14,7 +13,7 @@ import {
   CartItemRow,
   OrderSummary,
   Receipt,
-  EmptyCart
+  EmptyCart,
 } from "../../Modules/Billing";
 import "./CartPage.css";
 import Footer from "../../Components/Footer/Footer";
@@ -24,25 +23,24 @@ import { getBackendErrorMessage } from "../../Service/errorMessage";
 const UPI_MAX_TRANSACTION_INR = 100000;
 
 const CartPage = () => {
-  
   const navigate = useNavigate();
-  
+
   // ============ STATE MANAGEMENT ============
 
   // Cart items (synced with localStorage)
   const [cartItems, setCartItems] = useState([]);
-  
+
   // Customer form fields
   const [customerName, setCustomerName] = useState("");
   const [phone, setPhone] = useState("");
   const [city, setCity] = useState("");
   const [dob, setDob] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("CASH");
-  
+
   // Form validation errors
   const [nameError, setNameError] = useState("");
   const [phoneError, setPhoneError] = useState("");
-  
+
   // UI state
   const [processingPayment, setProcessingPayment] = useState(false);
   const [billResponse, setBillResponse] = useState(null);
@@ -53,7 +51,8 @@ const CartPage = () => {
   const validateName = (value) => {
     const alphabeticRegex = /^[a-zA-Z\s]+$/;
     if (!value.trim()) return "Customer name is required";
-    if (!alphabeticRegex.test(value)) return "Name should only contain letters and spaces (no numbers or special characters)";
+    if (!alphabeticRegex.test(value))
+      return "Name should only contain letters and spaces (no numbers or special characters)";
     return "";
   };
 
@@ -61,12 +60,13 @@ const CartPage = () => {
   const validatePhone = (value) => {
     const phoneRegex = /^\d{10}$/;
     if (!value.trim()) return "Phone number is required";
-    if (!phoneRegex.test(value)) return "Phone number must be exactly 10 digits";
+    if (!phoneRegex.test(value))
+      return "Phone number must be exactly 10 digits";
     return "";
   };
 
   const handlePhoneChange = (e) => {
-    const value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+    const value = e.target.value.replace(/\D/g, ""); // Remove non-digits
     setPhone(value);
     setPhoneError(validatePhone(value));
   };
@@ -77,21 +77,22 @@ const CartPage = () => {
     setNameError(validateName(value));
   };
 
-const handleCityChange = (e) => {
-   const value = e.target.value;
+  const handleCityChange = (e) => {
+    const value = e.target.value;
     setCity(value);
-                                                         
-}
+  };
 
-const handleDobChange = (e) => {
-  setDob(e.target.value);
-}                                       
+  const handleDobChange = (e) => {
+    setDob(e.target.value);
+  };
 
   const isFormValid = () => {
-    return customerName.trim() && 
-           phone.trim() && 
-           !validateName(customerName) && 
-           !validatePhone(phone);
+    return (
+      customerName.trim() &&
+      phone.trim() &&
+      !validateName(customerName) &&
+      !validatePhone(phone)
+    );
   };
 
   // ============ EFFECTS ============
@@ -111,7 +112,7 @@ const handleDobChange = (e) => {
 
   // Update item quantity with stock validation
   const updateQuantity = (itemId, newQuantity) => {
-    const item = cartItems.find(ci => ci.itemId === itemId);
+    const item = cartItems.find((ci) => ci.itemId === itemId);
     if (!item) return;
 
     if (newQuantity > item.availableQuantity) {
@@ -124,28 +125,38 @@ const handleDobChange = (e) => {
       return;
     }
 
-    setCartItems(cartItems.map(ci =>
-      ci.itemId === itemId ? { ...ci, quantity: newQuantity } : ci
-    ));
+    setCartItems(
+      cartItems.map((ci) =>
+        ci.itemId === itemId ? { ...ci, quantity: newQuantity } : ci,
+      ),
+    );
   };
 
-  const removeFromCart =async (itemId) => {
-
-    const ok = await confirmAction("Are you sure?", "This item will be removed from the cart!");
+  const removeFromCart = async (itemId) => {
+    const ok = await confirmAction(
+      "Are you sure?",
+      "This item will be removed from the cart!",
+    );
 
     if (!ok) {
       return;
     }
 
-
-    setCartItems(cartItems.filter(ci => ci.itemId !== itemId));
+    setCartItems(cartItems.filter((ci) => ci.itemId !== itemId));
   };
 
   // ============ PRICE CALCULATIONS ============
 
-  const calculateItemTaxAmount = (item) => (item.price * item.quantity * item.tax) / 100;
-  const subTotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const totalTax = cartItems.reduce((sum, item) => sum + calculateItemTaxAmount(item), 0);
+  const calculateItemTaxAmount = (item) =>
+    (item.price * item.quantity * item.tax) / 100;
+  const subTotal = cartItems.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0,
+  );
+  const totalTax = cartItems.reduce(
+    (sum, item) => sum + calculateItemTaxAmount(item),
+    0,
+  );
   const totalAmount = subTotal + totalTax;
 
   // ============ PAYMENT & INVOICE HANDLERS ============
@@ -165,8 +176,8 @@ const handleDobChange = (e) => {
     items: cartItems.map((item) => ({
       itemId: item.itemId,
       quantity: item.quantity,
-      tax: item.tax
-    }))
+      tax: item.tax,
+    })),
   });
 
   const openRazorpayCheckout = async (orderPayload) => {
@@ -184,7 +195,7 @@ const handleDobChange = (e) => {
         order_id: orderPayload.razorpayOrderId,
         prefill: {
           name: customerName,
-          contact: phone
+          contact: phone,
         },
         method: {
           upi: true,
@@ -192,10 +203,10 @@ const handleDobChange = (e) => {
           netbanking: false,
           wallet: false,
           emi: false,
-          paylater: false
+          paylater: false,
         },
         theme: {
-          color: "#0b7a5a"
+          color: "#0b7a5a",
         },
         handler: async (response) => {
           try {
@@ -203,7 +214,7 @@ const handleDobChange = (e) => {
               receipt: orderPayload.receipt,
               razorpayOrderId: response.razorpay_order_id,
               razorpayPaymentId: response.razorpay_payment_id,
-              razorpaySignature: response.razorpay_signature
+              razorpaySignature: response.razorpay_signature,
             });
             resolve(verifyResponse);
           } catch (error) {
@@ -216,14 +227,14 @@ const handleDobChange = (e) => {
               await cancelRazorpayPayment({
                 receipt: orderPayload.receipt,
                 razorpayOrderId: orderPayload.razorpayOrderId,
-                reason: "Checkout closed by user"
+                reason: "Checkout closed by user",
               });
             } catch (cancelError) {
               console.error("Cancel payment error:", cancelError);
             }
             reject(new Error("Payment cancelled by user"));
-          }
-        }
+          },
+        },
       };
 
       const razorpay = new window.Razorpay(options);
@@ -232,7 +243,7 @@ const handleDobChange = (e) => {
           await cancelRazorpayPayment({
             receipt: orderPayload.receipt,
             razorpayOrderId: orderPayload.razorpayOrderId,
-            reason: "Payment failed at gateway"
+            reason: "Payment failed at gateway",
           });
         } catch (cancelError) {
           console.error("Cancel on failure error:", cancelError);
@@ -245,9 +256,11 @@ const handleDobChange = (e) => {
 
   // Process payment and update stock in backend
   const handleCompleted = async () => {
- 
-    const ok= await confirmAction("Confirm Payment", `Total amount to be paid: INR ${totalAmount.toFixed(2)}. Do you want to proceed?`);
-    
+    const ok = await confirmAction(
+      "Confirm Payment",
+      `Total amount to be paid: INR ${totalAmount.toFixed(2)}. Do you want to proceed?`,
+    );
+
     if (!ok) {
       return;
     }
@@ -267,7 +280,9 @@ const handleDobChange = (e) => {
 
       if (paymentMethod === "UPI") {
         if (totalAmount > UPI_MAX_TRANSACTION_INR) {
-          throw new Error(`UPI payment limit exceeded for a single transaction. Please keep total at or below INR ${UPI_MAX_TRANSACTION_INR}.`);
+          throw new Error(
+            `UPI payment limit exceeded for a single transaction. Please keep total at or below INR ${UPI_MAX_TRANSACTION_INR}.`,
+          );
         }
 
         const receipt = getReceipt();
@@ -276,7 +291,7 @@ const handleDobChange = (e) => {
           currency: "INR",
           receipt,
           customerName: customerName.trim(),
-          phone: phone.trim()
+          phone: phone.trim(),
         });
 
         if (orderPayload.status === "PAID") {
@@ -305,7 +320,9 @@ const handleDobChange = (e) => {
       toast.success("Payment successful. Invoice generated.");
     } catch (error) {
       console.error(error);
-      toast.error(getBackendErrorMessage(error, "Payment failed. Order was not saved."));
+      toast.error(
+        getBackendErrorMessage(error, "Payment failed. Order was not saved."),
+      );
     } finally {
       setProcessingPayment(false);
     }
@@ -316,7 +333,7 @@ const handleDobChange = (e) => {
     setBillResponse(null);
     setCustomerName("");
     setPhone("");
-    
+
     setPaymentMethod("CASH");
     navigate("/billing");
   };
@@ -329,7 +346,6 @@ const handleDobChange = (e) => {
   if (billResponse) {
     return (
       <>
-        
         <div className="cart-page">
           <Receipt
             billResponse={billResponse}
@@ -346,7 +362,6 @@ const handleDobChange = (e) => {
     <>
       <div className="cart-page">
         <div className="cart-wrapper">
-          
           {/* Back Navigation */}
           <button className="back-btn" onClick={goBack}>
             <FaArrowLeft />
@@ -354,7 +369,6 @@ const handleDobChange = (e) => {
           </button>
 
           <div className="cart-layout">
-            
             {/* Left: Cart Items List */}
             <div className="cart-items-section">
               <div className="section-header">
@@ -376,7 +390,7 @@ const handleDobChange = (e) => {
                   </div>
 
                   {/* Cart Item Rows */}
-                  {cartItems.map(item => (
+                  {cartItems.map((item) => (
                     <CartItemRow
                       key={item.itemId}
                       item={item}
@@ -414,7 +428,7 @@ const handleDobChange = (e) => {
           </div>
         </div>
       </div>
-      <Footer/>
+      <Footer />
     </>
   );
 };

@@ -5,7 +5,6 @@ import CategoryList from "../../Modules/Categories/CategoryList";
 import { FaTags } from "react-icons/fa";
 import Footer from "../../Components/Footer/Footer";
 
-
 const ManageCategory = () => {
   const [refreshFlag, setRefreshFlag] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
@@ -24,26 +23,25 @@ const ManageCategory = () => {
 
   return (
     <>
-    <ManagementLayout
-      title="Manage Categories"
-      Icon={FaTags}
-      left={
-        <CategoryForm
-          refreshCategories={refreshCategories}
-          editingCategory={editingCategory}
-          onEditComplete={handleEditComplete}
-        />
-      }
-      right={
-        <CategoryList
-          refreshFlag={refreshFlag}
-          onEditCategoryClick={handleEditCategoryClick}
-        />
-      }
-    />
-    <Footer/>
-
-      </>
+      <ManagementLayout
+        title="Manage Categories"
+        Icon={FaTags}
+        left={
+          <CategoryForm
+            refreshCategories={refreshCategories}
+            editingCategory={editingCategory}
+            onEditComplete={handleEditComplete}
+          />
+        }
+        right={
+          <CategoryList
+            refreshFlag={refreshFlag}
+            onEditCategoryClick={handleEditCategoryClick}
+          />
+        }
+      />
+      <Footer />
+    </>
   );
 };
 

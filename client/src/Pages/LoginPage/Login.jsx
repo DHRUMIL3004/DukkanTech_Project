@@ -12,7 +12,6 @@ function Login() {
   const { t, i18n } = useTranslation("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
- 
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -41,7 +40,6 @@ function Login() {
 
       console.log("RAW RESPONSE:", data);
       if (!response.ok) {
-
         if (typeof data === "string") {
           alert(data || "Login failed");
         } else {
@@ -50,7 +48,6 @@ function Login() {
         return;
       }
 
-      
       console.log("Login Success", data);
 
       const decoded = jwtDecode(data.token);
@@ -75,8 +72,6 @@ function Login() {
       alert("Something went wrong");
     }
   };
-
-  
 
   return (
     <div>
@@ -103,9 +98,12 @@ function Login() {
                     </div>
 
                     <div className="mb-3">
-                    <Password onchange={(e) => setPassword(e.target.value)} className={"form-control form-control-lg"} placeholder={t("password")}/>
+                      <Password
+                        onchange={(e) => setPassword(e.target.value)}
+                        className={"form-control form-control-lg"}
+                        placeholder={t("password")}
+                      />
                     </div>
-                 
 
                     <div className="d-grid mb-3">
                       <button className="btn login_btn btn-lg">

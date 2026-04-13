@@ -5,19 +5,15 @@ import Working from "../../Modules/Features/Working/Working";
 import Footer from "../../Components/Footer/Footer";
 import Hero from "../../Modules/Hero/Hero";
 
-
-
-
-
 const LandingPage = () => {
   return (
     <>
-      <LandingNavbar/>
-      <Hero/>
-      <Features/>
-      <Working/>
-      <About/>
-      <Footer/>
+      <LandingNavbar />
+      <Hero />
+      <Features />
+      <Working />
+      <About />
+      <Footer />
     </>
   );
 };
