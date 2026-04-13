@@ -15,7 +15,7 @@ public class JwtUtil {
     public String generateToken(UserEntity user){
 
         String token= Jwts.builder()
-                .setSubject(user.getEmail())
+                .setSubject(String.valueOf(user.getId()))
                 .claim("role", user.getRole().name())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis()+86400000))
@@ -41,8 +41,16 @@ public class JwtUtil {
                 .getBody()
                 .get("role", String.class);
     }
-    
 
+    public Long extractUserId(String token){
+        String id = Jwts.parser()
+                .setSigningKey(SECRET)
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
+
+        return Long.parseLong(id);
+    }
 
     public boolean validateToken(String token){
 
@@ -53,6 +61,4 @@ public class JwtUtil {
             return false;
         }
     }
-
-
 }

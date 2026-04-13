@@ -1,30 +1,8 @@
 import { NavLink } from "react-router-dom";
 import "./NavBar.css";
-import { useEffect, useState } from "react";
-import { showName } from "../../Service/UserService";
 import Logout from "../Logout/Logout";
 
 const EmployeeNavbar = () => {
-
-   const [userName, setUserName] = useState("Employee");
-  
-    useEffect(() => {
-      
-        try {const data = showName();
-        setUserName(data);
-        }
-        catch (err) {
-          console.error("Error fetching user name:", err);
-        }
-      
-    }, []);
-
-     const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
-    window.location.href = "/";
-  };
-
 
   const links = [
     { to: "/billing", label: "Billing"},

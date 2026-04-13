@@ -1,7 +1,6 @@
 package com.intech.dukaantech.user.controller;
 
-import com.intech.dukaantech.authentication.dto.LoginResponse;
-import com.intech.dukaantech.authentication.security.JwtUtil;
+import com.intech.dukaantech.authentication.security.CurrentUser;
 import com.intech.dukaantech.common.dto.PageResponse;
 import com.intech.dukaantech.user.dto.UserRequest;
 import com.intech.dukaantech.user.dto.UserResponse;
@@ -14,8 +13,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
@@ -23,7 +20,6 @@ public class UserController {
 
     private final UserService userService;
     private final UserRepository userRepository;
-    private final JwtUtil jwtUtil;
 
     // Create User
     @PreAuthorize("hasRole('ADMIN')")
@@ -67,10 +63,18 @@ public class UserController {
     @PreAuthorize("hasAnyRole('ADMIN','EMPLOYEE')")
     @GetMapping("/me")
     public ResponseEntity<String> getCurrentUser(Authentication authentication) {
+        Object principal = authentication.getPrincipal();
 
-        String email=authentication.getName();
+        if (principal instanceof CurrentUser currentUser) {
+            UserEntity user = userRepository.findById(currentUser.getId())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            return ResponseEntity.ok(user.getName());
+        }
 
-        Optional<UserEntity> user=userRepository.findByEmail(email);
-        return ResponseEntity.ok(user.get().getName());
+        // Backward compatibility if authentication name is email in other flows.
+        String email = authentication.getName();
+        UserEntity user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return ResponseEntity.ok(user.getName());
     }
 }
