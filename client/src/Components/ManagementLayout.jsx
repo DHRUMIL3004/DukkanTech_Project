@@ -1,6 +1,6 @@
 import React from "react";
-import NavBar from "../NavBar/NavBar";
-import "../NavBar/NavBar.css";
+
+import "./NavBar/NavBar.css";
 import { FaRegUser } from "react-icons/fa";
 
 const ManagementLayout = ({

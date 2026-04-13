@@ -1,7 +1,7 @@
 import { useState } from "react";
-import ManagementLayout from "../../Components/Common/ManagementLayout";
-import ItemForm from "../../Components/Items/ItemForm";
-import ItemList from "../../Components/Items/ItemList";
+import ManagementLayout from "../../Components/ManagementLayout";
+import ItemForm from "../../Modules/Items/ItemForm";
+import ItemList from "../../Modules/Items/ItemList";
 import { FaBoxOpen } from "react-icons/fa";
 import Footer from "../../Components/Footer/Footer";
 

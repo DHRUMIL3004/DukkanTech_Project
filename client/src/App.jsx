@@ -1,5 +1,5 @@
 import React from 'react'
-import LandingPage from './Pages/LandingPage'
+import LandingPage from './Pages/LandingPage/LandingPage'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import Login from './Pages/LoginPage/Login'
 import ManageCategory from './Pages/ManageCategory/ManageCategory';
@@ -12,11 +12,12 @@ import "react-toastify/dist/ReactToastify.css";
 import OrderHistory from './Pages/OrderHistory/OrderHistory';
 import ProtectedRoute from './Components/ProtectedRoute';
 import { useLocation } from "react-router-dom";
+import ForgotPassword from './Pages/LoginPage/ForgotPassword';
+import AdminDashboard from './Pages/AdminDashboard/AdminDashboard';
 import LandingNavbar from './Components/NavBar/LandingNavbar';
 import NavBar from './Components/NavBar/NavBar';
 import EmployeeNavbar from './Components/NavBar/EmployeeNavbar';
-import ForgotPassword from './Pages/ForgotPassword/ForgotPassword';
-import AdminDashboard from './Pages/AdminDashboard/AdminDashboard';
+
 
 
 function App() {
@@ -32,7 +33,7 @@ function App() {
 
   // Public pages
   if (path === "/" || path === "/login" || path === "/forgot-password") {
-    return <LandingNavbar />;
+    return <LandingNavbar/>;
 
 
   }

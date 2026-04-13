@@ -2,7 +2,7 @@ import { NavLink } from "react-router-dom";
 import "./NavBar.css";
 import { useEffect, useState } from "react";
 import { showName } from "../../Service/UserService";
-import Logout from "../Logout/Logout";
+import Logout from "../../Modules/Logout/Logout";
 
 const EmployeeNavbar = () => {
 

@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getItems } from "../../Service/ItemService";
 import { getCategories } from "../../Service/CategoryService";
-import NavBar from "../../Components/NavBar/NavBar";
 import { FaShoppingCart } from "react-icons/fa";
 import { toast } from "react-toastify";
 import {
@@ -14,7 +13,7 @@ import {
   FilterDropdown,
   ProductCard,
   Pagination
-} from "../../Components/Billing";
+} from "../../Modules/Billing";
 import "./BillingPage.css";
 import Footer from "../../Components/Footer/Footer";
 import { getBackendErrorMessage } from "../../Service/errorMessage";

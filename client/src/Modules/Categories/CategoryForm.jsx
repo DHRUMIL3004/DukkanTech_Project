@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { createCategory, updateCategory } from "../../Service/CategoryService";
-import CardPanel from "../Common/CardPanel";
+import CardPanel from "../../Components/CardPanel";
 import { getBackendErrorMessage } from "../../Service/errorMessage";
 
 const CategoryForm = ({ refreshCategories, editingCategory, onEditComplete }) => {

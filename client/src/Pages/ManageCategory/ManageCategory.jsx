@@ -1,7 +1,7 @@
 import { useState } from "react";
-import ManagementLayout from "../../Components/Common/ManagementLayout";
-import CategoryForm from "../../Components/Categories/CategoryForm";
-import CategoryList from "../../Components/Categories/CategoryList";
+import ManagementLayout from "../../Components/ManagementLayout";
+import CategoryForm from "../../Modules/Categories/CategoryForm";
+import CategoryList from "../../Modules/Categories/CategoryList";
 import { FaTags } from "react-icons/fa";
 import Footer from "../../Components/Footer/Footer";
 

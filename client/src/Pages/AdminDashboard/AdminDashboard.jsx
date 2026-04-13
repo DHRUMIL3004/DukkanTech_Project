@@ -1,4 +1,4 @@
-import Dashboard from "../../Components/Dashboard/Dashboard";
+import Dashboard from "../../Modules/Dashboard/Dashboard";
 import Footer from "../../Components/Footer/Footer";
 
 function AdminDashboard() {

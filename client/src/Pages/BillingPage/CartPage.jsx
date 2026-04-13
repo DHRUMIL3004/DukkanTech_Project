@@ -15,7 +15,7 @@ import {
   OrderSummary,
   Receipt,
   EmptyCart
-} from "../../Components/Billing";
+} from "../../Modules/Billing";
 import "./CartPage.css";
 import Footer from "../../Components/Footer/Footer";
 import { confirmAction } from "../../Service/DeleteService";

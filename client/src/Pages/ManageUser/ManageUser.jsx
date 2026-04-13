@@ -1,7 +1,7 @@
 import { useState } from "react";
-import ManagementLayout from "../../Components/Common/ManagementLayout";
-import UserForm from "../../Components/Users/UserForm";
-import UserList from "../../Components/Users/UserList";
+import ManagementLayout from "../../Components/ManagementLayout";
+import UserForm from "../../Modules/Users/UserForm";
+import UserList from "../../Modules/Users/UserList";
 import { FaUsers } from "react-icons/fa";
 import Footer from "../../Components/Footer/Footer";
 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { createUser, updateUser } from "../../Service/UserService";
-import CardPanel from "../Common/CardPanel";
+import CardPanel from "../../Components/CardPanel";
 import { getBackendErrorMessage } from "../../Service/errorMessage";
 
 const UserForm = ({ refreshUsers, editingUser, onEditComplete }) => {

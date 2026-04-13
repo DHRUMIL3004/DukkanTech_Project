@@ -2,8 +2,8 @@
 import { useEffect, useState } from "react";
 import { getUsers, deleteUser } from "../../Service/UserService";
 import { FaEllipsisV } from "react-icons/fa";
-import CardPanel from "../Common/CardPanel";
-import FilterSortControls from "../Common/FilterSortControls";
+import CardPanel from "../../Components/CardPanel";
+import FilterSortControls from "../../Components/FilterSortControls";
 import { confirmAction } from "../../Service/DeleteService";
 import { getBackendErrorMessage } from "../../Service/errorMessage";
 

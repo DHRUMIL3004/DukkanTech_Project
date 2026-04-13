@@ -134,6 +134,7 @@ fetchRevenue();
     "#9b7fe8", "#3ecfcf", "#f97316", "#84cc16",
   ];
 
+
   if (loading) {
     return (
       <div className="dash-loading">
@@ -433,7 +434,7 @@ fetchRevenue();
             <div className="dash-quick-divider" />
             <div className="dash-quick-item">
               <span className="dash-quick-label">Total Users</span>
-              <span className="dash-quick-val">{users.length}</span>
+              <span className="dash-quick-val">{users.data.length}</span>
             </div>
           </div>
         </section>

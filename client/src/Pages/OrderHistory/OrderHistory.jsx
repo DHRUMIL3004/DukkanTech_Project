@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { getOrderSummary, getOrders } from "../../Service/OrderHistory";
-import Receipt from "../../Components/Billing/Receipt";
+import Receipt from "../../Modules/Billing/Receipt";
 import "./OrderHistory.css";
 import Footer from "../../Components/Footer/Footer";
 

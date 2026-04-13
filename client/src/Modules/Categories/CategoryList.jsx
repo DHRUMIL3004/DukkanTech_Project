@@ -5,7 +5,7 @@ import {
   getItemCountByCategory,
 } from "../../Service/CategoryService";
 import { FaEllipsisV } from "react-icons/fa";
-import CardPanel from "../Common/CardPanel";
+import CardPanel from "../../Components/CardPanel";
 import Logout from "../Logout/Logout";
 import { Delete } from "lucide-react";
 import Swal from "sweetalert2";
