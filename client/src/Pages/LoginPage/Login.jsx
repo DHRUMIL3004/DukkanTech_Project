@@ -5,10 +5,14 @@ import { useTranslation } from "react-i18next";
 import { jwtDecode } from "jwt-decode";
 import { Link } from "react-router-dom";
 
+import { Eye, EyeOff } from "lucide-react";
+import Password from "../../Components/PasswordField/Password";
+
 function Login() {
   const { t, i18n } = useTranslation("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+ 
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -72,6 +76,8 @@ function Login() {
     }
   };
 
+  
+
   return (
     <div>
       <section className="vh-100 login_form d-flex align-items-center">
@@ -97,20 +103,9 @@ function Login() {
                     </div>
 
                     <div className="mb-3">
-                      <input
-                        type="password"
-                        className="form-control form-control-lg"
-                        placeholder={t("password")}
-                        onChange={(e) => setPassword(e.target.value)}
-                      />
+                    <Password onchange={(e) => setPassword(e.target.value)} className={"form-control form-control-lg"} placeholder={t("password")}/>
                     </div>
-                    {/* <div className="mb-3">
-                      <select className="form-select form-select-lg" onChange={(e) => setRole(e.target.value)}>
-                        <option value="">{t('selectRole')}</option>
-                        <option value="ADMIN">{t('admin')}</option>
-                        <option value="EMPLOYEE">{t('employee')}</option>
-                      </select>
-                    </div> */}
+                 
 
                     <div className="d-grid mb-3">
                       <button className="btn login_btn btn-lg">

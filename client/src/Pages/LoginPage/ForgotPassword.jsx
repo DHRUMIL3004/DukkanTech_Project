@@ -7,6 +7,7 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { getBackendErrorMessage } from "../../Service/errorMessage";
+import Password from "../../Components/PasswordField/Password";
 
 function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -44,24 +45,21 @@ function ForgotPassword() {
       return;
     }
 
-    
-  try {
-    const response = await verifyOtp(email, otp);
+    try {
+      const response = await verifyOtp(email, otp);
 
-    //  Check backend response
-    if (response === "otp is varified") {
-      toast.success("OTP verified!");
-      setStep(3);
-    } else {
-      toast.error("Invalid OTP");
+      //  Check backend response
+      if (response === "otp is varified") {
+        toast.success("OTP verified!");
+        setStep(3);
+      } else {
+        toast.error("Invalid OTP");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error(getBackendErrorMessage(error, "Something went wrong"));
     }
-
-  } catch (error) {
-    console.error(error);
-    toast.error(getBackendErrorMessage(error, "Something went wrong"));
-  }
-};
-  
+  };
 
   //  Reset Password
   const handleResetPassword = async (e) => {
@@ -81,7 +79,6 @@ function ForgotPassword() {
       await resetPassword(email, password);
       toast.success("Password reset successfully!");
 
-
       // reset form
       setEmail("");
       setOtp("");
@@ -89,10 +86,8 @@ function ForgotPassword() {
       setConfirmPassword("");
 
       setTimeout(() => {
-      navigate("/login");
-    }, 1500);
-
-
+        navigate("/login");
+      }, 1500);
     } catch (error) {
       console.error(error);
       toast.error(getBackendErrorMessage(error, "Failed to reset password"));
@@ -174,20 +169,20 @@ function ForgotPassword() {
                     {step === 3 && (
                       <>
                         <div className="mb-3">
-                          <input
-                            type="password"
-                            className="form-control form-control-lg mb-3"
-                            placeholder="New Password"
+                          {/* new password */}
+                          <Password
+                            onchange={(e) => setPassword(e.target.value)}
+                            className={"form-control form-control-lg mb-3"}
+                            placeholder={"New Password"}
                             value={password}
-                            onChange={(e) => setPassword(e.target.value)}
                           />
 
-                          <input
-                            type="password"
-                            className="form-control form-control-lg"
-                            placeholder="Confirm Password"
+                          {/* confirm password */}
+                          <Password
+                            onchange={(e) => setConfirmPassword(e.target.value)}
+                            className={"form-control form-control-lg "}
+                            placeholder={"Confirm Password"}
                             value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
                           />
                         </div>
 
