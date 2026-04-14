@@ -5,7 +5,7 @@ function AdminDashboard() {
   return (
     <div>
       <Dashboard />
-      <Footer />
+      <Footer/>
     </div>
   );
 }
