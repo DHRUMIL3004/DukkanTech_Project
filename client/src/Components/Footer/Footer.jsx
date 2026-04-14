@@ -24,9 +24,17 @@ function Footer() {
             <h4 className="footer-heading">Contact Us</h4>
 
             <div className="footer-contact">
-              <p>Email: info@dukaantech.com</p>
-              <p>Phone: +91 9876543210</p>
-              <p>Location: Gujarat, India</p>
+              <p className="footer-email">
+                Email :
+                <a
+                  href="https://mail.google.com/mail/?view=cm&fs=1&to=support@dukaantech.com"
+                  target="_blank"
+                >
+                  &nbsp; support@dukaantech.com
+                </a>
+              </p>
+              <p>Phone : +91 9876543210</p>
+              <p>Location : Gujarat, India</p>
             </div>
           </div>
         </div>

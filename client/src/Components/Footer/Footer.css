@@ -54,6 +54,13 @@
   max-width: 380px;
 }
 
+
+.footer-description:hover {
+  color: white;
+  opacity: 0.8;
+  
+}
+
 /* CONTACT */
 .footer-heading {
   font-size: 1rem;
@@ -67,6 +74,23 @@
   color: #94a3b8;
   font-size: 0.95rem;
 }
+
+.footer-email a{
+  text-decoration: none;
+  color: #94a3b8;
+}
+
+.footer-email a:hover{
+  color: white;
+  opacity: 0.8;
+ 
+}
+
+.footer-contact p:hover {
+  color: white;
+  opacity: 0.8;
+}
+
 
 /* BOTTOM */
 .footer-bottom {
