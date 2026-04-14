@@ -45,31 +45,31 @@ const CategoryList = ({ refreshFlag, onEditCategoryClick }) => {
   }, [refreshFlag, debouncedSearch]);
 
   const handleDelete = async (id) => {
-   const count = await getItemCountByCategory(id);
-   
-  if(count > 0){
-    Swal.fire({
-      icon:"info",
-      title: "Cannot delete",
-      text: "This category has items associated with it. Please delete those items first.",
-      width:"300px",
-      padding:"1.5rem"
-    });
-    return;
-  }
-      
-   const ok =await confirmAction("Are you sure?", "This category will be deleted!");
+    const count = await getItemCountByCategory(id);
 
-   if(!ok){
-    return;
-   }
+    if (count > 0) {
+      Swal.fire({
+        icon: "info",
+        title: "Cannot delete",
+        text: "This category has items associated with it. Please delete those items first.",
+        width: "300px",
+        padding: "1.5rem",
+      });
+      return;
+    }
 
-       await deleteCategory(id);
+    const ok = await confirmAction(
+      "Are you sure?",
+      "This category will be deleted!",
+    );
+
+    if (!ok) {
+      return;
+    }
+
+    await deleteCategory(id);
     loadCategories();
-  }
-
-  
-
+  };
 
   return (
     <CardPanel title="Categories" className="fade-expand">

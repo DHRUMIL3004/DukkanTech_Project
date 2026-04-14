@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { getUsers, deleteUser } from "../../Service/UserService";
 import { FaEllipsisV } from "react-icons/fa";
@@ -33,8 +32,16 @@ const UserList = ({ refreshFlag, onAddUserClick, onEditUserClick }) => {
       setLoading(true);
       setError(null);
       const sortBy = sortOrder === "NONE" ? "" : "name";
-      const sortDir = sortOrder === "DESC" ? "DESC" : sortOrder === "ASC" ? "ASC" : "";
-      const data = await getUsers(0, 50, debouncedSearch, roleFilter, sortBy, sortDir);
+      const sortDir =
+        sortOrder === "DESC" ? "DESC" : sortOrder === "ASC" ? "ASC" : "";
+      const data = await getUsers(
+        0,
+        50,
+        debouncedSearch,
+        roleFilter,
+        sortBy,
+        sortDir,
+      );
       setUsers(data.data || data || []);
     } catch (err) {
       setError(getBackendErrorMessage(err, "Unable to load users"));
@@ -48,10 +55,12 @@ const UserList = ({ refreshFlag, onAddUserClick, onEditUserClick }) => {
   }, [refreshFlag, debouncedSearch, roleFilter, sortOrder]);
 
   const handleDelete = async (id) => {
+    const ok = await confirmAction(
+      "Are you sure?",
+      "This user will be deleted!",
+    );
 
-    const ok=await confirmAction("Are you sure?","This user will be deleted!");
-    
-    if(!ok){
+    if (!ok) {
       return;
     }
 

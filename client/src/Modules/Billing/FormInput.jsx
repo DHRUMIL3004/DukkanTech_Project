@@ -9,11 +9,13 @@ const FormInput = ({
   onChange,
   error,
   maxLength,
-  required
+  required,
 }) => {
   return (
     <div className="form-group">
-      <label>{label} {required && "*"}</label>
+      <label>
+        {label} {required && "*"}
+      </label>
       <input
         type={type}
         placeholder={placeholder}

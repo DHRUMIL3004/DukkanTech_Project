@@ -4,9 +4,7 @@ import { createItem, updateItem } from "../../Service/ItemService";
 import { getCategories } from "../../Service/CategoryService";
 import { getBackendErrorMessage } from "../../Service/errorMessage";
 
-
 const ItemForm = ({ refreshItems, editingItem, onEditComplete }) => {
-
   const [file, setFile] = useState(null);
   const [categories, setCategories] = useState([]);
 
@@ -17,19 +15,21 @@ const ItemForm = ({ refreshItems, editingItem, onEditComplete }) => {
     quantity: "",
     description: "",
     categoryId: "",
-    imgUrl: ""
+    imgUrl: "",
   };
 
   const [item, setItem] = useState(emptyItem);
 
   useEffect(() => {
-
-    getCategories().then(res => {
-      const list = Array.isArray(res?.data) ? res.data : Array.isArray(res) ? res : [];
+    getCategories().then((res) => {
+      const list = Array.isArray(res?.data)
+        ? res.data
+        : Array.isArray(res)
+          ? res
+          : [];
       setCategories(list);
-    })
-
-  }, [])
+    });
+  }, []);
 
   useEffect(() => {
     if (editingItem) {
@@ -50,11 +50,9 @@ const ItemForm = ({ refreshItems, editingItem, onEditComplete }) => {
     }
   }, [editingItem]);
 
-
   const handleChange = (e) => {
-    setItem({ ...item, [e.target.name]: e.target.value })
-  }
-
+    setItem({ ...item, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -74,25 +72,23 @@ const ItemForm = ({ refreshItems, editingItem, onEditComplete }) => {
           imageInput.value = "";
         }
         onEditComplete?.();
-       
       })
       .catch((error) => {
-        alert(getBackendErrorMessage(error, editingItem ? "Error updating item" : "Error creating item"));
-      })
-     
-      
-  }
+        alert(
+          getBackendErrorMessage(
+            error,
+            editingItem ? "Error updating item" : "Error creating item",
+          ),
+        );
+      });
+  };
 
   return (
-
     <div className="card shadow-sm">
-
       <div className="card-body">
-
         <h5 className="mb-3">{editingItem ? "Edit Item" : "Create Item"}</h5>
 
         <form onSubmit={handleSubmit}>
-
           {/* ITEM NAME */}
 
           <div className="mb-3">
@@ -118,10 +114,7 @@ const ItemForm = ({ refreshItems, editingItem, onEditComplete }) => {
             >
               <option value="">Select Category</option>
               {categories.map((category) => (
-                <option
-                  key={category.categoryId}
-                  value={category.categoryId}
-                >
+                <option key={category.categoryId} value={category.categoryId}>
                   {category.name}
                 </option>
               ))}
@@ -141,7 +134,6 @@ const ItemForm = ({ refreshItems, editingItem, onEditComplete }) => {
               required
             />
           </div>
-
 
           {/* QUANTITY */}
 
@@ -202,13 +194,10 @@ const ItemForm = ({ refreshItems, editingItem, onEditComplete }) => {
               Cancel Edit
             </button>
           )}
-
         </form>
-
       </div>
-
     </div>
-  )
-}
+  );
+};
 
 export default ItemForm;

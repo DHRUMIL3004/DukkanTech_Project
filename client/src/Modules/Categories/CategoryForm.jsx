@@ -3,7 +3,11 @@ import { createCategory, updateCategory } from "../../Service/CategoryService";
 import CardPanel from "../../Components/CardPanel";
 import { getBackendErrorMessage } from "../../Service/errorMessage";
 
-const CategoryForm = ({ refreshCategories, editingCategory, onEditComplete }) => {
+const CategoryForm = ({
+  refreshCategories,
+  editingCategory,
+  onEditComplete,
+}) => {
   const [category, setCategory] = useState({
     name: "",
     description: "",
@@ -46,7 +50,7 @@ const CategoryForm = ({ refreshCategories, editingCategory, onEditComplete }) =>
       }
       refreshCategories();
 
-      setCategory({ name: "", description: "", bgColor: "#ffffff" ,tax:""});
+      setCategory({ name: "", description: "", bgColor: "#ffffff", tax: "" });
       setFile(null);
       // clear file input manually - later if needed
       document.getElementById("category-image").value = "";
@@ -60,7 +64,10 @@ const CategoryForm = ({ refreshCategories, editingCategory, onEditComplete }) =>
   };
 
   return (
-    <CardPanel title={editingCategory ? "Edit Category" : "Create Category"} className="fade-expand">
+    <CardPanel
+      title={editingCategory ? "Edit Category" : "Create Category"}
+      className="fade-expand"
+    >
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label className="form-label">Name</label>
@@ -129,7 +136,12 @@ const CategoryForm = ({ refreshCategories, editingCategory, onEditComplete }) =>
             className="btn btn-outline-secondary w-100 mt-2"
             type="button"
             onClick={() => {
-              setCategory({ name: "", description: "", bgColor: "#ffffff", tax: "" });
+              setCategory({
+                name: "",
+                description: "",
+                bgColor: "#ffffff",
+                tax: "",
+              });
               setFile(null);
               document.getElementById("category-image").value = "";
               onEditComplete?.();

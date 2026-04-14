@@ -23,7 +23,10 @@ const ProductCard = ({ item, onAddToCart, isDisabled }) => {
             }}
           />
         ) : null}
-        <div className="image-placeholder" style={{ display: item.imgUrl ? 'none' : 'flex' }}>
+        <div
+          className="image-placeholder"
+          style={{ display: item.imgUrl ? "none" : "flex" }}
+        >
           {item.name?.charAt(0) || "P"}
         </div>
       </div>
@@ -39,8 +42,12 @@ const ProductCard = ({ item, onAddToCart, isDisabled }) => {
         </p>
 
         <div className="product-footer">
-          <span className="product-price">₹{parseFloat(item.price).toFixed(2)}</span>
-          <span className={`stock-status ${stockStatus.inStock ? "in-stock" : "out-of-stock"}`}>
+          <span className="product-price">
+            ₹{parseFloat(item.price).toFixed(2)}
+          </span>
+          <span
+            className={`stock-status ${stockStatus.inStock ? "in-stock" : "out-of-stock"}`}
+          >
             {stockStatus.text}
           </span>
         </div>

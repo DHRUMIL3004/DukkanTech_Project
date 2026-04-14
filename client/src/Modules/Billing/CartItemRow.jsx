@@ -7,21 +7,21 @@ const CartItemRow = ({ item, onUpdateQuantity, onRemove }) => {
       <div className="col-product">
         <span className="product-name">{item.itemName}</span>
       </div>
-      
+
       <div className="col-price">
         <span>₹{item.price.toFixed(2)}</span>
       </div>
-      
+
       <div className="col-qty">
         <div className="qty-control">
-          <button 
+          <button
             className="qty-btn"
             onClick={() => onUpdateQuantity(item.itemId, item.quantity - 1)}
           >
             <FaMinus />
           </button>
           <span className="qty-value">{item.quantity}</span>
-          <button 
+          <button
             className="qty-btn"
             onClick={() => onUpdateQuantity(item.itemId, item.quantity + 1)}
           >
@@ -29,16 +29,15 @@ const CartItemRow = ({ item, onUpdateQuantity, onRemove }) => {
           </button>
         </div>
       </div>
-      
+
       <div className="col-total">
-        <span className="item-total">₹{(item.price * item.quantity).toFixed(2)}</span>
+        <span className="item-total">
+          ₹{(item.price * item.quantity).toFixed(2)}
+        </span>
       </div>
-      
+
       <div className="col-action">
-        <button 
-          className="delete-btn"
-          onClick={() => onRemove(item.itemId)}
-        >
+        <button className="delete-btn" onClick={() => onRemove(item.itemId)}>
           <FaTrash />
         </button>
       </div>

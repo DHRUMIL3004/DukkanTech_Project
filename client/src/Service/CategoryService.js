@@ -6,7 +6,13 @@ const API_URL = "http://localhost:8080/api/categories";
 // Token is read inside each function so it is always fresh from localStorage
 const getToken = () => localStorage.getItem("token");
 
-export const getCategories = async (page = 0, size = 50, search = "", sortBy = "name", sortDir = "ASC") => {
+export const getCategories = async (
+  page = 0,
+  size = 50,
+  search = "",
+  sortBy = "name",
+  sortDir = "ASC",
+) => {
   const response = await axios.get(API_URL, {
     params: { page, size, search, sortBy, sortDir },
     headers: { Authorization: `Bearer ${getToken()}` },
@@ -25,7 +31,10 @@ export const getItemCountByCategory = async (id) => {
 
 export const createCategory = async (category, file) => {
   const form = new FormData();
-  form.append("data",  new Blob([JSON.stringify(category)], { type: "application/json" }));
+  form.append(
+    "data",
+    new Blob([JSON.stringify(category)], { type: "application/json" }),
+  );
   if (file) form.append("image", file);
 
   const response = await axios.post(API_URL, form, {
@@ -39,7 +48,10 @@ export const createCategory = async (category, file) => {
 
 export const updateCategory = async (id, category, file) => {
   const form = new FormData();
-  form.append("data", new Blob([JSON.stringify(category)], { type: "application/json" }));
+  form.append(
+    "data",
+    new Blob([JSON.stringify(category)], { type: "application/json" }),
+  );
   if (file) form.append("image", file);
 
   const response = await axios.patch(`${API_URL}/${id}`, form, {
@@ -55,7 +67,4 @@ export const deleteCategory = async (id) => {
   return axios.delete(`${API_URL}/${id}`, {
     headers: { Authorization: `Bearer ${getToken()}` },
   });
-
-
-  
 };

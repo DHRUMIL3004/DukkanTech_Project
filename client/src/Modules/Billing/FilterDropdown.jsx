@@ -7,7 +7,7 @@ const FilterDropdown = ({
   onToggleCategory,
   onClearAll,
   isOpen,
-  onToggleOpen
+  onToggleOpen,
 }) => {
   return (
     <div className="filter-wrapper">
@@ -31,7 +31,7 @@ const FilterDropdown = ({
             )}
           </div>
           <div className="filter-options">
-            {categories.map(category => (
+            {categories.map((category) => (
               <label key={category} className="filter-option">
                 <input
                   type="checkbox"

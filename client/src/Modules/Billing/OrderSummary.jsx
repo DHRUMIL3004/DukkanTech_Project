@@ -21,7 +21,7 @@ const OrderSummary = ({
   onPaymentMethodChange,
   onCompletePayment,
   isFormValid,
-  processingPayment
+  processingPayment,
 }) => {
   const [customerFound, setCustomerFound] = useState(false);
   const [loadingCustomer, setLoadingCustomer] = useState(false);
@@ -38,45 +38,37 @@ const OrderSummary = ({
       setLoadingCustomer(true);
 
       try {
-       const res = await fetch(`http://localhost:8080/api/customer/${value}`, {
-       headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json"
-    }
-  });
-        
+        const res = await fetch(`http://localhost:8080/api/customer/${value}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
         if (res.ok) {
           const data = await res.json();
           console.log("Customer data:", data);
-
-       
-        
 
           // Auto fill
           onNameChange({ target: { value: data.customerName } });
           onCityChange({ target: { value: data.city || "" } });
           onDobChange({ target: { value: data.dob || "" } });
-          
-            setCustomerFound(true);
 
+          setCustomerFound(true);
         } else {
           //  Not found
           setCustomerFound(false);
-          
+
           onCityChange({ target: { value: "" } });
           onDobChange({ target: { value: "" } });
         }
-
       } catch (err) {
         console.error(err);
         setCustomerFound(false);
       } finally {
         setLoadingCustomer(false);
-        
       }
     }
-
-   
   };
 
   return (
@@ -99,22 +91,18 @@ const OrderSummary = ({
         {loadingCustomer && <p>Checking customer...</p>}
 
         {/* Customer Not Found Message */}
-        
-{phone.length === 10 && !loadingCustomer && (
-  !customerFound ? (
-    <p style={{ color: "orange", marginBottom: "10px" }}>
-      No record found — create new profile.
-    </p>
-  ) : (
-    <p style={{ color: "green", marginBottom: "10px" }}>
-      Customer profile loaded
-    </p>
-  )
-)}
 
-      
-
-        
+        {phone.length === 10 &&
+          !loadingCustomer &&
+          (!customerFound ? (
+            <p style={{ color: "orange", marginBottom: "10px" }}>
+              No record found — create new profile.
+            </p>
+          ) : (
+            <p style={{ color: "green", marginBottom: "10px" }}>
+              Customer profile loaded
+            </p>
+          ))}
 
         {/* Name */}
         <FormInput

@@ -5,9 +5,7 @@ function Footer() {
   return (
     <footer className="footer">
       <div className="footer-container">
-
         <div className="footer-grid">
-
           {/* Brand */}
           <div className="footer-col footer-brand-section">
             <div className="footer-brand">
@@ -31,14 +29,12 @@ function Footer() {
               <p>Location: Gujarat, India</p>
             </div>
           </div>
-
         </div>
 
         {/* Bottom */}
         <div className="footer-bottom">
           <p>© 2026 DukaanTech. All rights reserved.</p>
         </div>
-
       </div>
     </footer>
   );

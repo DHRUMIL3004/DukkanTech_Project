@@ -32,7 +32,7 @@ const UserForm = ({ refreshUsers, editingUser, onEditComplete }) => {
 
     setUser({
       ...user,
-      [name]: value
+      [name]: value,
     });
   };
 
@@ -54,13 +54,12 @@ const UserForm = ({ refreshUsers, editingUser, onEditComplete }) => {
         name: "",
         email: "",
         role: "",
-        password: ""
+        password: "",
       });
 
       if (onEditComplete) {
         onEditComplete();
       }
-
     } catch (error) {
       const message = getBackendErrorMessage(error, "Server not responding");
       alert(message);
@@ -68,7 +67,10 @@ const UserForm = ({ refreshUsers, editingUser, onEditComplete }) => {
   };
 
   return (
-    <CardPanel title={editingUser ? "Edit User" : "Create User"} className="fade-expand">
+    <CardPanel
+      title={editingUser ? "Edit User" : "Create User"}
+      className="fade-expand"
+    >
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label className="form-label">Name</label>
@@ -92,7 +94,11 @@ const UserForm = ({ refreshUsers, editingUser, onEditComplete }) => {
             value={user.email}
             onChange={handleChange}
             disabled={editingUser ? true : false}
-            style={editingUser ? { backgroundColor: "#f5f5f5", cursor: "not-allowed" } : {}}
+            style={
+              editingUser
+                ? { backgroundColor: "#f5f5f5", cursor: "not-allowed" }
+                : {}
+            }
             required
           />
           {editingUser && (
@@ -108,7 +114,11 @@ const UserForm = ({ refreshUsers, editingUser, onEditComplete }) => {
             value={user.role}
             onChange={handleChange}
             disabled={editingUser ? true : false}
-            style={editingUser ? { backgroundColor: "#f5f5f5", cursor: "not-allowed" } : {}}
+            style={
+              editingUser
+                ? { backgroundColor: "#f5f5f5", cursor: "not-allowed" }
+                : {}
+            }
             required
           >
             <option value="">Select Role</option>

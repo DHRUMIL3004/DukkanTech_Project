@@ -55,36 +55,29 @@ function Dashboard() {
         setItems(itemsRes?.data || []);
         setCategories(catsRes?.data || []);
         setUsers(usersRes || []);
-        
-
       } catch (err) {
         console.error("Dashboard fetch error:", err);
       } finally {
         setLoading(false);
-        
       }
     };
     fetchAll();
-    
   }, []);
 
   // ── Derived stats ──────────────────────────────────────────────────────
   const [totalRevenue, setTotalRevenue] = useState(0);
   useEffect(() => {
-
-  const fetchRevenue=async()=>{
-    try{
-      const revenue = await getTotalRevenue();
-      setTotalRevenue(revenue || 0);
-
-    }catch(err){
-      console.error("Error fetching total revenue:", err);
-      setTotalRevenue(0);
-  }
-};
-fetchRevenue();
-}
-, [orders]);
+    const fetchRevenue = async () => {
+      try {
+        const revenue = await getTotalRevenue();
+        setTotalRevenue(revenue || 0);
+      } catch (err) {
+        console.error("Error fetching total revenue:", err);
+        setTotalRevenue(0);
+      }
+    };
+    fetchRevenue();
+  }, [orders]);
 
   const totalCustomers = new Set(orders.map((o) => o.phone)).size;
   const totalOrdersCount = orders.length;
@@ -100,8 +93,7 @@ fetchRevenue();
   // Revenue by category (match item's category field to category name)
   const categoryRevenue = categories.map((cat) => {
     const catItems = items.filter(
-      (item) =>
-        item.categoryId === cat.id || item.categoryName === cat.name
+      (item) => item.categoryId === cat.id || item.categoryName === cat.name,
     );
     const catItemNames = new Set(catItems.map((i) => i.name));
     const revenue = orders
@@ -121,19 +113,24 @@ fetchRevenue();
 
   // Payment method split
   const cashCount = orders.filter(
-    (o) => o.paymentMethod?.toLowerCase() === "cash"
+    (o) => o.paymentMethod?.toLowerCase() === "cash",
   ).length;
   const upiCount = orders.filter(
-    (o) => o.paymentMethod?.toLowerCase() === "upi"
+    (o) => o.paymentMethod?.toLowerCase() === "upi",
   ).length;
   const otherCount = orders.length - cashCount - upiCount;
   const payTotal = orders.length || 1;
 
   const COLORS = [
-    "#4f7cff", "#22c497", "#f5a623", "#e05c5c",
-    "#9b7fe8", "#3ecfcf", "#f97316", "#84cc16",
+    "#4f7cff",
+    "#22c497",
+    "#f5a623",
+    "#e05c5c",
+    "#9b7fe8",
+    "#3ecfcf",
+    "#f97316",
+    "#84cc16",
   ];
-
 
   if (loading) {
     return (
@@ -146,8 +143,6 @@ fetchRevenue();
 
   return (
     <div className="dash-root">
-     
-
       <main className="dash-main">
         {/* ── Page Header ─────────────────────────────────────────── */}
         <div className="dash-header">
@@ -325,7 +320,8 @@ fetchRevenue();
             <h2 className="dash-section-title">Low Stock Items</h2>
             {lowStockItems.length > 0 && (
               <span className="dash-badge dash-badge--warn">
-                ⚠ {lowStockItems.length} item{lowStockItems.length > 1 ? "s" : ""}
+                ⚠ {lowStockItems.length} item
+                {lowStockItems.length > 1 ? "s" : ""}
               </span>
             )}
           </div>
@@ -356,9 +352,7 @@ fetchRevenue();
                         <td>{formatCurrency(item.price || 0)}</td>
                         <td
                           className={
-                            item.quantity <= 3
-                              ? "dash-td-red"
-                              : "dash-td-amber"
+                            item.quantity <= 3 ? "dash-td-red" : "dash-td-amber"
                           }
                         >
                           {item.quantity}

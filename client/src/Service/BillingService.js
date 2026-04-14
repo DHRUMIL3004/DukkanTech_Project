@@ -11,8 +11,8 @@ export const createBill = async (billingRequest) => {
   const response = await axios.post(`${API_URL}/create`, billingRequest, {
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json"
-    }
+      "Content-Type": "application/json",
+    },
   });
 
   return response.data;
@@ -24,8 +24,8 @@ export const getBills = async () => {
 
   const response = await axios.get(API_URL, {
     headers: {
-      Authorization: `Bearer ${token}`
-    }
+      Authorization: `Bearer ${token}`,
+    },
   });
 
   return response.data;
@@ -38,8 +38,8 @@ export const sendWhatsappAlert = async (id) => {
 
   const response = await axios.get(`${Whatsapp_Url}/${id}`, {
     headers: {
-      Authorization: `Bearer ${token}`
-    }
+      Authorization: `Bearer ${token}`,
+    },
   });
   console.log("WhatsApp alert response:", response.data);
   return response.data;
@@ -51,10 +51,10 @@ export const getTotalRevenue = async () => {
 
   const response = await axios.get(`${API_URL}/revenue`, {
     headers: {
-      Authorization: `Bearer ${token}`
-    }
+      Authorization: `Bearer ${token}`,
+    },
   });
-console.log(response.data);
+  console.log(response.data);
   return response.data;
 };
 
@@ -65,8 +65,8 @@ export const createRazorpayOrder = async (payload) => {
   const response = await axios.post(`${PAYMENT_URL}/order`, payload, {
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json"
-    }
+      "Content-Type": "application/json",
+    },
   });
 
   return response.data;
@@ -79,8 +79,8 @@ export const verifyRazorpayPayment = async (payload) => {
   const response = await axios.post(`${PAYMENT_URL}/verify`, payload, {
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json"
-    }
+      "Content-Type": "application/json",
+    },
   });
 
   return response.data;
@@ -93,8 +93,8 @@ export const cancelRazorpayPayment = async (payload) => {
   const response = await axios.post(`${PAYMENT_URL}/cancel`, payload, {
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json"
-    }
+      "Content-Type": "application/json",
+    },
   });
 
   return response.data;

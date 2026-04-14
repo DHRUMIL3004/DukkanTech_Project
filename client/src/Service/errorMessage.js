@@ -1,4 +1,7 @@
-export const getBackendErrorMessage = (error, fallback = "Something went wrong") => {
+export const getBackendErrorMessage = (
+  error,
+  fallback = "Something went wrong",
+) => {
   if (!error) return fallback;
 
   const data = error.response?.data;

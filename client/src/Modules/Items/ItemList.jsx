@@ -5,8 +5,6 @@ import ItemSearch from "./ItemSearch";
 import { deleteItem, getItems } from "../../Service/ItemService";
 import { confirmAction } from "../../Service/DeleteService";
 
-
-
 const ItemList = ({ refreshFlag, onEditItemClick }) => {
   const [items, setItems] = useState([]);
   const [search, setSearch] = useState("");
@@ -24,35 +22,40 @@ const ItemList = ({ refreshFlag, onEditItemClick }) => {
 
   const loadItems = () => {
     const sortBy = sortOrder === "NONE" ? "" : "name";
-    const sortDir = sortOrder === "DESC" ? "DESC" : sortOrder === "ASC" ? "ASC" : "";
-    getItems(0, 1000, debouncedSearch, categoryFilter, sortBy, sortDir).then((response) => {
-      // Handle paginated response - extract data array
-      if (response && response.data && Array.isArray(response.data)) {
-        setItems(response.data);
-      } else if (Array.isArray(response)) {
-        setItems(response);
-      } else {
-        setItems([]);
-      }
-    });
+    const sortDir =
+      sortOrder === "DESC" ? "DESC" : sortOrder === "ASC" ? "ASC" : "";
+    getItems(0, 1000, debouncedSearch, categoryFilter, sortBy, sortDir).then(
+      (response) => {
+        // Handle paginated response - extract data array
+        if (response && response.data && Array.isArray(response.data)) {
+          setItems(response.data);
+        } else if (Array.isArray(response)) {
+          setItems(response);
+        } else {
+          setItems([]);
+        }
+      },
+    );
   };
 
   useEffect(() => {
     loadItems();
   }, [refreshFlag, debouncedSearch, categoryFilter, sortOrder]);
 
-  const handleDelete = async(id) => {
-   
-     const ok=await confirmAction("Are you sure?","This item will be deleted!");
+  const handleDelete = async (id) => {
+    const ok = await confirmAction(
+      "Are you sure?",
+      "This item will be deleted!",
+    );
 
-     if(!ok){
+    if (!ok) {
       return;
-     }
+    }
 
-     if (!id) {
+    if (!id) {
       console.error("Item id missing");
       return;
-      }
+    }
 
     deleteItem(id).then(() => {
       loadItems();

@@ -7,7 +7,7 @@ export const getOrders = async (
   fromDate = "",
   toDate = "",
   sortBy = "createdAt",
-  sortDir = "desc"
+  sortDir = "desc",
 ) => {
   const token = localStorage.getItem("token");
   if (!token) {
@@ -47,7 +47,7 @@ export const getOrders = async (
 export const getOrderSummary = async (
   search = "",
   fromDate = "",
-  toDate = ""
+  toDate = "",
 ) => {
   const token = localStorage.getItem("token");
   if (!token) {

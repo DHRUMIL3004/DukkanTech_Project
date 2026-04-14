@@ -7,12 +7,17 @@ const Receipt = ({ billResponse, onPrint, onNewOrder }) => {
         <div className="receipt-header">
           <img src="/Logo.png" alt="DukaanTech Logo" className="logo" />
           <div className="success-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
               <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
               <polyline points="22 4 12 14.01 9 11.01" />
             </svg>
           </div>
-          
+
           <h2>Order Completed!</h2>
           <p className="order-number">Order #{billResponse.orderId}</p>
         </div>
@@ -35,7 +40,9 @@ const Receipt = ({ billResponse, onPrint, onNewOrder }) => {
             </div>
             <div className="detail-row">
               <span className="label">Date</span>
-              <span className="value">{new Date(billResponse.createdAt).toLocaleString()}</span>
+              <span className="value">
+                {new Date(billResponse.createdAt).toLocaleString()}
+              </span>
             </div>
           </div>
 
@@ -56,7 +63,9 @@ const Receipt = ({ billResponse, onPrint, onNewOrder }) => {
                   </span>
                   <span>₹{parseFloat(item.price).toFixed(2)}</span>
                   <span>{item.tax || 0}%</span>
-                  <span className="total">₹{parseFloat(item.total).toFixed(2)}</span>
+                  <span className="total">
+                    ₹{parseFloat(item.total).toFixed(2)}
+                  </span>
                 </div>
               ))}
 
@@ -79,7 +88,9 @@ const Receipt = ({ billResponse, onPrint, onNewOrder }) => {
             </div>
           </div>
 
-          <div className={`payment-badge ${billResponse.paid ? "paid" : "unpaid"}`}>
+          <div
+            className={`payment-badge ${billResponse.paid ? "paid" : "unpaid"}`}
+          >
             {billResponse.paid ? "PAID" : "PENDING"}
           </div>
         </div>
