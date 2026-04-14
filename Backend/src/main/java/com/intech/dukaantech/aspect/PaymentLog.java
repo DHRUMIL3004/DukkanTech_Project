@@ -106,7 +106,7 @@ public class PaymentLog {
                 Object principal = auth.getPrincipal();
 
                 if (principal instanceof com.intech.dukaantech.authentication.security.CurrentUser user) {
-                    return "id=" + user.getId() + "|role=" + user.getRole();
+                    return "id=" + user.getUserId() + "|role=" + user.getRole();
                 }
 
                 return principal.toString();

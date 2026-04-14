@@ -66,7 +66,7 @@ public class UserController {
         Object principal = authentication.getPrincipal();
 
         if (principal instanceof CurrentUser currentUser) {
-            UserEntity user = userRepository.findById(currentUser.getId())
+            UserEntity user = userRepository.findByUserId(currentUser.getUserId())
                     .orElseThrow(() -> new RuntimeException("User not found"));
             return ResponseEntity.ok(user.getName());
         }

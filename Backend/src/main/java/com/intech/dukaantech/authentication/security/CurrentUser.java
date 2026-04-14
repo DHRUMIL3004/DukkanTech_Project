@@ -6,11 +6,11 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class CurrentUser {
-    private Long id;
+    private String userId;
     private String role;
 
     @Override
     public String toString() {
-        return "id=" + id + "|role=" + role;
+        return "id=" + userId + "|role=" + role;
     }
 }

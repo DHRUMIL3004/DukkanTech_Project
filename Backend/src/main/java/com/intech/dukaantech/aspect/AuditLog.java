@@ -52,7 +52,7 @@ public class AuditLog {
     // ITEM
     @AfterReturning(pointcut = "itemCreated()", returning = "response")
     public void afterItemCreated(Object response) {
-        String user = getCurrentUser();
+        String user = AspectUtils.getCurrentUser();
 
         if (response instanceof ItemResponse item) {
             auditLog.info(
@@ -67,7 +67,7 @@ public class AuditLog {
         String itemId = extractId(jp);
         auditLog.info(
                 "[UPDATE ITEM] itemId={} | user={}",
-                itemId, getCurrentUser()
+                itemId, AspectUtils.getCurrentUser()
         );
     }
 
@@ -76,7 +76,7 @@ public class AuditLog {
         String itemId = extractId(jp);
         auditLog.info(
                 "[DELETE ITEM] itemId={} | user={}",
-                itemId, getCurrentUser()
+                itemId, AspectUtils.getCurrentUser()
         );
     }
 
@@ -86,7 +86,7 @@ public class AuditLog {
         if (response instanceof CategoryResponse cat) {
             auditLog.info(
                     "[CREATE CATEGORY] categoryId={} | name={} | user={}",
-                    cat.getCategoryId(), cat.getName(), getCurrentUser()
+                    cat.getCategoryId(), cat.getName(), AspectUtils.getCurrentUser()
             );
         }
     }
@@ -95,7 +95,7 @@ public class AuditLog {
     public void afterCategoryUpdated(JoinPoint jp) {
         auditLog.info(
                 "[UPDATE CATEGORY] categoryId={} | user={}",
-                extractId(jp), getCurrentUser()
+                extractId(jp), AspectUtils.getCurrentUser()
         );
     }
 
@@ -103,7 +103,7 @@ public class AuditLog {
     public void afterCategoryDeleted(JoinPoint jp) {
         auditLog.info(
                 "[DELETE CATEGORY] categoryId={} | user={}",
-                extractId(jp), getCurrentUser()
+                extractId(jp), AspectUtils.getCurrentUser()
         );
     }
 
@@ -112,8 +112,8 @@ public class AuditLog {
     public void afterUserCreated(Object response) {
         if (response instanceof UserResponse userRes) {
             auditLog.info(
-                    "[CREATE USER] userId={} | name={} | role={} | createdBy={}",
-                    userRes.getUserId(), userRes.getName(), userRes.getRole(), getCurrentUser()
+                    "[CREATE USER] userId={} | name={} | createdUserRole={} | createdBy={}",
+                    userRes.getUserId(), userRes.getName(), userRes.getRole(), AspectUtils.getCurrentUser()
             );
         }
     }
@@ -122,7 +122,7 @@ public class AuditLog {
     public void afterUserUpdated(JoinPoint jp) {
         auditLog.info(
                 "[UPDATE USER] userId={} | updatedBy={}",
-                extractId(jp), getCurrentUser()
+                extractId(jp), AspectUtils.getCurrentUser()
         );
     }
 
@@ -130,23 +130,11 @@ public class AuditLog {
     public void afterUserDeleted(JoinPoint jp) {
         auditLog.info(
                 "[DELETE USER] userId={} | deletedBy={}",
-                extractId(jp), getCurrentUser()
+                extractId(jp), AspectUtils.getCurrentUser()
         );
     }
 
-    // helper methods
-
-    private String getCurrentUser() {
-        try {
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-            if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal())) {
-                return auth.getPrincipal().toString(); // replace with userId if available
-            }
-        } catch (Exception ignored) {}
-
-        return "anonymous";
-    }
+    // helper method
 
     private String extractId(JoinPoint jp) {
         Object[] args = jp.getArgs();

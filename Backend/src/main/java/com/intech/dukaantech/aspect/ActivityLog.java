@@ -28,7 +28,7 @@ public class ActivityLog {
 
         String className  = pjp.getTarget().getClass().getSimpleName();
         String methodName = pjp.getSignature().getName();
-        String user       = getCurrentUser();
+        String user       = AspectUtils.getCurrentUser();
 
         long start = System.currentTimeMillis();
 
@@ -60,24 +60,5 @@ public class ActivityLog {
 
             throw ex;
         }
-    }
-
-    private String getCurrentUser() {
-        try {
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-            if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal())) {
-
-                Object principal = auth.getPrincipal();
-
-                if (principal instanceof CurrentUser user) {
-                    return "id=" + user.getId() + "|role=" + user.getRole();
-                }
-
-                return principal.toString();
-            }
-        } catch (Exception ignored) {}
-
-        return "anonymous";
     }
 }

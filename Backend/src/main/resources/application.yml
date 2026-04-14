@@ -2,11 +2,6 @@ spring:
   config:
     import: optional:application-secret.yml
 
-  datasource:
-    url: jdbc:mysql://localhost:3306/billing_app
-    username: root
-    password: root
-
   mail:
     host: smtp.gmail.com
     port: 587
@@ -31,11 +26,6 @@ spring:
       ddl-auto: update
     show-sql: true
 
-twilio:
-  account-sid: ACb45886204f9f70d575362ca0b6edfafa
-  auth-token: bf3c597cd148f18a896bdf1df6bd7e2d
-  phone-number: +14155238886
-
 payment:
   upi-max-transaction-inr: 100000
 
@@ -44,12 +34,21 @@ server:
     context-path: /api
 
 logging:
-
   level:
     root: INFO
+
     org.springframework: WARN
     org.hibernate: WARN
-    org.eclipse.angus.mail: DEBUG
-    jakarta.mail: DEBUG
-    com.intech.dukaantech: DEBUG
+    org.apache.catalina: WARN
+    org.apache.coyote: WARN
+
+    org.eclipse.angus.mail: INFO
+    jakarta.mail: INFO
+
+    com.intech.dukaantech: INFO
+
+    ACTIVITY_LOGGER: INFO
+    AUDIT_LOGGER: INFO
+    PAYMENT_LOGGER: INFO
+    ERROR_LOGGER: WARN
 

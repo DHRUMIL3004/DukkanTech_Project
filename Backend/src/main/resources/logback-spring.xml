@@ -74,7 +74,7 @@
         <appender-ref ref="PAYMENT_FILE"/>
     </logger>
 
-    <logger name="ERROR_LOGGER" level="ERROR" additivity="false">
+    <logger name="ERROR_LOGGER" level="WARN" additivity="false">
         <appender-ref ref="ERROR_FILE"/>
     </logger>
 

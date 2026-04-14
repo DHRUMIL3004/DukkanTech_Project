@@ -50,7 +50,7 @@ public class ItemServiceImpl implements ItemService {
                 .findByCategoryId(itemRequest.getCategoryId())
                 .orElseThrow(() -> {
                     log.warn("Category Already Exists: {}", itemRequest.getCategoryId());
-                    return new DuplicateResourceException("Category Already Exists");
+                    return new ResourceNotFoundException("Category Already Exists");
                 });
 
         if (file == null || file.isEmpty()) {
