@@ -175,6 +175,20 @@
 			<scope>runtime</scope>
 		</dependency>
 
+
+<!--        pdf generation-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>html2pdf</artifactId>
+            <version>4.0.4</version>
+        </dependency>
+
+
 	</dependencies>
 
 	<build>

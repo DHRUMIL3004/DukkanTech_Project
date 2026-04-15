@@ -1,4 +1,6 @@
 import axios from "axios";
+import { Phone } from "lucide-react";
+import { toast } from "react-toastify";
 
 const API_URL = "http://localhost:8080/api/billing";
 const Whatsapp_Url = "http://localhost:8080/api/whatsapp/send";
@@ -16,6 +18,47 @@ export const createBill = async (billingRequest) => {
   });
 
   return response.data;
+};
+
+
+//generate bill pdf
+export const generatePDF = async () => {
+  const token = localStorage.getItem("token");
+  const billResponse = JSON.parse(localStorage.getItem("BillResponse"));
+
+  const data = {
+    orderId: billResponse.orderId,
+    customerName: billResponse.customerName,
+    phone: billResponse.phone,
+    paymentMethod: billResponse.paymentMethod,
+    date: new Date(billResponse.createdAt).toLocaleString(),
+    items: billResponse.items.map(item => ({
+      name: item.itemName,
+      price: item.price,
+      quantity: item.quantity,
+      tax: item.taxAmount,
+      total: item.total
+    })),
+    subTotal: billResponse.subTotal,
+   totalTax: billResponse.totalTax,
+  totalAmount: billResponse.totalAmount
+  };
+
+  const res = await axios.post(`${API_URL}/invoice`, data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json"
+    },
+    responseType: "blob"
+  });
+
+  const url = window.URL.createObjectURL(new Blob([res.data]));
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "invoice.pdf";
+  a.click();
+
+  toast.success("Invoice PDF generated successfully.");
 };
 
 // GET ALL BILLS (if needed later)

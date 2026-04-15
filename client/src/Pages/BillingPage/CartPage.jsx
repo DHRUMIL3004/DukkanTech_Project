@@ -4,6 +4,7 @@ import {
   cancelRazorpayPayment,
   createBill,
   createRazorpayOrder,
+  generatePDF,
   sendWhatsappAlert,
   verifyRazorpayPayment,
 } from "../../Service/BillingService";
@@ -94,6 +95,7 @@ const CartPage = () => {
       !validatePhone(phone)
     );
   };
+
 
   // ============ EFFECTS ============
 
@@ -308,16 +310,18 @@ const CartPage = () => {
 
       const orderResponse = await createBill(buildBillingRequest());
       const savedOrder = orderResponse?.data || orderResponse;
+      localStorage.setItem("BillResponse", JSON.stringify(savedOrder));
+      console.log("Saved order response:", savedOrder);
 
       setBillResponse(savedOrder);
       setCartItems([]);
       localStorage.removeItem("billingCart");
 
-      if (savedOrder?.orderId) {
-        sendWhatsappAlert(savedOrder.orderId);
-      }
+      // if (savedOrder?.orderId) {
+      //   sendWhatsappAlert(savedOrder.orderId);
+      // }
 
-      toast.success("Payment successful. Invoice generated.");
+      toast.success("Payment successfully processed.");
     } catch (error) {
       console.error(error);
       toast.error(
@@ -333,9 +337,10 @@ const CartPage = () => {
     setBillResponse(null);
     setCustomerName("");
     setPhone("");
-
+   
     setPaymentMethod("CASH");
     navigate("/billing");
+    localStorage.removeItem("BillResponse");
   };
 
   const goBack = () => navigate("/billing");
@@ -349,7 +354,7 @@ const CartPage = () => {
         <div className="cart-page">
           <Receipt
             billResponse={billResponse}
-            onPrint={() => window.print()}
+            onPrint={generatePDF}
             onNewOrder={handleNewOrder}
           />
         </div>

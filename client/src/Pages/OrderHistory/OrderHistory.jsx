@@ -3,6 +3,7 @@ import { getOrderSummary, getOrders } from "../../Service/OrderHistory";
 import Receipt from "../../Modules/Billing/Receipt";
 import "./OrderHistory.css";
 import Footer from "../../Components/Footer/Footer";
+import { generatePDF } from "../../Service/BillingService";
 
 const formatItems = (items) => items.map((i) => i.itemName).join(", ");
 const formatDate  = (date)  => new Date(date).toLocaleDateString("en-GB");
@@ -72,6 +73,7 @@ const OrderHistory = () => {
     try {
       const data = await getOrders(page, 10, search, fromDate, toDate, sortBy, sortDir);
       setOrders(data.data ?? []);
+    
       setTotalPages(data.totalPages ?? 0);
       setPage(data.page ?? 0);
       setTotalElements(data.totalElements ?? data.data?.length ?? 0);
@@ -364,7 +366,12 @@ const OrderHistory = () => {
                 <span className="col-invoice">
                   <button
                     className="oh-invoice-btn"
-                    onClick={() => { setSelectedOrder(order); setShowInvoice(true); }}
+                    onClick={() => { setSelectedOrder(order); setShowInvoice(true);
+                      localStorage.removeItem("BillResponse");
+                      localStorage.setItem("BillResponse", JSON.stringify(order));
+                     }
+                  }
+                    
                   >
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -419,14 +426,19 @@ const OrderHistory = () => {
       </div>
 
       {/* INVOICE MODAL */}
-      {showInvoice && selectedOrder && (
+      {showInvoice && (
         <div className="oh-modal-overlay" onClick={() => setShowInvoice(false)}>
           <div className="oh-modal" onClick={e => e.stopPropagation()}>
-            <button className="oh-modal-close" onClick={() => setShowInvoice(false)}>✕</button>
+            <button className="oh-modal-close" onClick={() => {setShowInvoice(false);
+            localStorage.removeItem("BillResponse");
+      
+            }}>✕</button>
             <Receipt
               billResponse={selectedOrder}
-              onPrint={() => window.print()}
-              onNewOrder={() => setShowInvoice(false)}
+              onPrint={generatePDF}
+              onNewOrder={() => {setShowInvoice(false);
+                localStorage.removeItem("BillResponse");
+              }}
             />
           </div>
         </div>
