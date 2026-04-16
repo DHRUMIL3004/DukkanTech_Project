@@ -2,23 +2,9 @@ spring:
   config:
     import: optional:application-secret.yml
 
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: ${USER_NAME}
-    password: ${PASSWORD}
-    properties:
-      mail:
-        debug: true
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-          ssl:
-            enable: false
-
   main:
     banner-mode: off
+    web-application-type: servlet
 
   jpa:
     open-in-view: false
@@ -26,29 +12,38 @@ spring:
       ddl-auto: update
     show-sql: true
 
-payment:
-  upi-max-transaction-inr: 100000
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    properties:
+      mail:
+        debug: false
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          ssl:
+            enable: false
 
 server:
+  port: 8080
   servlet:
     context-path: /api
+
+payment:
+  upi-max-transaction-inr: 100000
 
 logging:
   level:
     root: INFO
-
     org.springframework: WARN
     org.hibernate: WARN
     org.apache.catalina: WARN
     org.apache.coyote: WARN
-
     org.eclipse.angus.mail: INFO
     jakarta.mail: INFO
-
     com.intech.dukaantech: INFO
-
     ACTIVITY_LOGGER: INFO
     AUDIT_LOGGER: INFO
     PAYMENT_LOGGER: INFO
     ERROR_LOGGER: WARN
-
