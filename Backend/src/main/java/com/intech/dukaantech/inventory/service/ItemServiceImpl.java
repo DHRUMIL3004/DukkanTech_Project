@@ -199,7 +199,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional(readOnly = true)
     public List<Item> getLowStockItems() {
-        return itemRepository.findByQuantityLessThan(2);
+        return itemRepository.findByQuantityLessThan(10);
     }
 
     @Override

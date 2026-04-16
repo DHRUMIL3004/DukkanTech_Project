@@ -317,9 +317,9 @@ const CartPage = () => {
       setCartItems([]);
       localStorage.removeItem("billingCart");
 
-      // if (savedOrder?.orderId) {
-      //   sendWhatsappAlert(savedOrder.orderId);
-      // }
+      if (savedOrder?.orderId) {
+        sendWhatsappAlert(savedOrder.orderId);
+      }
 
       toast.success("Payment successfully processed.");
     } catch (error) {
