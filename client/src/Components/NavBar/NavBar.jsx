@@ -7,24 +7,6 @@ import Logout from "../../Modules/Logout/Logout";
 const NavBar = () => {
   const [userName, setUserName] = useState("admin");
 
-  useEffect(() => {
-    const fetchUserName = async () => {
-      try {
-        const data = await showName();
-        setUserName(data || "admin");
-      } catch (err) {
-        console.error("Error fetching user name:", err);
-      }
-    };
-
-    fetchUserName();
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
-    window.location.href = "/";
-  };
 
   const links = [
     { to: "/dashboard", label: "Dashboard" },
