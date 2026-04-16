@@ -22,6 +22,7 @@ const EmployeeNavbar = () => {
     window.location.href = "/";
   };
 
+
   const links = [
     { to: "/billing", label: "Billing" },
     { to: "/order-history", label: "Order History" },

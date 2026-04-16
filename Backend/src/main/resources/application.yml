@@ -2,28 +2,9 @@ spring:
   config:
     import: optional:application-secret.yml
 
-  datasource:
-    url: jdbc:mysql://localhost:3306/billing_app
-    username: root
-    password: 1234
-
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: ${USER_NAME}
-    password: ${PASSWORD}
-    properties:
-      mail:
-        debug: true
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-          ssl:
-            enable: false
-
   main:
     banner-mode: off
+    web-application-type: servlet
 
   jpa:
     open-in-view: false
@@ -31,36 +12,38 @@ spring:
       ddl-auto: update
     show-sql: true
 
-twilio:
-  account-sid: ${ACCOUNT_SID}
-  auth-token: ${AUTH_TOKEN}
-  phone-number: ${PHONE_NUMBER}
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    properties:
+      mail:
+        debug: false
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          ssl:
+            enable: false
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api
 
 payment:
   upi-max-transaction-inr: 100000
 
-server:
-  servlet:
-    context-path: /api
-
 logging:
-
   level:
     root: INFO
     org.springframework: WARN
     org.hibernate: WARN
-    org.eclipse.angus.mail: DEBUG
-    jakarta.mail: DEBUG
-    com.intech.dukaantech: DEBUG
-
-aws:
-  access-key: AKIA2LIP2ENXWGVPGR3J
-  secret-key: 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
-  region: eu-north-1
-
-  s3:
-    bucket: billing-software-dukaantech
-
-razorpay:
-  key-id: rzp_test_SUm3zPOy1VorrB
-  key-secret: 6ObI8U1pJav4O2ZGoGLQf6nU
+    org.apache.catalina: WARN
+    org.apache.coyote: WARN
+    org.eclipse.angus.mail: INFO
+    jakarta.mail: INFO
+    com.intech.dukaantech: INFO
+    ACTIVITY_LOGGER: INFO
+    AUDIT_LOGGER: INFO
+    PAYMENT_LOGGER: INFO
+    ERROR_LOGGER: WARN

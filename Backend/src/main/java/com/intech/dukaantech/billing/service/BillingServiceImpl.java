@@ -30,8 +30,7 @@ public class BillingServiceImpl implements BillingService {
     private final ItemRepository itemRepository;
     private final BillingRepository billingRepository;
     private final BillingMapper billingMapper; // mapper for DTO conversion
-    @Autowired
-    private CustomerRepository customerRepository;
+    private final CustomerRepository customerRepository;
 
     @Override
     @Transactional
@@ -70,7 +69,7 @@ public class BillingServiceImpl implements BillingService {
             Item item = itemRepository.findByItemID(itemRequest.getItemId())
                     .orElseThrow(() -> new ResourceNotFoundException("Item not found: " + itemRequest.getItemId()));
 
-            long currentStock = String.valueOf(item.getQuantity()) == null ? 0L : Long.parseLong(String.valueOf(item.getQuantity()));
+            long currentStock = Long.valueOf(item.getQuantity()) == null ? 0L : item.getQuantity();
             long requestedQty = itemRequest.getQuantity();
 
             if (requestedQty <= 0) {
@@ -137,6 +136,4 @@ public class BillingServiceImpl implements BillingService {
       return billingRepository.findByOrderId(orderId)
               .orElseThrow(()->new ResourceNotFoundException("Bill not found: " + orderId));
     }
-
-
 }
