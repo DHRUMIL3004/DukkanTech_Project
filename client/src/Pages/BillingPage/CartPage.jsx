@@ -201,7 +201,7 @@ const CartPage = () => {
         },
         method: {
           upi: true,
-          card: false,
+          card: true,
           netbanking: false,
           wallet: false,
           emi: false,
