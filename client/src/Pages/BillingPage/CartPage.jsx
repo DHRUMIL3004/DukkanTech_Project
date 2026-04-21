@@ -201,241 +201,244 @@ const CartPage = () => {
         },
         method: {
           upi: true,
-          card: true,
+          card: false,
           netbanking: false,
           wallet: false,
           emi: false,
           paylater: false,
         },
-        theme: {
-          color: "#0b7a5a",
+        upi:{
+          flow: "intent"
         },
-        handler: async (response) => {
-          try {
-            const verifyResponse = await verifyRazorpayPayment({
-              receipt: orderPayload.receipt,
-              razorpayOrderId: response.razorpay_order_id,
-              razorpayPaymentId: response.razorpay_payment_id,
-              razorpaySignature: response.razorpay_signature,
-            });
-            resolve(verifyResponse);
-          } catch (error) {
-            reject(error);
-          }
+      theme: {
+        color: "#0b7a5a",
         },
-        modal: {
-          ondismiss: async () => {
-            try {
-              await cancelRazorpayPayment({
-                receipt: orderPayload.receipt,
-                razorpayOrderId: orderPayload.razorpayOrderId,
-                reason: "Checkout closed by user",
-              });
-            } catch (cancelError) {
-              console.error("Cancel payment error:", cancelError);
-            }
-            reject(new Error("Payment cancelled by user"));
-          },
-        },
-      };
-
-      const razorpay = new window.Razorpay(options);
-      razorpay.on("payment.failed", async () => {
+      handler: async (response) => {
         try {
-          await cancelRazorpayPayment({
+          const verifyResponse = await verifyRazorpayPayment({
             receipt: orderPayload.receipt,
-            razorpayOrderId: orderPayload.razorpayOrderId,
-            reason: "Payment failed at gateway",
+            razorpayOrderId: response.razorpay_order_id,
+            razorpayPaymentId: response.razorpay_payment_id,
+            razorpaySignature: response.razorpay_signature,
           });
-        } catch (cancelError) {
-          console.error("Cancel on failure error:", cancelError);
+          resolve(verifyResponse);
+        } catch (error) {
+          reject(error);
         }
-        reject(new Error("UPI payment failed"));
-      });
-      razorpay.open();
-    });
-  };
-
-  // Process payment and update stock in backend
-  const handleCompleted = async () => {
-    const ok = await confirmAction(
-      "Confirm Payment",
-      `Total amount to be paid: INR ${totalAmount.toFixed(2)}. Do you want to proceed?`,
-    );
-
-    if (!ok) {
-      return;
-    }
-
-    if (cartItems.length === 0) {
-      toast.error("Please add items to the cart");
-      return;
-    }
-
-    if (!isFormValid()) {
-      toast.error("Please fill valid customer details before payment");
-      return;
-    }
-
-    try {
-      setProcessingPayment(true);
-
-      if (paymentMethod === "UPI") {
-        if (totalAmount > UPI_MAX_TRANSACTION_INR) {
-          throw new Error(
-            `UPI payment limit exceeded for a single transaction. Please keep total at or below INR ${UPI_MAX_TRANSACTION_INR}.`,
-          );
-        }
-
-        const receipt = getReceipt();
-        const orderPayload = await createRazorpayOrder({
-          amount: totalAmount,
-          currency: "INR",
-          receipt,
-          customerName: customerName.trim(),
-          phone: phone.trim(),
-        });
-
-        if (orderPayload.status === "PAID") {
-          toast.info("Payment already completed for this receipt. Continuing.");
-        } else {
-          const verifyResult = await openRazorpayCheckout(orderPayload);
-          if (!verifyResult?.verified) {
-            throw new Error("Payment verification failed");
+      },
+        modal: {
+        ondismiss: async () => {
+          try {
+            await cancelRazorpayPayment({
+              receipt: orderPayload.receipt,
+              razorpayOrderId: orderPayload.razorpayOrderId,
+              reason: "Checkout closed by user",
+            });
+          } catch (cancelError) {
+            console.error("Cancel payment error:", cancelError);
           }
-        }
-      } else {
-        toast.info("Cash payment selected.");
+          reject(new Error("Payment cancelled by user"));
+        },
+        },
+    };
+
+    const razorpay = new window.Razorpay(options);
+    razorpay.on("payment.failed", async () => {
+      try {
+        await cancelRazorpayPayment({
+          receipt: orderPayload.receipt,
+          razorpayOrderId: orderPayload.razorpayOrderId,
+          reason: "Payment failed at gateway",
+        });
+      } catch (cancelError) {
+        console.error("Cancel on failure error:", cancelError);
       }
+      reject(new Error("UPI payment failed"));
+    });
+    razorpay.open();
+  });
+};
 
-      const orderResponse = await createBill(buildBillingRequest());
-      const savedOrder = orderResponse?.data || orderResponse;
-      localStorage.setItem("BillResponse", JSON.stringify(savedOrder));
-      console.log("Saved order response:", savedOrder);
+// Process payment and update stock in backend
+const handleCompleted = async () => {
+  const ok = await confirmAction(
+    "Confirm Payment",
+    `Total amount to be paid: INR ${totalAmount.toFixed(2)}. Do you want to proceed?`,
+  );
 
-      setBillResponse(savedOrder);
-      setCartItems([]);
-      localStorage.removeItem("billingCart");
-
-      if (savedOrder?.orderId) {
-        sendWhatsappAlert(savedOrder.orderId);
-      }
-
-      toast.success("Payment successfully processed.");
-    } catch (error) {
-      console.error(error);
-      toast.error(
-        getBackendErrorMessage(error, "Payment failed. Order was not saved."),
-      );
-    } finally {
-      setProcessingPayment(false);
-    }
-  };
-
-  // Reset form and start new order
-  const handleNewOrder = () => {
-    setBillResponse(null);
-    setCustomerName("");
-    setPhone("");
-   
-    setPaymentMethod("CASH");
-    navigate("/billing");
-    localStorage.removeItem("BillResponse");
-  };
-
-  const goBack = () => navigate("/billing");
-
-  // ============ RENDER ============
-
-  // Show receipt after successful order
-  if (billResponse) {
-    return (
-      <>
-        <div className="cart-page">
-          <Receipt
-            billResponse={billResponse}
-            onPrint={generatePDF}
-            onNewOrder={handleNewOrder}
-          />
-        </div>
-      </>
-    );
+  if (!ok) {
+    return;
   }
 
-  // Main cart view
+  if (cartItems.length === 0) {
+    toast.error("Please add items to the cart");
+    return;
+  }
+
+  if (!isFormValid()) {
+    toast.error("Please fill valid customer details before payment");
+    return;
+  }
+
+  try {
+    setProcessingPayment(true);
+
+    if (paymentMethod === "UPI") {
+      if (totalAmount > UPI_MAX_TRANSACTION_INR) {
+        throw new Error(
+          `UPI payment limit exceeded for a single transaction. Please keep total at or below INR ${UPI_MAX_TRANSACTION_INR}.`,
+        );
+      }
+
+      const receipt = getReceipt();
+      const orderPayload = await createRazorpayOrder({
+        amount: totalAmount,
+        currency: "INR",
+        receipt,
+        customerName: customerName.trim(),
+        phone: phone.trim(),
+      });
+
+      if (orderPayload.status === "PAID") {
+        toast.info("Payment already completed for this receipt. Continuing.");
+      } else {
+        const verifyResult = await openRazorpayCheckout(orderPayload);
+        if (!verifyResult?.verified) {
+          throw new Error("Payment verification failed");
+        }
+      }
+    } else {
+      toast.info("Cash payment selected.");
+    }
+
+    const orderResponse = await createBill(buildBillingRequest());
+    const savedOrder = orderResponse?.data || orderResponse;
+    localStorage.setItem("BillResponse", JSON.stringify(savedOrder));
+    console.log("Saved order response:", savedOrder);
+
+    setBillResponse(savedOrder);
+    setCartItems([]);
+    localStorage.removeItem("billingCart");
+
+    if (savedOrder?.orderId) {
+      sendWhatsappAlert(savedOrder.orderId);
+    }
+
+    toast.success("Payment successfully processed.");
+  } catch (error) {
+    console.error(error);
+    toast.error(
+      getBackendErrorMessage(error, "Payment failed. Order was not saved."),
+    );
+  } finally {
+    setProcessingPayment(false);
+  }
+};
+
+// Reset form and start new order
+const handleNewOrder = () => {
+  setBillResponse(null);
+  setCustomerName("");
+  setPhone("");
+
+  setPaymentMethod("CASH");
+  navigate("/billing");
+  localStorage.removeItem("BillResponse");
+};
+
+const goBack = () => navigate("/billing");
+
+// ============ RENDER ============
+
+// Show receipt after successful order
+if (billResponse) {
   return (
     <>
       <div className="cart-page">
-        <div className="cart-wrapper">
-          {/* Back Navigation */}
-          <button className="back-btn" onClick={goBack}>
-            <FaArrowLeft />
-            <span>Back to Products</span>
-          </button>
-
-          <div className="cart-layout">
-            {/* Left: Cart Items List */}
-            <div className="cart-items-section">
-              <div className="section-header">
-                <h2>Shopping Cart</h2>
-                <span className="item-count">{cartItems.length} items</span>
-              </div>
-
-              {cartItems.length === 0 ? (
-                <EmptyCart onBrowseProducts={goBack} />
-              ) : (
-                <div className="cart-items-list">
-                  {/* Table Header */}
-                  <div className="cart-table-header">
-                    <span className="col-product">Product</span>
-                    <span className="col-price">Price</span>
-                    <span className="col-qty">Quantity</span>
-                    <span className="col-total">Total</span>
-                    <span className="col-action">Delete</span>
-                  </div>
-
-                  {/* Cart Item Rows */}
-                  {cartItems.map((item) => (
-                    <CartItemRow
-                      key={item.itemId}
-                      item={item}
-                      onUpdateQuantity={updateQuantity}
-                      onRemove={removeFromCart}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Right: Order Summary with customer form and payment */}
-            {cartItems.length > 0 && (
-              <OrderSummary
-                customerName={customerName}
-                phone={phone}
-                city={city}
-                dob={dob}
-                nameError={nameError}
-                phoneError={phoneError}
-                onNameChange={handleNameChange}
-                onPhoneChange={handlePhoneChange}
-                onCityChange={handleCityChange}
-                onDobChange={handleDobChange}
-                subTotal={subTotal}
-                totalTax={totalTax}
-                totalAmount={totalAmount}
-                paymentMethod={paymentMethod}
-                onPaymentMethodChange={setPaymentMethod}
-                onCompletePayment={handleCompleted}
-                isFormValid={isFormValid()}
-                processingPayment={processingPayment}
-              />
-            )}
-          </div>
-        </div>
+        <Receipt
+          billResponse={billResponse}
+          onPrint={generatePDF}
+          onNewOrder={handleNewOrder}
+        />
       </div>
-      <Footer />
     </>
   );
+}
+
+// Main cart view
+return (
+  <>
+    <div className="cart-page">
+      <div className="cart-wrapper">
+        {/* Back Navigation */}
+        <button className="back-btn" onClick={goBack}>
+          <FaArrowLeft />
+          <span>Back to Products</span>
+        </button>
+
+        <div className="cart-layout">
+          {/* Left: Cart Items List */}
+          <div className="cart-items-section">
+            <div className="section-header">
+              <h2>Shopping Cart</h2>
+              <span className="item-count">{cartItems.length} items</span>
+            </div>
+
+            {cartItems.length === 0 ? (
+              <EmptyCart onBrowseProducts={goBack} />
+            ) : (
+              <div className="cart-items-list">
+                {/* Table Header */}
+                <div className="cart-table-header">
+                  <span className="col-product">Product</span>
+                  <span className="col-price">Price</span>
+                  <span className="col-qty">Quantity</span>
+                  <span className="col-total">Total</span>
+                  <span className="col-action">Delete</span>
+                </div>
+
+                {/* Cart Item Rows */}
+                {cartItems.map((item) => (
+                  <CartItemRow
+                    key={item.itemId}
+                    item={item}
+                    onUpdateQuantity={updateQuantity}
+                    onRemove={removeFromCart}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Right: Order Summary with customer form and payment */}
+          {cartItems.length > 0 && (
+            <OrderSummary
+              customerName={customerName}
+              phone={phone}
+              city={city}
+              dob={dob}
+              nameError={nameError}
+              phoneError={phoneError}
+              onNameChange={handleNameChange}
+              onPhoneChange={handlePhoneChange}
+              onCityChange={handleCityChange}
+              onDobChange={handleDobChange}
+              subTotal={subTotal}
+              totalTax={totalTax}
+              totalAmount={totalAmount}
+              paymentMethod={paymentMethod}
+              onPaymentMethodChange={setPaymentMethod}
+              onCompletePayment={handleCompleted}
+              isFormValid={isFormValid()}
+              processingPayment={processingPayment}
+            />
+          )}
+        </div>
+      </div>
+    </div>
+    <Footer />
+  </>
+);
 };
 
 export default CartPage;

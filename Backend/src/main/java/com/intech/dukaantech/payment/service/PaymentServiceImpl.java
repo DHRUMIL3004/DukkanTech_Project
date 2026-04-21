@@ -13,11 +13,11 @@ import com.razorpay.Order;
 import com.razorpay.Payment;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -28,19 +28,22 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentTransactionRepository paymentTransactionRepository;
+    private final RazorpayClient razorpayClient;
 
-    @Value("${razorpay.key-id:}")
+    @Value("${razorpay.key-id}")
     private String razorpayKeyId;
 
-    @Value("${razorpay.key-secret:}")
+    @Value("${razorpay.key-secret}")
     private String razorpayKeySecret;
 
     @Value("${payment.upi-max-transaction-inr:100000}")
     private BigDecimal upiMaxTransactionInr;
+
 
     @Override
     public CreatePaymentOrderResponse createRazorpayOrder(CreatePaymentOrderRequest request) {
@@ -80,8 +83,6 @@ public class PaymentServiceImpl implements PaymentService {
                 .longValue();
 
         try {
-            RazorpayClient client = new RazorpayClient(razorpayKeyId, razorpayKeySecret);
-
             JSONObject options = new JSONObject();
             options.put("amount", amountInPaise);
             options.put("currency", currency);
@@ -101,7 +102,7 @@ public class PaymentServiceImpl implements PaymentService {
                 options.put("notes", notes);
             }
 
-            Order razorpayOrder = client.orders.create(options);
+            Order razorpayOrder = razorpayClient.orders.create(options);
 
             PaymentTransaction tx = new PaymentTransaction();
             tx.setReceipt(receipt);
@@ -166,8 +167,7 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         try {
-            RazorpayClient client = new RazorpayClient(razorpayKeyId, razorpayKeySecret);
-            Payment payment = client.payments.fetch(request.getRazorpayPaymentId());
+            Payment payment = razorpayClient.payments.fetch(request.getRazorpayPaymentId());
 
             String orderIdFromGateway = payment.get("order_id");
             String paymentStatus = payment.get("status");
