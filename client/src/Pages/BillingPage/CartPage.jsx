@@ -207,9 +207,6 @@ const CartPage = () => {
           emi: false,
           paylater: false,
         },
-        upi:{
-          flow: "intent"
-        },
       theme: {
         color: "#0b7a5a",
         },
