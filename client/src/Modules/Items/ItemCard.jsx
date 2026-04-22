@@ -1,24 +1,20 @@
 import { FaEllipsisV } from "react-icons/fa";
 import "./ItemCard.css";
-
 const ItemCard = ({ item, deleteItem, onEditItemClick }) => {
   return (
     <div className="card mb-2 shadow-sm item-row-card">
       <div className="card-body d-flex justify-content-between align-items-center">
         <div className="d-flex align-items-center">
           {item.imgUrl && (
-            <img
-              src={item.imgUrl}
-              alt={item.name}
-              style={{
-                width: 48,
-                height: 48,
-                objectFit: "cover",
-                borderRadius: 8,
-                marginRight: 12,
-              }}
-            />
+            <div className="item_img_wrapper">
+              <img
+                className="item_img"
+                src={item.imgUrl}
+                alt={item.name}
+              />
+            </div>
           )}
+
           <div>
             <strong>{item.name}</strong>
             <div className="text-muted" style={{ fontSize: "0.85rem" }}>

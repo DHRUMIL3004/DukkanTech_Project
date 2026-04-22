@@ -1,6 +1,7 @@
 import React from "react";
 
 import "./NavBar/NavBar.css";
+
 import { FaRegUser } from "react-icons/fa";
 
 const ManagementLayout = ({
@@ -24,13 +25,23 @@ const ManagementLayout = ({
             </h2>
           </div>
 
-          <div className="row gx-4 gy-4">
+          
+          <div className="row gx-4 gy-4 management-content-row">
             {fullWidth ? (
-              <div className="col-12">{left}</div>
+              <div className="col-12 left_column">{left}</div>
             ) : (
               <>
-                <div className="col-xl-5 col-lg-6">{left}</div>
-                <div className="col-xl-7 col-lg-6">{right}</div>
+                <div className="col-xl-5 col-lg-6 left_column">
+                  <div className="left_inner">
+                    {left}
+                  </div>
+                </div>
+
+                <div className="col-xl-7 col-lg-6 right_column">
+                  <div className="right_inner">
+                    {right}
+                  </div>
+                </div>
               </>
             )}
           </div>

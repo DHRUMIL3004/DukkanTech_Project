@@ -26,6 +26,8 @@ const ManageItemPage = () => {
       <ManagementLayout
         title="Manage Items"
         Icon={FaBoxOpen}
+        
+        
         left={
           <ItemForm
             refreshItems={refreshItems}
@@ -33,6 +35,8 @@ const ManageItemPage = () => {
             onEditComplete={handleEditComplete}
           />
         }
+
+
         right={
           <ItemList
             refreshFlag={refreshFlag}
