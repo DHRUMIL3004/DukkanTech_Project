@@ -4,7 +4,9 @@ const FormInput = ({
   label,
   type = "text",
   placeholder,
+  max,
   disabled,
+  min,
   value,
   onChange,
   error,
@@ -20,6 +22,8 @@ const FormInput = ({
         type={type}
         placeholder={placeholder}
         value={value}
+        min={"1900-01-01"}
+        max={max}
         onChange={onChange}
         disabled={disabled}
         maxLength={maxLength}

@@ -130,6 +130,7 @@ const OrderSummary = ({
         <FormInput
           label="Date of Birth"
           type="date"
+          max={new Date().toISOString().split("T")[0]} // max today
           value={dob}
           onChange={onDobChange}
           disabled={customerFound}
