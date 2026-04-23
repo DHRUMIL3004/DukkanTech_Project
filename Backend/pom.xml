@@ -200,22 +200,7 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.11.0</version>
 				<configuration>
-					<annotationProcessorPaths>
 
-						<!-- Lombok -->
-						<path>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-						</path>
-
-						<!-- QueryDSL -->
-						<path>
-							<groupId>com.querydsl</groupId>
-							<artifactId>querydsl-apt</artifactId>
-							<version>5.0.0</version>
-						</path>
-
-					</annotationProcessorPaths>
 				</configuration>
 			</plugin>
 
