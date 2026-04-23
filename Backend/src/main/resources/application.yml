@@ -26,6 +26,7 @@ spring:
             enable: false
 
 server:
+  address: 0.0.0.0
   port: ${PORT:8080}
   servlet:
     context-path: /api
