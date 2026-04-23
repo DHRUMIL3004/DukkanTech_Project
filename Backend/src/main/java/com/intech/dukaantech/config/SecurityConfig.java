@@ -63,6 +63,7 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/","/test/**") .permitAll()
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/otp/**").permitAll()
                         .requestMatchers("/billing/orders", "/billing/orders/summary", "/billing/revenue").authenticated()
