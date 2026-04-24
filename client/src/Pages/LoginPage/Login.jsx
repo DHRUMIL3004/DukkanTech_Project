@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 
 import { Eye, EyeOff } from "lucide-react";
 import Password from "../../Components/PasswordField/Password";
+import { buildUrl } from "../../Service/baseUrl";
 
 function Login() {
   const { t, i18n } = useTranslation("login");
@@ -22,7 +23,7 @@ function Login() {
     }
 
     try {
-      const response = await fetch("http://localhost:8080/api/auth/login", {
+      const response = await fetch(buildUrl("/api/auth/login"), {
         method: "POST",
         headers: {
           "Content-type": "application/json",
