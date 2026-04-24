@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { showName } from "../../Service/UserService";
 import Swal from "sweetalert2";
 
-import "./logout.css";
+import "./Logout.css";
 import { confirmAction } from "../../Service/DeleteService";
 
 function Logout() {
