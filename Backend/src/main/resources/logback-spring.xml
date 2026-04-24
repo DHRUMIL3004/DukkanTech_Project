@@ -4,6 +4,13 @@
     <property name="LOG_PATTERN"
               value="%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [%X{requestId}] %logger - %msg%n"/>
 
+    <!-- CONSOLE LOG -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
     <!-- ACTIVITY LOG -->
     <appender name="ACTIVITY_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>logs/activity.log</file>
@@ -84,6 +91,7 @@
 
     <!-- ROOT (console) -->
     <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
         <appender-ref ref="ACTIVITY_FILE"/>
     </root>
 
