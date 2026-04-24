@@ -1,6 +1,7 @@
 import { useState } from "react";
 import FormInput from "./FormInput";
 import "./Billing.css";
+import { buildUrl } from "../../Service/baseUrl";
 
 const OrderSummary = ({
   customerName,
@@ -38,7 +39,7 @@ const OrderSummary = ({
       setLoadingCustomer(true);
 
       try {
-        const res = await fetch(`http://localhost:8080/api/customer/${value}`, {
+        const res = await fetch(buildUrl(`/api/customer/${value}`), {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
