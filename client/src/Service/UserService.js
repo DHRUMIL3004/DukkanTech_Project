@@ -1,7 +1,8 @@
 import axios from "axios";
+import { buildUrl } from "./baseUrl";
 
 // Backend exposes user APIs at /users (Spring Boot controller uses @RequestMapping("/users"))
-const API_URL = "http://localhost:8080/api/users";
+const API_URL = buildUrl("/api/users");
 const getToken = () => localStorage.getItem("token");
 
 export const getUsers = async (

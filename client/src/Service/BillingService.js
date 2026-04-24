@@ -1,10 +1,11 @@
 import axios from "axios";
 import { Phone } from "lucide-react";
 import { toast } from "react-toastify";
+import { buildUrl } from "./baseUrl";
 
-const API_URL = "http://localhost:8080/api/billing";
-const Whatsapp_Url = "http://localhost:8080/api/whatsapp/send";
-const PAYMENT_URL = "http://localhost:8080/api/payment/razorpay";
+const API_URL = buildUrl("/api/billing");
+const Whatsapp_Url = buildUrl("/api/whatsapp/send");
+const PAYMENT_URL = buildUrl("/api/payment/razorpay");
 
 // CREATE BILL
 export const createBill = async (billingRequest) => {

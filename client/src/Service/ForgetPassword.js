@@ -1,6 +1,7 @@
 import axios from "axios";
+import { buildUrl } from "./baseUrl";
 
-const url = "http://localhost:8080/api/otp";
+const url = buildUrl("/api/otp");
 
 export const sendOtp = async (email) => {
   const token = localStorage.getItem("token");

@@ -1,4 +1,6 @@
-const API_URL = "http://localhost:8080/api/billing";
+import { buildUrl } from "./baseUrl";
+
+const API_URL = buildUrl("/api/billing");
 
 export const getOrders = async (
   page = 0,

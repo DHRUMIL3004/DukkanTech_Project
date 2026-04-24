@@ -1,7 +1,8 @@
 import axios from "axios";
+import { buildUrl } from "./baseUrl";
 
 // Item APIs
-const API_URL = "http://localhost:8080/api/items";
+const API_URL = buildUrl("/api/items");
 
 // GET ITEMS with pagination, search, filtering, and sorting
 export const getItems = async (

@@ -1,7 +1,8 @@
 import axios from "axios";
+import { buildUrl } from "./baseUrl";
 
 // Category APIs under /api/categories (context path configured in backend)
-const API_URL = "http://localhost:8080/api/categories";
+const API_URL = buildUrl("/api/categories");
 
 // Token is read inside each function so it is always fresh from localStorage
 const getToken = () => localStorage.getItem("token");
