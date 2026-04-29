@@ -13,6 +13,7 @@ function Login() {
   const { t, i18n } = useTranslation("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -21,6 +22,8 @@ function Login() {
       alert("Please fill all fields");
       return;
     }
+
+    setLoading(true);
 
     try {
       const response = await fetch(buildUrl("/api/auth/login"), {
@@ -71,6 +74,7 @@ function Login() {
     } catch (err) {
       console.log("Login error : ", err);
       alert("Something went wrong");
+      setLoading(false);
     }
   };
 
@@ -107,8 +111,15 @@ function Login() {
                     </div>
 
                     <div className="d-grid mb-3">
-                      <button className="btn login_btn btn-lg">
-                        {t("login")}
+                      <button className="btn login_btn btn-lg" disabled={loading}>
+                        {loading ? (
+                          <>
+                            <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            {t("login")}
+                          </>
+                        ) : (
+                          t("login")
+                        )}
                       </button>
                     </div>
                     <div className="d-flex justify-content-end mb-3">
