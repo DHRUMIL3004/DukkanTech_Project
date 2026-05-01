@@ -15,10 +15,14 @@ function ForgotPassword() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [otp, setOtp] = useState("");
   const [step, setStep] = useState(1);
+  const [otpLoading, setOtpLoading] = useState(false);
+  const [verifyLoading, setVerifyLoading] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
   const navigate = useNavigate();
 
   //  Send OTP
   const handleSendOtp = async (e) => {
+    
     e.preventDefault();
 
     if (!email) {
@@ -27,12 +31,18 @@ function ForgotPassword() {
     }
 
     try {
+      setOtpLoading(true);
       await sendOtp(email);
       toast.success("OTP sent to your email!");
+      setOtpLoading(false);
       setStep(2);
     } catch (error) {
       console.error(error);
       toast.error(getBackendErrorMessage(error, "Failed to send OTP"));
+      setOtpLoading(false);
+    }
+    finally {
+      setOtpLoading(false);
     }
   };
 
@@ -46,9 +56,9 @@ function ForgotPassword() {
     }
 
     try {
+      setVerifyLoading(true);
       const response = await verifyOtp(email, otp);
 
-      //  Check backend response
       if (response === "otp is varified") {
         toast.success("OTP verified!");
         setStep(3);
@@ -58,6 +68,8 @@ function ForgotPassword() {
     } catch (error) {
       console.error(error);
       toast.error(getBackendErrorMessage(error, "Something went wrong"));
+    } finally {
+      setVerifyLoading(false);
     }
   };
 
@@ -76,10 +88,10 @@ function ForgotPassword() {
     }
 
     try {
+      setResetLoading(true);
       await resetPassword(email, password);
       toast.success("Password reset successfully!");
 
-      // reset form
       setEmail("");
       setOtp("");
       setPassword("");
@@ -91,6 +103,8 @@ function ForgotPassword() {
     } catch (error) {
       console.error(error);
       toast.error(getBackendErrorMessage(error, "Failed to reset password"));
+    } finally {
+      setResetLoading(false);
     }
   };
 
@@ -130,8 +144,16 @@ function ForgotPassword() {
                           <button
                             onClick={handleSendOtp}
                             className="btn login_btn btn-lg"
+                            disabled={otpLoading}
                           >
-                            Send OTP
+                            {otpLoading ? (
+                              <>
+                                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                Sending...
+                              </>
+                            ) : (
+                              "Send OTP"
+                            )}
                           </button>
                         </div>
                       </>
@@ -158,8 +180,16 @@ function ForgotPassword() {
                           <button
                             onClick={handleVerifyOtp}
                             className="btn login_btn btn-lg"
+                            disabled={verifyLoading}
                           >
-                            Verify OTP
+                            {verifyLoading ? (
+                              <>
+                                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                Verifying...
+                              </>
+                            ) : (
+                              "Verify OTP"
+                            )}
                           </button>
                         </div>
                       </>
@@ -190,8 +220,16 @@ function ForgotPassword() {
                           <button
                             onClick={handleResetPassword}
                             className="btn login_btn btn-lg"
+                            disabled={resetLoading}
                           >
-                            Reset Password
+                            {resetLoading ? (
+                              <>
+                                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                Setting Password...
+                              </>
+                            ) : (
+                              "Reset Password"
+                            )}
                           </button>
                         </div>
                       </>

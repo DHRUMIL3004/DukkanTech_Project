@@ -23,12 +23,12 @@ const ItemList = ({ refreshFlag, onEditItemClick }) => {
   }, [search]);
 
   const loadItems = () => {
+    setLoading(true);
     const sortBy = sortOrder === "NONE" ? "" : "name";
     const sortDir =
       sortOrder === "DESC" ? "DESC" : sortOrder === "ASC" ? "ASC" : "";
-    getItems(0, 1000, debouncedSearch, categoryFilter, sortBy, sortDir).then(
-      (response) => {
-        // Handle paginated response - extract data array
+    getItems(0, 1000, debouncedSearch, categoryFilter, sortBy, sortDir)
+      .then((response) => {
         if (response && response.data && Array.isArray(response.data)) {
           setItems(response.data);
         } else if (Array.isArray(response)) {
@@ -36,8 +36,14 @@ const ItemList = ({ refreshFlag, onEditItemClick }) => {
         } else {
           setItems([]);
         }
-      },
-    );
+      })
+      .catch((error) => {
+        console.error("Error loading items:", error);
+        setItems([]);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   useEffect(() => {
@@ -93,14 +99,20 @@ const ItemList = ({ refreshFlag, onEditItemClick }) => {
           categories={categoryOptions}
         />
 
-        {items.map((item) => (
-          <ItemCard
-            key={item.itemId}
-            item={item}
-            deleteItem={handleDelete}
-            onEditItemClick={onEditItemClick}
-          />
-        ))}
+        {loading ? (
+          <Loader message="Loading items..." />
+        ) : items.length === 0 ? (
+          <div className="text-muted">No items found.</div>
+        ) : (
+          items.map((item) => (
+            <ItemCard
+              key={item.itemId}
+              item={item}
+              deleteItem={handleDelete}
+              onEditItemClick={onEditItemClick}
+            />
+          ))
+        )}
       </div>
     </div>
   );
