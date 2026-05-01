@@ -8,6 +8,7 @@ import { FaEllipsisV } from "react-icons/fa";
 import CardPanel from "../../Components/CardPanel";
 import Logout from "../Logout/Logout";
 import { Delete } from "lucide-react";
+import Loader from "../../Components/Loader";
 import Swal from "sweetalert2";
 import { confirmAction } from "../../Service/DeleteService";
 import { getBackendErrorMessage } from "../../Service/errorMessage";
@@ -82,7 +83,7 @@ const CategoryList = ({ refreshFlag, onEditCategoryClick }) => {
         />
       </div>
 
-      {loading && <div className="text-muted">Loading categories…</div>}
+      {loading && <Loader message="Loading categories..." />}
       {error && <div className="text-danger mb-2">{error}</div>}
 
       {!loading && categories.length === 0 && (

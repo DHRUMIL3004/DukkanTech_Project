@@ -4,6 +4,9 @@ import Receipt from "../../Modules/Billing/Receipt";
 import "./OrderHistory.css";
 import Footer from "../../Components/Footer/Footer";
 import { generatePDF } from "../../Service/BillingService";
+import Loader from "../../Components/Loader";
+import { toast } from "react-toastify";
+
 
 const formatItems = (items) => items.map((i) => i.itemName).join(", ");
 const formatDate  = (date)  => new Date(date).toLocaleDateString("en-GB");
@@ -48,6 +51,7 @@ const OrderHistory = () => {
 
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showInvoice,   setShowInvoice]   = useState(false);
+  const [printLoading, setPrintLoading] = useState(false);
   const [summary, setSummary] = useState({
     totalCustomers: 0,
     totalOrders: 0,
@@ -56,6 +60,7 @@ const OrderHistory = () => {
   });
 
   const [sortBy, sortDir] = sortCombo.split("|");
+
 
   /* close date panel on outside click */
   useEffect(() => {
@@ -119,6 +124,19 @@ const OrderHistory = () => {
     setPage(0); setShowDatePanel(false);
   };
   const clearDates = () => { setFromDate(""); setToDate(""); setActivePreset(null); setPage(0); };
+
+  const handlePrintInvoice = async () => {
+    setPrintLoading(true);
+    try {
+      await generatePDF();
+    } catch (err) {
+      console.error("PDF generation failed:", err);
+      toast.error("Failed to generate invoice PDF. Please try again.");
+    } finally {
+      setPrintLoading(false);
+    }
+  };
+
   const dateRangeLabel = () => {
     if (activePreset) return activePreset;
     if (fromDate && toDate) return `${fromDate} → ${toDate}`;
@@ -274,7 +292,7 @@ const OrderHistory = () => {
 
         {/* ── FLAT TABLE ── */}
         {loading ? (
-          <div className="oh-loading"><div className="oh-spinner"/><p>Loading orders…</p></div>
+          <Loader message="Loading orders..." />
         ) : orders.length === 0 ? (
           <div className="oh-empty">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">
@@ -435,7 +453,8 @@ const OrderHistory = () => {
             }}>✕</button>
             <Receipt
               billResponse={selectedOrder}
-              onPrint={generatePDF}
+              onPrint={handlePrintInvoice}
+              loading={printLoading}
               onNewOrder={() => {setShowInvoice(false);
                 localStorage.removeItem("BillResponse");
               }}

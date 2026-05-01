@@ -5,6 +5,7 @@ import CardPanel from "../../Components/CardPanel";
 import FilterSortControls from "../../Components/FilterSortControls";
 import { confirmAction } from "../../Service/DeleteService";
 import { getBackendErrorMessage } from "../../Service/errorMessage";
+import Loader from "../../Components/Loader";
 
 const UserList = ({ refreshFlag, onAddUserClick, onEditUserClick }) => {
   const [users, setUsers] = useState([]);
@@ -95,7 +96,7 @@ const UserList = ({ refreshFlag, onAddUserClick, onEditUserClick }) => {
         className="mb-2"
       />
 
-      {loading && <div className="text-muted">Loading users…</div>}
+      {loading && <Loader message="Loading users..." />}
       {error && <div className="text-danger mb-2">{error}</div>}
 
       {!loading && users.length === 0 && (

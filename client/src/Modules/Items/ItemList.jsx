@@ -4,9 +4,11 @@ import ItemCard from "./ItemCard";
 import ItemSearch from "./ItemSearch";
 import { deleteItem, getItems } from "../../Service/ItemService";
 import { confirmAction } from "../../Service/DeleteService";
+import Loader from "../../Components/Loader";
 
 const ItemList = ({ refreshFlag, onEditItemClick }) => {
   const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("ALL");

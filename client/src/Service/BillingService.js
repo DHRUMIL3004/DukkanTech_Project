@@ -24,9 +24,13 @@ export const createBill = async (billingRequest) => {
 
 //generate bill pdf
 export const generatePDF = async () => {
+  
   const token = localStorage.getItem("token");
   const billResponse = JSON.parse(localStorage.getItem("BillResponse"));
 
+ 
+
+  
   const data = {
     orderId: billResponse.orderId,
     customerName: billResponse.customerName,
@@ -59,7 +63,7 @@ export const generatePDF = async () => {
   a.download = "invoice.pdf";
   a.click();
 
-  toast.success("Invoice PDF generated successfully.");
+
 };
 
 // GET ALL BILLS (if needed later)

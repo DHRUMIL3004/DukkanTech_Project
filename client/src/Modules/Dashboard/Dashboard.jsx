@@ -5,6 +5,7 @@ import { getCategories } from "../../Service/CategoryService";
 import { getUsers } from "../../Service/UserService";
 import "./Dashboard.css";
 import { getTotalRevenue } from "../../Service/BillingService";
+import Loader from "../../Components/Loader";
 
 // ─── Helpers ───────────────────────────────────────────────────────────────
 const formatDate = (d) => new Date(d).toLocaleDateString("en-GB");
@@ -133,12 +134,7 @@ function Dashboard() {
   ];
 
   if (loading) {
-    return (
-      <div className="dash-loading">
-        <div className="dash-spinner" />
-        <p>Loading dashboard...</p>
-      </div>
-    );
+    return <Loader message="Loading dashboard..." size="large" />;
   }
 
   return (

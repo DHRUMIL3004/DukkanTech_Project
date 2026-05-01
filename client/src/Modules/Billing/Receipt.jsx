@@ -1,6 +1,7 @@
 import "./Billing.css";
+import Loader from "../../Components/Loader";
 
-const Receipt = ({ billResponse, onPrint, onNewOrder }) => {
+const Receipt = ({ billResponse, onPrint, onNewOrder, loading }) => {
   return (
     <div className="receipt-wrapper">
       <div className="receipt-card">
@@ -96,13 +97,14 @@ const Receipt = ({ billResponse, onPrint, onNewOrder }) => {
         </div>
 
         <div className="receipt-actions">
-          <button className="btn-outline" onClick={onPrint}>
-            Print Invoice
+          <button className="btn-outline" onClick={onPrint} disabled={loading}>
+            {loading ? "Generating PDF..." : "Print Invoice"}
           </button>
-          <button className="btn-primary" onClick={onNewOrder}>
+          <button className="btn-primary" onClick={onNewOrder} disabled={loading}>
             New Order
           </button>
         </div>
+        {loading && <Loader message="Generating PDF..." overlay />}
       </div>
     </div>
   );

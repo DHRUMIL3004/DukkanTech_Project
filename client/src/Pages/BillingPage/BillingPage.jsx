@@ -17,6 +17,7 @@ import {
 import "./BillingPage.css";
 import Footer from "../../Components/Footer/Footer";
 import { getBackendErrorMessage } from "../../Service/errorMessage";
+import Loader from "../../Components/Loader";
 
 const BillingPage = () => {
   const navigate = useNavigate();
@@ -258,7 +259,7 @@ const BillingPage = () => {
           {/* Products Grid - Shows loading, empty, or product cards */}
           <div className="products-grid">
             {loading ? (
-              <div className="loading-state">Loading products...</div>
+              <Loader message="Loading products..." />
             ) : filteredItems.length === 0 ? (
               <div className="empty-state">No products found</div>
             ) : (

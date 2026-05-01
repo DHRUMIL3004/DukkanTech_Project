@@ -23,6 +23,10 @@ import { getBackendErrorMessage } from "../../Service/errorMessage";
 
 const UPI_MAX_TRANSACTION_INR = 100000;
 
+const goBack = () => {
+  window.history.back();
+}
+
 const CartPage = () => {
   const navigate = useNavigate();
 
@@ -44,6 +48,7 @@ const CartPage = () => {
 
   // UI state
   const [processingPayment, setProcessingPayment] = useState(false);
+  const [printLoading, setPrintLoading] = useState(false);
   const [billResponse, setBillResponse] = useState(null);
 
   // ============ VALIDATION FUNCTIONS ============
@@ -343,30 +348,38 @@ const handleNewOrder = () => {
   localStorage.removeItem("BillResponse");
 };
 
-const goBack = () => navigate("/billing");
+  const handlePrintInvoice = async () => {
+    setPrintLoading(true);
+    try {
+      await generatePDF();
+    } catch (err) {
+      console.error("PDF generation failed:", err);
+      toast.error("Failed to generate invoice PDF. Please try again.");
+    } finally {
+      setPrintLoading(false);
+    }
+  };
 
-// ============ RENDER ============
+  if (billResponse) {
+    return (
+      <>
+        <div className="cart-page">
+          <Receipt
+            billResponse={billResponse}
+            onPrint={handlePrintInvoice}
+            onNewOrder={handleNewOrder}
+            loading={printLoading}
+          />
+        </div>
+      </>
+    );
+  }
 
-// Show receipt after successful order
-if (billResponse) {
+  // Main cart view
   return (
     <>
       <div className="cart-page">
-        <Receipt
-          billResponse={billResponse}
-          onPrint={generatePDF}
-          onNewOrder={handleNewOrder}
-        />
-      </div>
-    </>
-  );
-}
-
-// Main cart view
-return (
-  <>
-    <div className="cart-page">
-      <div className="cart-wrapper">
+        <div className="cart-wrapper">
         {/* Back Navigation */}
         <button className="back-btn" onClick={goBack}>
           <FaArrowLeft />
